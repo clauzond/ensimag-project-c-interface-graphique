@@ -1,0 +1,7 @@
+_macos/
+_win/
+_x11/
+clion/
+cmake/
+docs/
+CMakeLists.txt
