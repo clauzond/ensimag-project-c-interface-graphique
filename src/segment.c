@@ -8,25 +8,23 @@ void draw_segment_straight(ei_surface_t surface,
                            ei_color_t color,
                            const ei_rect_t *clipper) {
         /* TODO: Clipping de draw_segment_straight */
-        int width, i;
-        uint32_t *pixel_ptr;
-
-        width = hw_surface_get_size(surface).width;
-        pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
+        int width = hw_surface_get_size(surface).width;
+        int i;
+        uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
+        uint32_t col = ei_map_rgba(surface, color);
 
         /* On positionne le pointeur au départ (x1, y1) */
         pixel_ptr += x1;
         pixel_ptr += y1 * width;
-
         if (x1 == x2) { // Ligne verticale
                 for (i = y1; i <= y2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr += width;
+                        *pixel_ptr = col; // drawPixel
+                        pixel_ptr += width; // y += 1
                 }
         } else { // Ligne horizontale
                 for (i = x1; i <= x2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr += 1;
+                        *pixel_ptr = col; // drawPixel
+                        pixel_ptr += 1; // x += 1
                 }
         }
 }
@@ -37,11 +35,11 @@ void draw_segment_bresenham(ei_surface_t surface,
                             const ei_rect_t *clipper) {
         /* TODO: Clipping de draw_segment_straight */
         /* TODO: Si algorithme trop lent, voir algo sur wiki */
-        int width, i, E;
-        uint32_t *pixel_ptr;
-
-        width = hw_surface_get_size(surface).width;
-        pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
+        int width = hw_surface_get_size(surface).width;
+        int i;
+        int E = 0;
+        uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
+        uint32_t col = ei_map_rgba(surface, color);
 
         /* On positionne le pointeur au départ (x1, y1) */
         pixel_ptr += x1;
@@ -50,7 +48,7 @@ void draw_segment_bresenham(ei_surface_t surface,
         E = 0;
         if (swap == 0) {
                 for (i = x1; i <= x2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
+                        *pixel_ptr = col; // drawPixel
                         pixel_ptr++; // x+= 1
                         E += dy;
                         if (2 * E > dx) {
@@ -60,7 +58,7 @@ void draw_segment_bresenham(ei_surface_t surface,
                 }
         } else { // On inverse x et y
                 for (i = y1; i <= y2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
+                        *pixel_ptr = col; // drawPixel
                         pixel_ptr += width; // y+= 1 (swap)
                         E += dx;
                         if (2 * E > dy) {
