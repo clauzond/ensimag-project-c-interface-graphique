@@ -8,6 +8,7 @@ void draw_segment_straight(ei_surface_t surface,
                            ei_color_t color,
                            const ei_rect_t *clipper) {
         /* TODO: Clipping de draw_segment_straight */
+        /* TODO: Transparence additionnée */
         int width = hw_surface_get_size(surface).width;
         int i, inc;
         uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
@@ -46,7 +47,7 @@ void draw_segment_bresenham(ei_surface_t surface,
                             ei_color_t color,
                             const ei_rect_t *clipper) {
         /* TODO: Clipping de draw_segment_straight */
-        /* TODO: Si algorithme trop lent, voir algo sur wiki */
+        /* TODO: Transparence additionnée */
         int width = hw_surface_get_size(surface).width;
         int i;
         int inc_x = sign_x, inc_y = (sign_y)*width; // Parcours des pixels à l'endroit ou non

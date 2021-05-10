@@ -127,10 +127,10 @@ void test_triangle(ei_surface_t surface, ei_rect_t* clipper) {
         ei_color_t              color           = {100, 155, 205, 255};
         ei_linked_point_t       pts[4];
 
-        pts[0].point.x = 0; pts[0].point.y = 200; pts[0].next = &(pts[1]);
-        pts[1].point.x = 200; pts[1].point.y = 200; pts[1].next = &(pts[2]);
-        pts[2].point.x = 500; pts[2].point.y = 500; pts[2].next = &(pts[3]);
-        pts[3].point.x = 0; pts[3].point.y = 200; pts[3].next = NULL;
+        pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
+        pts[1].point.x = 400; pts[1].point.y = 510; pts[1].next = &(pts[2]);
+        pts[2].point.x = 260; pts[2].point.y = 160; pts[2].next = &(pts[3]);
+        pts[3].point.x = 540; pts[3].point.y = 160; pts[3].next = NULL;
 
         ei_draw_polyline(surface, pts, color, clipper);
 }
@@ -164,7 +164,7 @@ int main(int argc, char** argv)
 	test_square	(main_window, clipper_ptr);
 	test_dot	(main_window, clipper_ptr);
         test_triangle   (main_window, clipper_ptr);
-	
+
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
 	hw_surface_update_rects(main_window, NULL);

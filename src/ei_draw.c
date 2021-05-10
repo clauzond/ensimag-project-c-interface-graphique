@@ -53,10 +53,9 @@ void ei_draw_polyline(ei_surface_t surface,
                       ei_color_t color,
                       const ei_rect_t *clipper) {
         /* TODO: Clipping de ei_draw_polyline */
-        /* TODO: Refactorisation */
-        int x1, x2, y1, y2, dx, dy, sign_x = 1, sign_y = 1;
-        int swap = 0;
-
+        /* TODO: Transparence additionnée */
+        int x1, x2, y1, y2, dx, dy, sign_x, sign_y;
+        int swap;
         /* Tracé d'un point */
         if (first_point->next == NULL) {
                 x1 = first_point->point.x;
@@ -83,6 +82,8 @@ void ei_draw_polyline(ei_surface_t surface,
                 } else if (dx == 0) {
                         draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
                         continue;
+                } else {
+                        sign_x = 1;
                 }
                 if (dy < 0) {
                         dy = -dy;
@@ -90,9 +91,13 @@ void ei_draw_polyline(ei_surface_t surface,
                 } else if (dy == 0) {
                         draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
                         continue;
+                } else {
+                        sign_y = 1;
                 }
                 if (dx < dy) {
                         swap = 1;
+                } else {
+                        swap = 0;
                 }
                 draw_segment_bresenham(surface, x1, y1, dx, dy, sign_x, sign_y, swap, color, clipper);
         }
