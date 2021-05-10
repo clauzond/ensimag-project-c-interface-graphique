@@ -37,52 +37,114 @@ void ei_draw_polyline(ei_surface_t surface,
                       const ei_rect_t *clipper) {
         /* TODO: Clipping de ei_draw_polyline */
         /* Déclarations des variables */
-        int x, y, dx, dy;
         int x1, x2, y1, y2;
         int E;
         int sign_x, sign_y = 1, 1;
         int swap = 0;
 
         /* Segment par segment */
-        while (first_point->next != NULL) {
-                x1, y1 = first_point->point.x, first_point->point.y;
+        while (first_point != NULL) {
+                x1 = first_point->point.x;
+                y1 = first_point->point.y;
                 first_point = first_point->next;
-                x2, y2 = first_point->point.x, first_point->point.y;
+                if (first_point == NULL) {
+                        draw_polyline_straight(surface, x1, x1, y1, y1, color, clipper);
+                        return;
+                }
+                x2 = first_point->point.x;
+                y2 = first_point->point.y;
                 /* Conditions à respecter */
                 if (x1 > x2) { // dx < 0
-                        x1, x2 = -x1, -x2;
+                        x1 = -x1;
+                        x2 = -x2;
                         sign_x = -1;
                 } else if (x1 == x2) { // dx == 0
-                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper)
+                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper);
+                        continue;
                 }
                 if (y1 > y2) { // dy < 0
-                        y1, y2 = -y1, -y2;
+                        y1 = -y1;
+                        y2 = -y2;
                         sign_y = -1;
                 } else if (y1 == y2) { // dy == 0
-                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper)
+                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper);
+                        continue;
                 }
                 if (x2 - x1 < y2 - y1) { // |dx| < |dy|
-                        x1, y1 = y1, x1;
-                        x2, y2 = y2, x2;
+                        swap = y1;
+                        y1 = x1;
+                        x1 = swap;
+                        swap = y2;
+                        y2 = x2;
+                        x2 = swap;
                         swap = 1;
                 }
                 draw_segment_bresenham(surface, x1, x2, y1, y2, sign_x, sign_y, swap, color, clipper);
         }
-
+        return;
 }
 
 void draw_segment_straight(ei_surface_t surface,
                             int x1, int x2, int y1, int y2,
                             ei_color_t color,
-                            const ei_rect_t *clipper) {}
+                            const ei_rect_t *clipper) {
+        /* TODO: factorisation du code */
+        /* Doit pouvoir marcher pour un point (x1 == x2, y1 == y2) */
+        int             width, i;
+        uint32_t*       pixel_ptr;
+
+        width = hw_surface_get_size(surface).width;
+        pixel_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+
+        /* On positionne le pointeur au départ (x1, y1) */
+        pixel_ptr += x1;
+        pixel_ptr += y1*width;
+
+        if (x1 == x2) { // Ligne verticale
+                for (i = y1; i<=y2; i++) {
+                        *pixel_ptr = ei_map_rgba(surface, color);
+                        pixel_ptr += width;
+                }
+        } else { // Ligne horizontale
+                for (i = x1; i<=x2; i++) {
+                        *pixel_ptr = ei_map_rgba(surface, color);
+                        pixel_ptr += 1;
+                }
+        }
+        return;
+}
 
 void draw_segment_bresenham(ei_surface_t surface,
-                            int x1, int x2, int y1, int y2, int sign_x, int sign_y, int swap,
+                            int x1, int x2, int y1, int y2, int dx, int dy, int swap,
                             ei_color_t color,
                             const ei_rect_t *clipper) {
-        // La surface est déjà locked
-        // Il reste à utiliser le buffer ; s'inspirer de minimal.c
-        // Pour le parcours du buffer, faire ligne par ligne (raisonner dans la boucle de l'algo)
+        /* TODO: Si algorithme trop lent, voir algo sur wiki */
+        int             width, i, E;
+        uint32_t*       pixel_ptr;
+
+        width = hw_surface_get_size(surface).width;
+        pixel_ptr = (uint32_t*) hw_surface_get_buffer(surface);
+
+        /* On positionne le pointeur au départ (x, y) */
+        pixel_ptr += x1;
+        pixel_ptr += y1*width;
+
+        if ((dx < dy) || (dx < 0) || (dy < 0)) { // TODO: remove
+                printf("FAIL");
+        }
+
+        if (swap == 0) {
+                for (i = x1; i<=x2; i++) {
+                        *pixel_ptr = ei_map_rgba(surface, color);
+                        pixel_ptr++; // x+= 1
+                        E += dy;
+                        if (2*E > dx) {
+                                pixel_ptr += width; // y+= 1
+                                E -= dx;
+                        }
+                }
+        }
+        return;
 }
 
 /**
