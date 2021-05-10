@@ -45,6 +45,7 @@ void draw_segment_bresenham(ei_surface_t surface,
         pixel_ptr += x1;
         pixel_ptr += y1 * width;
 
+        E = 0;
         if (swap == 0) {
                 for (i = x1; i <= x2; i++) {
                         *pixel_ptr = ei_map_rgba(surface, color);
