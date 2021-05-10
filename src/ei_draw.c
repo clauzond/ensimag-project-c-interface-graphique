@@ -53,23 +53,26 @@ void ei_draw_polyline(ei_surface_t surface,
                       ei_color_t color,
                       const ei_rect_t *clipper) {
         /* TODO: Clipping de ei_draw_polyline */
+        /* TODO: Refactorisation */
         int x1, x2, y1, y2, dx, dy;
         int swap = 0;
 
+        /* Tracé d'un point */
+        if (first_point->next == NULL) {
+                x1 = first_point->point.x;
+                y1 = first_point->point.y;
+                draw_segment_straight(surface, x1, x1, y1, y1, color, clipper);
+                return;
+        }
+
         /* Segment par segment */
-        while (first_point != NULL) {
+        while (first_point->next != NULL) {
                 x1 = first_point->point.x;
                 y1 = first_point->point.y;
                 first_point = first_point->next;
-
-                /* Tracé d'un point */
-                if (first_point == NULL) {
-                        draw_segment_straight(surface, x1, x1, y1, y1, color, clipper);
-                        return;
-                }
-
                 x2 = first_point->point.x;
                 y2 = first_point->point.y;
+
                 dx = x2 - x1;
                 dy = y2 - y1;
 
@@ -146,7 +149,22 @@ void ei_draw_text(ei_surface_t surface,
 void ei_fill(ei_surface_t surface,
              const ei_color_t *color,
              const ei_rect_t *clipper) {
+        /* TODO: Clipping de ei_fill */
+        ei_size_t size = hw_surface_get_size(surface);
+        uint32_t col;
+        uint32_t *pixel_ptr;
+        int i;
 
+        if (color == NULL) {
+                col = ei_map_rgba(surface, (ei_color_t) {0x00, 0x00, 0x00, 0xff});
+        } else {
+                col = ei_map_rgba(surface, *color);
+        }
+
+        pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
+        for (i = 0; i < (size.width * size.height); i++) {
+                *pixel_ptr++ = col;
+        }
 }
 
 

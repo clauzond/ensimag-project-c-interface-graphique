@@ -7,6 +7,7 @@ void draw_segment_straight(ei_surface_t surface,
                            int x1, int x2, int y1, int y2,
                            ei_color_t color,
                            const ei_rect_t *clipper) {
+        /* TODO: Clipping de draw_segment_straight */
         int width, i;
         uint32_t *pixel_ptr;
 
@@ -34,6 +35,7 @@ void draw_segment_bresenham(ei_surface_t surface,
                             int x1, int x2, int y1, int y2, int dx, int dy, int swap,
                             ei_color_t color,
                             const ei_rect_t *clipper) {
+        /* TODO: Clipping de draw_segment_straight */
         /* TODO: Si algorithme trop lent, voir algo sur wiki */
         int width, i, E;
         uint32_t *pixel_ptr;
