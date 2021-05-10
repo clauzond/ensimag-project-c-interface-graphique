@@ -2,6 +2,8 @@
 #include "ei_types.h"
 #include "hw_interface.h"
 
+#include "segment.h"
+
 /**
  * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer
  * 		than can be written directly in the memory returned by \ref hw_surface_get_buffer.
@@ -36,7 +38,6 @@ void ei_draw_polyline(ei_surface_t surface,
                       ei_color_t color,
                       const ei_rect_t *clipper) {
         /* TODO: Clipping de ei_draw_polyline */
-        /* Déclarations des variables */
         int x1, x2, y1, y2, dx, dy;
         int swap = 0;
 
@@ -45,10 +46,13 @@ void ei_draw_polyline(ei_surface_t surface,
                 x1 = first_point->point.x;
                 y1 = first_point->point.y;
                 first_point = first_point->next;
+
+                /* Tracé d'un point */
                 if (first_point == NULL) {
-                        draw_polyline_straight(surface, x1, x1, y1, y1, color, clipper);
+                        draw_segment_straight(surface, x1, x1, y1, y1, color, clipper);
                         return;
                 }
+
                 x2 = first_point->point.x;
                 y2 = first_point->point.y;
                 dx = x2 - x1;
@@ -58,13 +62,13 @@ void ei_draw_polyline(ei_surface_t surface,
                 if (dx < 0) {
                         dx = -dx;
                 } else if (dx == 0) {
-                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper);
+                        draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
                         continue;
                 }
                 if (dy < 0) {
                         dy = -dy;
                 } else if (dy == 0) {
-                        draw_polyline_straight(surface, x1, x2, y1, y2, color, clipper);
+                        draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
                         continue;
                 }
                 if (dx < dy) {
@@ -72,80 +76,6 @@ void ei_draw_polyline(ei_surface_t surface,
                 }
                 draw_segment_bresenham(surface, x1, x2, y1, y2, dx, dy, swap, color, clipper);
         }
-        return;
-}
-
-void draw_segment_straight(ei_surface_t surface,
-                           int x1, int x2, int y1, int y2,
-                           ei_color_t color,
-                           const ei_rect_t *clipper) {
-        /* TODO: factorisation du code */
-        /* Doit pouvoir marcher pour un point (x1 == x2, y1 == y2) */
-        int width, i;
-        uint32_t *pixel_ptr;
-
-        width = hw_surface_get_size(surface).width;
-        pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
-
-        /* On positionne le pointeur au départ (x1, y1) */
-        pixel_ptr += x1;
-        pixel_ptr += y1 * width;
-
-        if (x1 == x2) { // Ligne verticale
-                for (i = y1; i <= y2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr += width;
-                }
-        } else { // Ligne horizontale
-                for (i = x1; i <= x2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr += 1;
-                }
-        }
-        return;
-}
-
-void draw_segment_bresenham(ei_surface_t surface,
-                            int x1, int x2, int y1, int y2, int dx, int dy, int swap,
-                            ei_color_t color,
-                            const ei_rect_t *clipper) {
-        /* TODO: Si algorithme trop lent, voir algo sur wiki */
-        int width, i, E;
-        uint32_t *pixel_ptr;
-
-        width = hw_surface_get_size(surface).width;
-        pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
-
-        /* On positionne le pointeur au départ (x, y) */
-        pixel_ptr += x1;
-        pixel_ptr += y1 * width;
-
-        if ((dx < dy) || (dx < 0) || (dy < 0)) { // TODO: remove
-                printf("FAIL");
-        }
-
-        if (swap == 0) {
-                for (i = x1; i <= x2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr++; // x+= 1
-                        E += dy;
-                        if (2 * E > dx) {
-                                pixel_ptr += width; // y+= 1
-                                E -= dx;
-                        }
-                }
-        } else { // On inverse x et y
-                for (i = y1; i <= y2; i++) {
-                        *pixel_ptr = ei_map_rgba(surface, color);
-                        pixel_ptr += width; // y+= 1 (swap)
-                        E += dx;
-                        if (2 * E > dy) {
-                                pixel_ptr++; // x+= 1 (swap)
-                                E -= dy;
-                        }
-                }
-        }
-        return;
 }
 
 /**
