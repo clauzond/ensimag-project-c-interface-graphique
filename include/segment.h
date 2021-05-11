@@ -4,6 +4,20 @@
 #include "ei_types.h"
 #include "hw_interface.h"
 
+
+typedef struct ei_side {
+        int ymax;
+        int x_ymin;
+        int dx;
+        int dy;
+        struct ei_side *next;
+} ei_side;
+
+typedef struct ei_side_table {
+        size_t length;
+        struct ei_side **array;
+} ei_side_table;
+
 /**
  * \brief       Determines if point (x, y) is in clipper
  *
@@ -50,5 +64,11 @@ void draw_segment_bresenham(ei_surface_t surface,
                             int x1, int y1, int dx, int dy, int sign_x, int sign_y, int swap,
                             ei_color_t color,
                             const ei_rect_t *clipper);
+
+ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t *first_point);
+
+void sort_side_table(ei_side* side);
+
+void swap_side(ei_side* s1, ei_side* s2);
 
 #endif //SEGMENT_H

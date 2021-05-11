@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdlib.h>
 
 #include "ei_types.h"
 #include "hw_interface.h"
@@ -52,8 +53,9 @@ void ei_draw_polyline(ei_surface_t surface,
                       const ei_linked_point_t *first_point,
                       ei_color_t color,
                       const ei_rect_t *clipper) {
-        /* TODO: Clipping de ei_draw_polyline */
         /* TODO: Transparence additionnée */
+        /* TODO: Optimisation possible en traçant segment par segment */
+        /* --> retenir le pixel_ptr du précédent appel pour ne pas recalculer la pos de départ */
         int x1, x2, y1, y2, dx, dy, sign_x, sign_y;
         int swap;
         /* Tracé d'un point */
@@ -119,7 +121,43 @@ void ei_draw_polygon(ei_surface_t surface,
                      const ei_linked_point_t *first_point,
                      ei_color_t color,
                      const ei_rect_t *clipper) {
+        int y = 0;
+        ei_side_table tc = construct_side_table(surface, first_point);
+        ei_side *tca = NULL, *ptr;
+	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 
+        while ((tc.length != 0) || (tca != NULL)) {
+                // Déplacer les côtés de TC(y) dans TCA
+                if (tc.array[y] != NULL) {
+                        if (tca == NULL) {
+                                tca = tc.array[y];
+                        } else {
+                                tca->next = tc.array[y];
+                        }
+                }
+
+                // Supprimer de TCA les côtés tels que ymax = y.
+                ei_side sent = {0, 0, 0, 0, tca};
+                for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
+                        if (ptr->next->ymax == y) {
+                        	ei_side* to_delete = ptr->next;
+                                ptr->next = ptr->next->next;
+                                free(to_delete);
+                        }
+                }
+
+                // Trier TCA par x_ymin
+		sort_side_table(tca);
+
+                // Modifier les pixels de l’image sur la scanline, dans les intervalles intérieurs au polygone
+
+
+                // Incrémenter y.
+                y++;
+                pixel_ptr++;
+                
+                // Mettre à jour les abscisses d’intersections des côtés de TCA avec la nouvelle scanline.
+        }
 }
 
 /**
