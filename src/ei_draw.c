@@ -54,23 +54,18 @@ void ei_draw_polyline(ei_surface_t surface,
 		      ei_color_t color,
 		      const ei_rect_t *clipper) {
 	/* TODO: Transparence additionnée */
-	/* Optimisation sur pixel_ptr faite */
+	/* TODO: Optimisation sur pixel_ptr */
 	/* --> retenir le pixel_ptr du précédent appel pour ne pas recalculer la pos de départ */
 
 	int x1, x2, y1, y2, dx, dy, sign_x, sign_y;
 	int swap;
-	int width = hw_surface_get_size(surface).width;
-	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 
 	/* Tracé d'un point */
 	if (first_point->next == NULL) {
 		x1 = first_point->point.x;
 		y1 = first_point->point.y;
 
-		/* On positionne le pointeur au départ (x1, y1) */
-		pixel_ptr += x1 + (y1*width);
-
-		draw_segment_straight(surface, &pixel_ptr, x1, x1, y1, y1, color, clipper);
+		draw_segment_straight(surface, x1, x1, y1, y1, color, clipper);
 		return;
 	}
 
@@ -85,15 +80,12 @@ void ei_draw_polyline(ei_surface_t surface,
 		dx = x2 - x1;
 		dy = y2 - y1;
 
-		/* On positionne le pointeur au départ (x1, y1) */
-		pixel_ptr += x1 + (y1*width);
-
 		/* Conditions à respecter */
 		if (dx < 0) {
 			dx = -dx;
 			sign_x = -1;
 		} else if (dx == 0) {
-			draw_segment_straight(surface, &pixel_ptr, x1, x2, y1, y2, color, clipper);
+			draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
 			continue;
 		} else {
 			sign_x = 1;
@@ -102,7 +94,7 @@ void ei_draw_polyline(ei_surface_t surface,
 			dy = -dy;
 			sign_y = -1;
 		} else if (dy == 0) {
-			draw_segment_straight(surface, &pixel_ptr, x1, x2, y1, y2, color, clipper);
+			draw_segment_straight(surface, x1, x2, y1, y2, color, clipper);
 			continue;
 		} else {
 			sign_y = 1;
@@ -112,7 +104,7 @@ void ei_draw_polyline(ei_surface_t surface,
 		} else {
 			swap = 0;
 		}
-		draw_segment_bresenham(surface, &pixel_ptr, x1, y1, dx, dy, sign_x, sign_y, swap, color, clipper);
+		draw_segment_bresenham(surface, x1, y1, dx, dy, sign_x, sign_y, swap, color, clipper);
 	}
 }
 
@@ -132,14 +124,15 @@ void ei_draw_polygon(ei_surface_t surface,
 		     const ei_linked_point_t *first_point,
 		     ei_color_t color,
 		     const ei_rect_t *clipper) {
-	int y = 0, width = hw_surface_get_size(surface).width;
+	int y = 0;
 	ei_side_table tc = construct_side_table(surface, first_point);
-	ei_side *tca = NULL, *ptr;
+	ei_side *tca = NULL;
 	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 
 	while ((tc.length != 0) || (tca != NULL)) {
 		// Déplacer les côtés de TC(y) dans TCA
 		add_sides_to_tca(tc.array[y], &tca);
+		delete_sides_from_tc(&tc, y);
 
 		// Supprimer de TCA les côtés tels que ymax = y
 		delete_ymax_from_tca(&tca, y);
@@ -155,8 +148,9 @@ void ei_draw_polygon(ei_surface_t surface,
 		y++;
 
 		// Mettre à jour les abscisses d’intersections des côtés de TCA avec la nouvelle scanline
-		update_scanline(surface, tca, y);
+		update_scanline(tca, y);
 	}
+	free(tc.array);
 }
 
 /**
