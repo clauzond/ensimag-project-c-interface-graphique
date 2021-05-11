@@ -12,3 +12,5 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen);
     ei_widget_t* frame_root = ei_widget_create(root, NULL, NULL, NULL );
     ei_app_run();
 
+void ei_app_run(void);
+    getchar();
