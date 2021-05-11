@@ -5,7 +5,18 @@
 #include "hw_interface.h"
 
 /**
- * \brief
+ * \brief       Determines if point (x, y) is in clipper
+ *
+ * @param       x
+ * @param       y
+ * @param       clipper         If not NULL, the drawing is restricted within this rectangle.
+ * @return                      0 iff point not in clipper
+ */
+int point_in_clipper(int x, int y, const ei_rect_t *clipper);
+
+/**
+ * \brief       Draw a straight segment.
+ *
  * @param       surface         Where to draw the line, from (x1, y1) to (x2, y2).
  *                              The surface must be *locked* by \ref hw_surface_lock.
  * @param       x1
@@ -21,9 +32,10 @@ void draw_segment_straight(ei_surface_t surface,
                            const ei_rect_t *clipper);
 
 /**
- *
+ * \brief       Draw a segment using Bresenham algorithm.
  * @param       surface         Where to draw the line, from (x1, y1) to (x2, y2).
  *                              The surface must be *locked* by \ref hw_surface_lock.
+ *
  * @param       x1
  * @param       y1
  * @param       dx
