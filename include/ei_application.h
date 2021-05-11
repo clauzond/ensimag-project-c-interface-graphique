@@ -48,6 +48,7 @@ void ei_app_free(void);
  *		\ref ei_app_quit_request is called.
  */
 void ei_app_run(void);
+    getchar();
 
 /**
  * \brief	Adds a rectangle to the list of rectangles that must be updated on screen. The real
