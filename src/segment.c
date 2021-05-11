@@ -8,6 +8,7 @@
 
 int point_in_clipper(int x, int y, const ei_rect_t *clipper) {
 	/* TODO: Clipping force brute à remplacer */
+	
 	if (clipper == NULL) {
 		return 0;
 	} else {
@@ -17,19 +18,23 @@ int point_in_clipper(int x, int y, const ei_rect_t *clipper) {
 	}
 }
 
-void draw_segment_straight(ei_surface_t surface,
+void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper) {
+	if (point_in_clipper(x, y, clipper)) {
+		*pixel_ptr = ei_map_rgba(surface, color);
+	}
+}
+
+void draw_segment_straight(ei_surface_t surface, uint32_t **pixel_ptr,
 			   int x1, int x2, int y1, int y2,
 			   ei_color_t color,
 			   const ei_rect_t *clipper) {
 	/* TODO: Transparence additionnée */
 	int width = hw_surface_get_size(surface).width;
 	int i, sign = 1, inc;
-	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
-	uint32_t col = ei_map_rgba(surface, color);
 
-	/* On positionne le pointeur au départ (x1, y1) */
-	pixel_ptr += x1;
-	pixel_ptr += y1 * width;
+
+	/* Pointeur positionné au départ (x1, y1) */
+
 	if (x1 == x2) { // Ligne verticale
 		int dy = y2 - y1;
 		inc = width;
@@ -39,10 +44,8 @@ void draw_segment_straight(ei_surface_t surface,
 			sign = -1;
 		}
 		for (i = 0; i <= dy; i++) {
-			if (point_in_clipper(x1, y1 + (sign) * i, clipper)) {
-				*pixel_ptr = col; // drawPixel
-			}
-			pixel_ptr += inc; // y += 1
+			draw_pixel(surface, *pixel_ptr, x1, y1 + (sign * i), color, clipper);
+			(*pixel_ptr) += inc; // y += 1
 		}
 	} else { // Ligne horizontale
 		int dx = x2 - x1;
@@ -54,15 +57,13 @@ void draw_segment_straight(ei_surface_t surface,
 			sign = -1;
 		}
 		for (i = 0; i <= dx; i++) {
-			if (point_in_clipper(x1 + (sign) * i, y1, clipper)) {
-				*pixel_ptr = col; // drawPixel
-			}
-			pixel_ptr += inc; // x += 1
+			draw_pixel(surface, *pixel_ptr, x1 + (sign * i), y1, color, clipper);
+			(*pixel_ptr) += inc; // x += 1
 		}
 	}
 }
 
-void draw_segment_bresenham(ei_surface_t surface,
+void draw_segment_bresenham(ei_surface_t surface, uint32_t **pixel_ptr,
 			    int x1, int y1, int dx, int dy, int sign_x, int sign_y, int swap,
 			    ei_color_t color,
 			    const ei_rect_t *clipper) {
@@ -71,36 +72,28 @@ void draw_segment_bresenham(ei_surface_t surface,
 	int i, j = 0;
 	int inc_x = sign_x, inc_y = (sign_y) * width; // Parcours des pixels à l'endroit ou non
 	int E = 0;
-	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
-	uint32_t col = ei_map_rgba(surface, color);
 
-	/* On positionne le pointeur au départ (x1, y1) */
-	pixel_ptr += x1;
-	pixel_ptr += y1 * width;
+	/* Pointeur positionné au départ (x1, y1) */
 
 	if (swap == 0) {
 		for (i = 0; i <= dx; i++) {
-			if (point_in_clipper(x1 + (sign_x) * i, y1 + (sign_y) * j, clipper)) {
-				*pixel_ptr = col; // drawPixel
-			}
-			pixel_ptr += inc_x; // x+= 1
+			draw_pixel(surface, *pixel_ptr, x1 + (sign_x * i), y1 + (sign_y * j), color, clipper);
+			(*pixel_ptr) += inc_x; // x+= 1
 			E += dy;
 			if (2 * E > dx) {
 				j++;
-				pixel_ptr += inc_y; // y+= 1
+				(*pixel_ptr) += inc_y; // y+= 1
 				E -= dx;
 			}
 		}
 	} else { // On inverse x et y
 		for (i = 0; i <= dy; i++) {
-			if (point_in_clipper(x1 + (sign_x) * j, y1 + (sign_y) * i, clipper)) {
-				*pixel_ptr = col; // drawPixel
-			}
-			pixel_ptr += inc_y; // y+= 1 (swap)
+			draw_pixel(surface, *pixel_ptr, x1 + (sign_x * j), y1 + (sign_y * j), color, clipper);
+			(*pixel_ptr) += inc_y; // y+= 1 (swap)
 			E += dx;
 			if (2 * E > dy) {
 				j++;
-				pixel_ptr += inc_x; // x+= 1 (swap)
+				(*pixel_ptr) += inc_x; // x+= 1 (swap)
 				E -= dy;
 			}
 		}
@@ -147,19 +140,27 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 	return tc;
 }
 
-void sort_side_table(ei_side *side) {
-	ei_side *i, *j, *min;
-	for (i = side; i->next != NULL; i = i->next) {
-		min = i;
-		for (j = i->next; j != NULL; j = j->next) {
-			if (j->x_ymin < min->x_ymin) {
-				min = j;
-			}
-		}
-		if (min != i) { // Swap min and i
-			swap_side(min, i);
+void add_sides_to_tca(ei_side* sides, ei_side** tca) {
+	if (sides != NULL) {
+		if ((*tca) == NULL) {
+			*tca = sides;
+		} else {
+			(*tca)->next = sides;
 		}
 	}
+}
+
+void delete_ymax_from_tca(ei_side **tca, int y) {
+	ei_side *ptr;
+	ei_side sent = {0, 0, 0, 0, tca};
+	for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
+		if (ptr->next->ymax == y) {
+			ei_side *to_delete = ptr->next;
+			ptr->next = ptr->next->next;
+			free(to_delete);
+		}
+	}
+	*tca = sent.next;
 }
 
 void swap_side(ei_side *s1, ei_side *s2) {
@@ -182,6 +183,57 @@ void swap_side(ei_side *s1, ei_side *s2) {
 	s2->dx = tmp3;
 	s2->dy = tmp4;
 	s2->next = tmp5;
+}
+
+void sort_side_table(ei_side *side) {
+	ei_side *i, *j, *min;
+	for (i = side; i->next != NULL; i = i->next) {
+		min = i;
+		for (j = i->next; j != NULL; j = j->next) {
+			if (j->x_ymin < min->x_ymin) {
+				min = j;
+			}
+		}
+		if (min != i) { // Swap min and i
+			swap_side(min, i);
+		}
+	}
+}
+
+void draw_scanline(ei_surface_t surface, uint32_t **pixel_ptr, ei_side *tca, int y, ei_color_t color,
+		   const ei_rect_t *clipper) {
+	int drawing = 1, x;
+	ei_side sent = {0, 0, 0, 0, tca};
+	ei_side *ptr;
+	for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
+		if (drawing) {
+			for (x = ptr->x_ymin; x < ptr->next->x_ymin; x++) {
+				draw_pixel(surface, *pixel_ptr, x, y, color, clipper);
+				*pixel_ptr += 1;
+			}
+			drawing = 0;
+		} else {
+			*pixel_ptr += (ptr->next->x_ymin) - (ptr->x_ymin);
+			drawing = 1;
+		}
+	}
+	*pixel_ptr += hw_surface_get_size(surface).width - ptr->x_ymin;
+}
+
+ei_point_t find_intersection(int y, ei_side side) {
+	// Cas |dx| < |dy|
+}
+
+
+void update_scanline(ei_surface_t surface, ei_side *tca, int y) {
+	ei_side* ptr;
+	ei_point_t point;
+	for (ptr = tca; ptr == NULL; ptr = ptr->next) {
+		// On veut trouver l'intersection entre le côté et la scanline
+		// x_ymin sera l'abscisse de cette intersection
+		point = find_intersection(y, *ptr);
+	}
+	}
 }
 
 //liste tri(liste L)
