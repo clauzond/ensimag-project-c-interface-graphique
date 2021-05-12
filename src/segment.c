@@ -112,7 +112,7 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 		array[i] = NULL;
 	}
 	ei_side_table tc = {0, array};
-	for (ptr = first_point; ptr->next == NULL; ptr = ptr->next) {
+	for (ptr = first_point; ptr != NULL && ptr->next != NULL; ptr = ptr->next) {
 		x1 = ptr->point.x;
 		y1 = ptr->point.y;
 		x2 = ptr->next->point.x;
@@ -120,7 +120,7 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 		if (y1 == y2) { // On ignore les côtés horizontaux
 			continue;
 		}
-		if (y2 > y1) { // point 1 correspond au ymin
+		if (y1 > y2) { // Point 1 correspond au ymin
 			tmp = y1;
 			y1 = y2;
 			y2 = tmp;
@@ -145,36 +145,31 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 	return tc;
 }
 
-void add_sides_to_tca(ei_side *sides, ei_side **tca) {
-	if (sides != NULL) {
+void move_sides_to_tca(ei_side_table *tc, int y, ei_side **tca) {
+	if (tc->array[y] != NULL) {
 		if ((*tca) == NULL) {
-			*tca = sides;
+			*tca = tc->array[y];
 		} else {
-			(*tca)->next = sides;
+			(*tca)->next = tc->array[y];
 		}
-	}
-}
-
-void delete_sides_from_tc(ei_side_table *tc, int y) {
-	ei_side *ptr;
-	ei_side sent = {0, 0, 0, 0, 0, tc->array[y]};
-	for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
-		ei_side *to_delete = ptr->next;
-		ptr->next = to_delete->next;
-		free(to_delete);
-
-		tc->length--;
+		while (tc->array[y] != NULL) { // vider tc->array[y]
+			tc->array[y] = tc->array[y]->next; // ne pas free, car déplacé dans tca
+			tc->length--;
+		}
+		tc->array[y] = NULL;
 	}
 }
 
 void delete_ymax_from_tca(ei_side **tca, int y) {
-	ei_side *ptr;
 	ei_side sent = {0, 0, 0, 0, 0, *tca};
-	for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
+	ei_side *ptr = &sent;
+	while (ptr != NULL && ptr->next != NULL) {
 		if (ptr->next->ymax == y) {
 			ei_side *to_delete = ptr->next;
 			ptr->next = to_delete->next;
 			free(to_delete);
+		} else {
+			ptr = ptr->next;
 		}
 	}
 	*tca = sent.next;
@@ -203,7 +198,7 @@ void swap_sides(ei_side *s1, ei_side *s2) {
 
 void sort_side_table(ei_side *side) {
 	ei_side *i, *j, *min;
-	for (i = side; i->next != NULL; i = i->next) {
+	for (i = side; i != NULL && i->next != NULL; i = i->next) {
 		min = i;
 		for (j = i->next; j != NULL; j = j->next) {
 			if (j->x_ymin < min->x_ymin) {
@@ -218,10 +213,10 @@ void sort_side_table(ei_side *side) {
 
 void draw_scanline(ei_surface_t surface, uint32_t **pixel_ptr, ei_side *tca, int y, ei_color_t color,
 		   const ei_rect_t *clipper) {
-	int drawing = 1, x;
+	int drawing = 0, x;
 	ei_side sent = {0, 0, 0, 0, 0, tca};
 	ei_side *ptr;
-	for (ptr = &sent; ptr->next != NULL; ptr = ptr->next) {
+	for (ptr = &sent; ptr != NULL && ptr->next != NULL; ptr = ptr->next) {
 		if (drawing) {
 			for (x = ptr->x_ymin; x < ptr->next->x_ymin; x++) {
 				/* TODO: arrondi de la condition de remplissage (sûrement avec E) */
@@ -234,7 +229,7 @@ void draw_scanline(ei_surface_t surface, uint32_t **pixel_ptr, ei_side *tca, int
 			drawing = 1;
 		}
 	}
-	*pixel_ptr += hw_surface_get_size(surface).width - ptr->x_ymin;
+	*pixel_ptr += hw_surface_get_size(surface).width - ptr->x_ymin; // pixel_ptr sur la prochaine scanline
 }
 
 ei_point_t find_intersection(int y, ei_side *side) {

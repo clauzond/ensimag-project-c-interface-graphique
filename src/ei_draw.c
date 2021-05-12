@@ -131,8 +131,7 @@ void ei_draw_polygon(ei_surface_t surface,
 
 	while ((tc.length != 0) || (tca != NULL)) {
 		// Déplacer les côtés de TC(y) dans TCA
-		add_sides_to_tca(tc.array[y], &tca);
-		delete_sides_from_tc(&tc, y);
+		move_sides_to_tca(&tc, y, &tca);
 
 		// Supprimer de TCA les côtés tels que ymax = y
 		delete_ymax_from_tca(&tca, y);

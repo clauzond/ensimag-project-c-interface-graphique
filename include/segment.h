@@ -8,9 +8,9 @@
 typedef struct ei_side {
 	int ymax;
 	int x_ymin;
-	int dx;		///< dx can be negative
-	int dy;		///< dy always positive (segment from ymin to ymax)
-	int E;		///< Error in Bresenham algorithm
+	int dx;                ///< dx can be negative
+	int dy;                ///< dy always positive (segment from ymin to ymax)
+	int E;                ///< Error in Bresenham algorithm
 	struct ei_side *next;
 } ei_side;
 
@@ -92,15 +92,7 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
  * @param 	sides
  * @param 	tca
  */
-void add_sides_to_tca(ei_side *sides, ei_side **tca);
-
-/**
- * \brief	Delete all sides from "tc->array[y]"
- *
- * @param 	tc
- * @param 	y
- */
-void delete_sides_from_tc(ei_side_table *tc, int y);
+void move_sides_to_tca(ei_side_table *tc, int y, ei_side **tca);
 
 /**
  * \brief	Delete all sides from tca that are such as "side->ymax == y"
