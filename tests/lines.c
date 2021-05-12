@@ -179,9 +179,9 @@ int main(int argc, char** argv)
 
         /* Draw polygones. */
 
-        // test_octogone	(main_window, clipper_ptr, 1);
-	// test_square	(main_window, clipper_ptr, 1);
-	test_triangle   (main_window, clipper_ptr, 1);
+        test_octogone	(main_window, clipper_ptr, 1);
+        // test_square	(main_window, clipper_ptr, 1);
+	// test_triangle   (main_window, clipper_ptr, 1);
 
 
 	/* Unlock and update the surface. */
