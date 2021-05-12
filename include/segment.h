@@ -40,7 +40,7 @@ int point_in_clipper(int x, int y, const ei_rect_t *clipper);
  * @param	clipper
  * @param	alpha		If false, exact copy of color. If true, weighted copy with alpha.
  */
-void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper, ei_bool_t alpha);
+void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t *color, const ei_rect_t *clipper, ei_bool_t alpha);
 
 /**
  * \brief	Add pixels "src_pixel" and "dst_pixel". If alpha is TRUE, weight with pixels' alpha. If alpha is FALSE,

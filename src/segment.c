@@ -19,9 +19,13 @@ int point_in_clipper(int x, int y, const ei_rect_t *clipper) {
 	}
 }
 
-void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper, ei_bool_t alpha) {
+void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t *color, const ei_rect_t *clipper, ei_bool_t alpha) {
 	if (point_in_clipper(x, y, clipper)) {
-		*pixel_ptr = add_pixels(ei_map_rgba(surface, color), *pixel_ptr, alpha);
+		if (color == NULL) {
+			*pixel_ptr = (uint32_t) 0x00000000;
+		} else {
+			*pixel_ptr = add_pixels(ei_map_rgba(surface, *color), *pixel_ptr, alpha);
+		}
 	}
 }
 
@@ -58,7 +62,7 @@ void draw_segment_straight(ei_surface_t surface,
 			sign = -1;
 		}
 		for (i = 0; i <= dy; i++) {
-			draw_pixel(surface, pixel_ptr, x1, y1 + (sign * i), color, clipper, alpha);
+			draw_pixel(surface, pixel_ptr, x1, y1 + (sign * i), &color, clipper, alpha);
 			pixel_ptr += incr; // y += 1
 		}
 	} else { // Ligne horizontale
@@ -71,7 +75,7 @@ void draw_segment_straight(ei_surface_t surface,
 			sign = -1;
 		}
 		for (i = 0; i <= dx; i++) {
-			draw_pixel(surface, pixel_ptr, x1 + (sign * i), y1, color, clipper, alpha);
+			draw_pixel(surface, pixel_ptr, x1 + (sign * i), y1, &color, clipper, alpha);
 			pixel_ptr += incr; // x += 1
 		}
 	}
@@ -94,7 +98,7 @@ void draw_segment_bresenham(ei_surface_t surface,
 
 	if (swap == 0) {
 		for (i = 0; i <= dx; i++) {
-			draw_pixel(surface, pixel_ptr, x1 + (sign_x * i), y1 + (sign_y * j), color, clipper, alpha);
+			draw_pixel(surface, pixel_ptr, x1 + (sign_x * i), y1 + (sign_y * j), &color, clipper, alpha);
 			pixel_ptr += incr_x; // x+= 1
 			E += dy;
 			if (2 * E > dx) {
@@ -105,7 +109,7 @@ void draw_segment_bresenham(ei_surface_t surface,
 		}
 	} else { // On inverse x et y
 		for (i = 0; i <= dy; i++) {
-			draw_pixel(surface, pixel_ptr, x1 + (sign_x * j), y1 + (sign_y * i), color, clipper, alpha);
+			draw_pixel(surface, pixel_ptr, x1 + (sign_x * j), y1 + (sign_y * i), &color, clipper, alpha);
 			pixel_ptr += incr_y; // y+= 1 (swap)
 			E += dx;
 			if (2 * E > dy) {
@@ -234,7 +238,7 @@ void draw_scanline(ei_surface_t surface, uint32_t **pixel_ptr, ei_side *tca, int
 		if (drawing) {
 			for (x = ptr->x_ymin; x < ptr->next->x_ymin; x++) {
 				/* TODO: arrondi de la condition de remplissage (sûrement avec E) */
-				draw_pixel(surface, *pixel_ptr, x, y, color, clipper, alpha);
+				draw_pixel(surface, *pixel_ptr, x, y, &color, clipper, alpha);
 				*pixel_ptr += 1;
 			}
 			drawing = 0;
