@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 #include "hw_interface.h"
 #include "ei_utils.h"
@@ -158,7 +159,7 @@ int main(int argc, char** argv)
 	ei_rect_t*		clipper_ptr	= NULL;
 	ei_rect_t		clipper		= ei_rect(ei_point(0, 250), ei_size(800, 100));
 	clipper_ptr		= &clipper;
-	clipper_ptr		= NULL;
+	// clipper_ptr		= NULL;
 	ei_event_t		event;
 
 	hw_init();
@@ -182,7 +183,21 @@ int main(int argc, char** argv)
 
         // test_octogone	(main_window, clipper_ptr, 1);
         // test_square	(main_window, clipper_ptr, 1);
-	// test_triangle   (main_window, clipper_ptr, 1);
+	test_triangle   (main_window, clipper_ptr, 1);
+
+	/* Test ei_copy_surface */
+	ei_bool_t alpha = EI_FALSE;
+	ei_rect_t srect = ei_rect(ei_point(0, 250), ei_size(800, 100));
+	ei_rect_t drect = ei_rect(ei_point(0, 450), ei_size(800, 100));
+	const ei_rect_t *src_rect = &srect;
+	const ei_rect_t *dst_rect = &drect;
+	int copy_bool = ei_copy_surface(main_window, dst_rect, main_window, src_rect, alpha);
+	assert((copy_bool == 0));
+
+	ei_rect_t brect = ei_rect(ei_point(0, 450), ei_size(800, 101));
+	const ei_rect_t *bad_rect = &brect;
+	copy_bool = ei_copy_surface(main_window, dst_rect, main_window, bad_rect, alpha);
+	assert((copy_bool == 1));
 
 
 	/* Unlock and update the surface. */
