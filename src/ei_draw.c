@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #include "ei_types.h"
 #include "hw_interface.h"
@@ -231,5 +232,53 @@ int ei_copy_surface(ei_surface_t destination,
 		    ei_surface_t source,
 		    const ei_rect_t *src_rect,
 		    ei_bool_t alpha) {
+	int x, y, dst_x0 = 0, dst_y0 = 0, src_x0 = 0, src_y0 = 0, dst_newline = 0, src_newline = 0;
+	int dst_width, dst_height, src_width, src_height;
+	ei_size_t dst_size = hw_surface_get_size(destination);
+	ei_size_t src_size = hw_surface_get_size(source);
+	uint32_t *dst_pixel = (uint32_t *) hw_surface_get_buffer(destination);
+	uint32_t *src_pixel = (uint32_t *) hw_surface_get_buffer(source);
 
+	// Définition des tailles
+	if (dst_rect == NULL) {
+		dst_width = dst_size.width;
+		dst_height = dst_size.height;
+	} else {
+		dst_width = dst_rect->size.width;
+		dst_height = dst_rect->size.height;
+		// Positionnement du pixel sur dst_rect->top_left
+		dst_x0 = dst_rect->top_left.x;
+		dst_y0 = dst_rect->top_left.y;
+		dst_pixel += dst_x0 + (dst_size.width * dst_y0);
+		dst_newline = dst_size.width - dst_rect->size.width; // incrément pour passer à la ligne suivante
+	}
+	if (src_rect == NULL) {
+		src_width = src_size.width;
+		src_height = src_size.height;
+	} else {
+		src_width = src_rect->size.width;
+		src_height = src_rect->size.height;
+		// Positionnement du pixel sur src_rect->top_left
+		src_x0 = src_rect->top_left.x;
+		src_y0 = src_rect->top_left.y;
+		src_pixel += src_x0 + (src_size.width * src_y0);
+		src_newline = src_size.width - src_rect->size.width; // incrément pour passer à la ligne suivante
+	}
+
+	// Vérification des tailles
+	if (!(dst_width == src_width && dst_height == src_height)) {
+		return 1;
+	}
+
+	// Copie de la surface
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			*dst_pixel = add_pixels(*src_pixel, *dst_pixel, alpha);
+			dst_pixel++;
+			src_pixel++;
+		}
+		dst_pixel += dst_newline;
+		src_pixel += src_newline;
+	}
+	return 0;
 }
