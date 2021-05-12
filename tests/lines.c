@@ -158,6 +158,7 @@ int main(int argc, char** argv)
 	ei_rect_t*		clipper_ptr	= NULL;
 	ei_rect_t		clipper		= ei_rect(ei_point(0, 250), ei_size(800, 100));
 	clipper_ptr		= &clipper;
+	clipper_ptr		= NULL;
 	ei_event_t		event;
 
 	hw_init();
@@ -169,17 +170,17 @@ int main(int argc, char** argv)
 	ei_fill		(main_window, &white, clipper_ptr);
 
 	/* Draw polylines. */
-	/*
+
 	test_line	(main_window, clipper_ptr);
 	test_octogone	(main_window, clipper_ptr, 0);
 	test_square	(main_window, clipper_ptr, 0);
 	test_dot	(main_window, clipper_ptr);
         test_triangle   (main_window, clipper_ptr, 0);
-	*/
+
 
         /* Draw polygones. */
 
-        test_octogone	(main_window, clipper_ptr, 1);
+        // test_octogone	(main_window, clipper_ptr, 1);
         // test_square	(main_window, clipper_ptr, 1);
 	// test_triangle   (main_window, clipper_ptr, 1);
 
