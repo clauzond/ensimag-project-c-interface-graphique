@@ -37,8 +37,21 @@ int point_in_clipper(int x, int y, const ei_rect_t *clipper);
  * @param 	x
  * @param 	y
  * @param 	color
+ * @param	clipper
+ * @param	alpha		If false, exact copy of color. If true, weighted copy with alpha.
  */
-void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper);
+void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper, ei_bool_t alpha);
+
+/**
+ * \brief	Add pixels "src_pixel" and "dst_pixel". If alpha is TRUE, weight with pixels' alpha. If alpha is FALSE,
+ * 		return the exact copy of "src_pixel".
+ *
+ * @param 	src_pixel
+ * @param 	dst_pixel
+ * @param 	alpha		If false, exact copy of "src_pixel". If true, weighted copy with alpha.
+ * @return			Corresponding color
+ */
+uint32_t add_pixels(uint32_t p1, uint32_t p2, ei_bool_t alpha);
 
 /**
  * \brief       Draw a straight segment.
