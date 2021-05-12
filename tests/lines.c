@@ -176,14 +176,14 @@ int main(int argc, char** argv)
 	test_octogone	(main_window, clipper_ptr, 0);
 	test_square	(main_window, clipper_ptr, 0);
 	test_dot	(main_window, clipper_ptr);
-        test_triangle   (main_window, clipper_ptr, 0);
+        // test_triangle   (main_window, clipper_ptr, 0);
 
 
         /* Draw polygones. */
 
         test_octogone	(main_window, clipper_ptr, 1);
         test_square	(main_window, clipper_ptr, 1);
-	test_triangle   (main_window, clipper_ptr, 1);
+	// test_triangle   (main_window, clipper_ptr, 1);
 
 	/* Test ei_copy_surface */
 	ei_bool_t alpha = EI_FALSE;
@@ -204,6 +204,13 @@ int main(int argc, char** argv)
 	assert((copy_bool == 1));
 	copy_bool = ei_copy_surface(main_window, NULL, main_window, NULL, alpha);
 	assert((copy_bool == 0));
+
+	/* Test ei_draw_text */
+	/* TODO: tester ei_draw_text après transparence additionée */
+	ei_font_t font = hw_text_font_create(ei_default_font_filename, ei_style_bold, 14);
+	ei_point_t where = {30, 30};
+	ei_color_t cyan = {30, 255, 200, 255};
+	ei_draw_text(main_window, &where, "Bonjour je suis un texte !", font, cyan, NULL);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
