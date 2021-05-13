@@ -56,12 +56,15 @@ void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_colo
  * \brief	Add pixels "src_pixel" and "dst_pixel". If alpha is TRUE, weight with pixels' alpha. If alpha is FALSE,
  * 		return the exact copy of "src_pixel".
  *
- * @param 	src_pixel
- * @param 	dst_pixel
+ * @param	surface
+ * @param 	src_pixel	32 bits integer returned by \ref hw_surface_get_buffer.
+ * 				If NULL, uses "src_color". Both cannot be NULL.
+ * @param	src_color	If NULL, uses "src_pixel". Both cannot be NULL.
+ * @param 	dst_pixel	32 bits integer returned by \ref hw_surface_get_buffer.
  * @param 	alpha		If false, exact copy of "src_pixel". If true, weighted copy with alpha.
  * @return			Corresponding color
  */
-uint32_t add_pixels(uint32_t p1, uint32_t p2, ei_bool_t alpha);
+uint32_t add_pixels(ei_surface_t surface, uint32_t *src_pixel, ei_color_t *src_color, uint32_t *dst_pixel, ei_bool_t alpha);
 
 /**
  * \brief       Draw a straight segment.

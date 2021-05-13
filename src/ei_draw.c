@@ -290,7 +290,7 @@ int ei_copy_surface(ei_surface_t destination,
 	// Copie de la surface
 	for (y = 0; y < src_height; y++) {
 		for (x = 0; x < src_width; x++) {
-			*dst_pixel = add_pixels(*src_pixel, *dst_pixel, alpha);
+			*dst_pixel = add_pixels(destination, src_pixel, NULL, dst_pixel, alpha);
 			dst_pixel++;
 			src_pixel++;
 		}

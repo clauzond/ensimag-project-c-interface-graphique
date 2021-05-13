@@ -44,18 +44,34 @@ void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_colo
 		if (color == NULL) {
 			*pixel_ptr = (uint32_t) 0x00000000;
 		} else {
-			*pixel_ptr = add_pixels(ei_map_rgba(surface, *color), *pixel_ptr, alpha);
+			*pixel_ptr = add_pixels(surface, NULL, color, pixel_ptr, alpha);
 		}
 	}
 }
 
-uint32_t add_pixels(uint32_t src_pixel, uint32_t dst_pixel, ei_bool_t alpha) {
-	if (alpha) {
-		/* TODO: alpha */
-		uint32_t result = src_pixel;
-		return result;
-	} else {
-		uint32_t result = src_pixel;
+uint32_t add_pixels(ei_surface_t surface, uint32_t *src_pixel, ei_color_t *src_color, uint32_t *dst_pixel, ei_bool_t alpha) {
+	uint32_t result;
+	if (alpha) { // Use additive transparency
+		ei_color_t src;
+		ei_color_t dst = pixel_to_rgba(surface, *dst_pixel);
+		if (src_color == NULL) {
+			src = pixel_to_rgba(surface, *src_pixel);
+		} else {
+			src = *src_color;
+		}
+		dst.red = (src.alpha*src.red + (255 - src.alpha)*dst.red)/255;
+		dst.green = (src.alpha*src.green + (255 - src.alpha)*dst.green)/255;
+		dst.blue = (src.alpha*src.blue + (255 - src.alpha)*dst.blue)/255;
+		dst.alpha = 255;
+
+		return ei_map_rgba(surface, dst);
+
+	} else { // Copy source to result
+		if (src_pixel == NULL) {
+			result = ei_map_rgba(surface, *src_color);
+		} else {
+			result = *src_pixel;
+		}
 		return result;
 	}
 }
