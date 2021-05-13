@@ -22,9 +22,9 @@
 uint32_t ei_map_rgba(ei_surface_t surface, ei_color_t color) {
 	int ir, ig, ib, ia;
 
-	/* Obtenir les indices et ranger dans un tableau */
+	/* Obtenir les indices et ordonner dans un tableau */
 	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
-	int array[4] = {255, 255, 255, 255};
+	uint8_t array[4] = {255, 255, 255, 255};
 	array[ir] = color.red;
 	array[ig] = color.green;
 	array[ib] = color.blue;
@@ -32,8 +32,9 @@ uint32_t ei_map_rgba(ei_surface_t surface, ei_color_t color) {
 		array[ia] = color.alpha;
 	}
 
-	/* Multiplication par 16^6, 16^4 et 16^2 des indices dans l'ordre d'apparition */
-	uint32_t rgba = array[3] * 16777216 + array[2] * 65536 + array[1] * 256 + array[0];
+	/* Décalage à la bonne position des composantes */
+	uint32_t rgba = (array[3] << 24) + (array[2] << 16) + (array[1] << 8) + (array[0]);
+
 	return rgba;
 }
 
