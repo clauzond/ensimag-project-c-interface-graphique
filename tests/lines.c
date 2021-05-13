@@ -19,7 +19,7 @@
  */
 void test_line(ei_surface_t surface, ei_rect_t* clipper)
 {
-	ei_color_t		color		= { 255, 0, 255, 255 };
+	ei_color_t		color		= { 255, 0, 255, 230 };
 	ei_linked_point_t	pts[2];
 
 	pts[0].point.x = 200; pts[0].point.y = 200; pts[0].next = &pts[1];
@@ -38,7 +38,7 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
  */
 void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 0, 255, 0, 255 };
+	ei_color_t		color		= { 0, 255, 0, 200 };
 	ei_linked_point_t	pts[9];
 	int			i, xdiff, ydiff;
 
@@ -131,7 +131,7 @@ void test_dot(ei_surface_t surface, ei_rect_t* clipper)
 }
 
 void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
-        ei_color_t              color           = {100, 155, 205, 255};
+        ei_color_t              color           = {100, 155, 205, 245};
         ei_linked_point_t       pts[4];
 
         pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
 	ei_rect_t*		clipper_ptr	= NULL;
 	ei_rect_t		clipper		= ei_rect(ei_point(0, 250), ei_size(800, 100));
 	clipper_ptr		= &clipper;
-	// clipper_ptr		= NULL;
+	clipper_ptr		= NULL;
 	ei_event_t		event;
 
 	hw_init();
@@ -172,18 +172,18 @@ int main(int argc, char** argv)
 
 	/* Draw polylines. */
 
-	test_line	(main_window, clipper_ptr);
-	test_octogone	(main_window, clipper_ptr, 0);
-	test_square	(main_window, clipper_ptr, 0);
-	test_dot	(main_window, clipper_ptr);
+	// test_line	(main_window, clipper_ptr);
+	// test_octogone	(main_window, clipper_ptr, 0);
+	// test_square	(main_window, clipper_ptr, 0);
+	// test_dot	(main_window, clipper_ptr);
         // test_triangle   (main_window, clipper_ptr, 0);
 
 
         /* Draw polygones. */
 
-        test_octogone	(main_window, clipper_ptr, 1);
+        // test_octogone	(main_window, clipper_ptr, 1);
         test_square	(main_window, clipper_ptr, 1);
-	// test_triangle   (main_window, clipper_ptr, 1);
+	test_triangle   (main_window, clipper_ptr, 1);
 
 	/* Test ei_copy_surface */
 	ei_bool_t alpha = EI_FALSE;
