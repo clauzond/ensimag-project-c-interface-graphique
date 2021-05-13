@@ -1,5 +1,5 @@
 ## Étapes de progression
-- [x] A.1 (Damien) ► *ei_draw.c* (sauf *ei_draw_text* et *ei_copy_surface*)
+- [x] A.1 (Damien)
 - [ ] A.2 (Baptiste)  
 - [ ] A.3 (Esteban)  
 - [ ] A.4  (Esteban)
