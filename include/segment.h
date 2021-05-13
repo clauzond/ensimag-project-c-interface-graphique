@@ -20,6 +20,16 @@ typedef struct ei_side_table {
 } ei_side_table;
 
 /**
+ * \brief 	Do the opposite of \ref ei_map_rgba. Converts a 32 bits integer returned by \ref hw_surface_get_buffer
+ * 		into the red, green, blue and alpha components.
+ *
+ * @param 	surface
+ * @param 	pixel
+ * @return			Red, green, blue and alpha components
+ */
+ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel);
+
+/**
  * \brief       Determines if point (x, y) is in clipper
  *
  * @param       x

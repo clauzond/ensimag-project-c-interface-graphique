@@ -7,6 +7,26 @@
 
 #include "segment.h"
 
+ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel) {
+	int ir, ig, ib, ia;
+	ei_color_t color;
+
+	/* Obtenir les indices et ranger dans un tableau */
+	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
+	// uint32_t rgba = array[3] * 16777216 + array[2] * 65536 + array[1] * 256 + array[0];
+	int array[4] = {0, 8, 16, 24};
+	color.red = (unsigned char) (pixel >> array[ir]) & 0x000000FF;
+	color.green = (unsigned char) (pixel >> array[ig]) & 0x000000FF;
+	color.blue = (unsigned char) (pixel >> array[ib]) & 0x000000FF;
+	if (ia == -1) {
+		color.alpha = 0xff;
+	} else {
+		color.alpha = (unsigned char) (pixel >> array[ia]) & 0x000000FF;
+	}
+	return color;
+}
+
+
 int point_in_clipper(int x, int y, const ei_rect_t *clipper) {
 	/* TODO: Clipping force brute à remplacer */
 
