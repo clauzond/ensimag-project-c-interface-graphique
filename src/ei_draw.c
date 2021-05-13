@@ -172,7 +172,6 @@ void ei_draw_text(ei_surface_t surface,
 		  ei_font_t font,
 		  ei_color_t color,
 		  const ei_rect_t *clipper) {
-	/* TODO: Clipping de ei_draw_text */
 	ei_rect_t dst_rect;
 	ei_rect_t src_rect;
 	ei_size_t size;
