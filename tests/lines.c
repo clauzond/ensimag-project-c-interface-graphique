@@ -155,7 +155,7 @@ int main(int argc, char** argv)
 {
 	ei_size_t		win_size	= ei_size(800, 600);
 	ei_surface_t		main_window	= NULL;
-	ei_color_t		white		= { 0xff, 0xff, 0xff, 0xff };
+	ei_color_t		white		= { 0, 153, 255, 0xff };
 	ei_rect_t*		clipper_ptr	= NULL;
 	ei_rect_t		clipper		= ei_rect(ei_point(0, 250), ei_size(800, 100));
 	clipper_ptr		= &clipper;
@@ -206,10 +206,11 @@ int main(int argc, char** argv)
 	assert((copy_bool == 0));
 
 	/* Test ei_draw_text */
+	ei_rect_t clip = ei_rect(ei_point(20, 22), ei_size(600, 50));
 	ei_font_t font = hw_text_font_create(ei_default_font_filename, ei_style_bold, 14);
-	ei_point_t where = {30, 30};
-	ei_color_t cyan = {0, 255, 0, 255};
-	ei_draw_text(main_window, &where, "Bonjour je suis un texte !", font, cyan, NULL);
+	ei_point_t where = {15, 15};
+	ei_color_t col = {255, 255, 255, 255};
+	ei_draw_text(main_window, &where, "C'est bon les gars j'ai fini le A.1 avec le clipping du texte!", font, col, &clip);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
