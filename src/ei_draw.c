@@ -55,7 +55,6 @@ void ei_draw_polyline(ei_surface_t surface,
 		      const ei_linked_point_t *first_point,
 		      ei_color_t color,
 		      const ei_rect_t *clipper) {
-	/* TODO: Transparence additionnée */
 	/* TODO: Optimisation sur pixel_ptr */
 	/* --> retenir le pixel_ptr du précédent appel pour ne pas recalculer la pos de départ */
 
@@ -175,21 +174,53 @@ void ei_draw_text(ei_surface_t surface,
 		  const ei_rect_t *clipper) {
 	/* TODO: Clipping de ei_draw_text */
 	ei_rect_t dst_rect;
+	ei_rect_t src_rect;
 	ei_size_t size;
 	ei_surface_t text_surface;
 	ei_bool_t alpha = EI_TRUE;
 
-	// Compute size
+	// Compute size and dst_rect
 	hw_text_compute_size(text, font, &(size.width), &(size.height));
-	dst_rect.top_left = *where;
-	dst_rect.size = size;
+
+
+	// Create src_rect if clipping needed by finding the intersection between the two rectangles
+	if (clipper != NULL) {
+		size.width = min(clipper->size.width - where->x + clipper->top_left.x, size.width + where->x - clipper->top_left.x);
+		size.height = min(clipper->size.height - where->y - clipper->top_left.y, size.height + where->y - clipper->top_left.y);
+		if (size.width < 0 || size.height < 0) { // Empty intersection
+			return;
+		}
+		if (where->x >= clipper->top_left.x) {
+			dst_rect.top_left.x = where->x;
+			src_rect.top_left.x = 0;
+		} else {
+			dst_rect.top_left.x = clipper->top_left.x;
+			src_rect.top_left.x = clipper->top_left.x - where->x;
+		}
+		if (where->y > clipper->top_left.y) {
+			dst_rect.top_left.y = where->y;
+			src_rect.top_left.y = 0;
+		} else {
+			dst_rect.top_left.y = clipper->top_left.y;
+			src_rect.top_left.y = clipper->top_left.y - where->y;
+		}
+		dst_rect.size = size;
+		src_rect.size = size;
+	} else {
+		dst_rect.top_left = *where;
+		dst_rect.size = size;
+	}
 
 	// Create surface, then lock it
 	text_surface = hw_text_create_surface(text, font, color);
 	hw_surface_lock(text_surface);
 
 	// Copy surface
-	ei_copy_surface(surface, &dst_rect, text_surface, NULL, alpha);
+	if (clipper == NULL) {
+		ei_copy_surface(surface, &dst_rect, text_surface, NULL, alpha);
+	} else {
+		ei_copy_surface(surface, &dst_rect, text_surface, &src_rect, alpha);
+	}
 
 	// Free surface
 	hw_surface_unlock(text_surface);
@@ -290,7 +321,7 @@ int ei_copy_surface(ei_surface_t destination,
 	// Copie de la surface
 	for (y = 0; y < src_height; y++) {
 		for (x = 0; x < src_width; x++) {
-			*dst_pixel = add_pixels(destination, src_pixel, NULL, dst_pixel, alpha);
+			*dst_pixel = add_pixels(source, src_pixel, NULL, destination, dst_pixel, alpha);
 			dst_pixel++;
 			src_pixel++;
 		}
