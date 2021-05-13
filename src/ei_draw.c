@@ -5,7 +5,7 @@
 #include "ei_types.h"
 #include "hw_interface.h"
 
-#include "segment.h"
+#include "ei_draw_utils.h"
 
 /**
  * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer
