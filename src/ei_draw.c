@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "ei_draw.h"
 #include "ei_types.h"
 #include "hw_interface.h"
 
@@ -21,9 +22,9 @@
 uint32_t ei_map_rgba(ei_surface_t surface, ei_color_t color) {
 	int ir, ig, ib, ia;
 
-	/* Obtenir les indices et ranger dans un tableau */
+	/* Obtenir les indices et ordonner dans un tableau */
 	hw_surface_get_channel_indices(surface, &ir, &ig, &ib, &ia);
-	int array[4] = {255, 255, 255, 255};
+	uint8_t array[4] = {255, 255, 255, 255};
 	array[ir] = color.red;
 	array[ig] = color.green;
 	array[ib] = color.blue;
@@ -31,8 +32,9 @@ uint32_t ei_map_rgba(ei_surface_t surface, ei_color_t color) {
 		array[ia] = color.alpha;
 	}
 
-	/* Multiplication par 16^6, 16^4 et 16^2 des indices dans l'ordre d'apparition */
-	uint32_t rgba = array[3] * 16777216 + array[2] * 65536 + array[1] * 256 + array[0];
+	/* Décalage à la bonne position des composantes */
+	uint32_t rgba = (array[3] << 24) + (array[2] << 16) + (array[1] << 8) + (array[0]);
+
 	return rgba;
 }
 
@@ -53,7 +55,6 @@ void ei_draw_polyline(ei_surface_t surface,
 		      const ei_linked_point_t *first_point,
 		      ei_color_t color,
 		      const ei_rect_t *clipper) {
-	/* TODO: Transparence additionnée */
 	/* TODO: Optimisation sur pixel_ptr */
 	/* --> retenir le pixel_ptr du précédent appel pour ne pas recalculer la pos de départ */
 
@@ -171,7 +172,59 @@ void ei_draw_text(ei_surface_t surface,
 		  ei_font_t font,
 		  ei_color_t color,
 		  const ei_rect_t *clipper) {
+	/* TODO: Clipping de ei_draw_text */
+	ei_rect_t dst_rect;
+	ei_rect_t src_rect;
+	ei_size_t size;
+	ei_surface_t text_surface;
+	ei_bool_t alpha = EI_TRUE;
 
+	// Compute size and dst_rect
+	hw_text_compute_size(text, font, &(size.width), &(size.height));
+
+
+	// Create src_rect if clipping needed by finding the intersection between the two rectangles
+	if (clipper != NULL) {
+		size.width = min(clipper->size.width - where->x + clipper->top_left.x, size.width + where->x - clipper->top_left.x);
+		size.height = min(clipper->size.height - where->y - clipper->top_left.y, size.height + where->y - clipper->top_left.y);
+		if (size.width < 0 || size.height < 0) { // Empty intersection
+			return;
+		}
+		if (where->x >= clipper->top_left.x) {
+			dst_rect.top_left.x = where->x;
+			src_rect.top_left.x = 0;
+		} else {
+			dst_rect.top_left.x = clipper->top_left.x;
+			src_rect.top_left.x = clipper->top_left.x - where->x;
+		}
+		if (where->y > clipper->top_left.y) {
+			dst_rect.top_left.y = where->y;
+			src_rect.top_left.y = 0;
+		} else {
+			dst_rect.top_left.y = clipper->top_left.y;
+			src_rect.top_left.y = clipper->top_left.y - where->y;
+		}
+		dst_rect.size = size;
+		src_rect.size = size;
+	} else {
+		dst_rect.top_left = *where;
+		dst_rect.size = size;
+	}
+
+	// Create surface, then lock it
+	text_surface = hw_text_create_surface(text, font, color);
+	hw_surface_lock(text_surface);
+
+	// Copy surface
+	if (clipper == NULL) {
+		ei_copy_surface(surface, &dst_rect, text_surface, NULL, alpha);
+	} else {
+		ei_copy_surface(surface, &dst_rect, text_surface, &src_rect, alpha);
+	}
+
+	// Free surface
+	hw_surface_unlock(text_surface);
+	hw_surface_free(text_surface);
 }
 
 /**
@@ -186,21 +239,17 @@ void ei_draw_text(ei_surface_t surface,
 void ei_fill(ei_surface_t surface,
 	     const ei_color_t *color,
 	     const ei_rect_t *clipper) {
-	/* TODO: Clipping de ei_fill */
 	ei_size_t size = hw_surface_get_size(surface);
-	uint32_t col;
 	uint32_t *pixel_ptr;
-	int i;
-
-	if (color == NULL) {
-		col = ei_map_rgba(surface, (ei_color_t) {0x00, 0x00, 0x00, 0xff});
-	} else {
-		col = ei_map_rgba(surface, *color);
-	}
+	ei_bool_t alpha = EI_TRUE;
+	int x, y;
 
 	pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
-	for (i = 0; i < (size.width * size.height); i++) {
-		*pixel_ptr++ = col;
+	for (y = 0; y < size.height; y++) {
+		for (x = 0; x < size.width; x++){
+			draw_pixel(surface, pixel_ptr, x, y, color, clipper, alpha);
+			pixel_ptr++;
+		}
 	}
 }
 
@@ -231,5 +280,53 @@ int ei_copy_surface(ei_surface_t destination,
 		    ei_surface_t source,
 		    const ei_rect_t *src_rect,
 		    ei_bool_t alpha) {
+	int x, y, dst_x0, dst_y0, src_x0, src_y0, dst_newline = 0, src_newline = 0;
+	int dst_width, dst_height, src_width, src_height;
+	ei_size_t dst_size = hw_surface_get_size(destination);
+	ei_size_t src_size = hw_surface_get_size(source);
+	uint32_t *dst_pixel = (uint32_t *) hw_surface_get_buffer(destination);
+	uint32_t *src_pixel = (uint32_t *) hw_surface_get_buffer(source);
 
+	// Définition des tailles
+	if (dst_rect == NULL) {
+		dst_width = dst_size.width;
+		dst_height = dst_size.height;
+	} else {
+		dst_width = dst_rect->size.width;
+		dst_height = dst_rect->size.height;
+		// Positionnement du pixel sur dst_rect->top_left
+		dst_x0 = dst_rect->top_left.x;
+		dst_y0 = dst_rect->top_left.y;
+		dst_pixel += dst_x0 + (dst_size.width * dst_y0);
+		dst_newline = dst_size.width - dst_rect->size.width; // incrément pour passer à la ligne suivante
+	}
+	if (src_rect == NULL) {
+		src_width = src_size.width;
+		src_height = src_size.height;
+	} else {
+		src_width = src_rect->size.width;
+		src_height = src_rect->size.height;
+		// Positionnement du pixel sur src_rect->top_left
+		src_x0 = src_rect->top_left.x;
+		src_y0 = src_rect->top_left.y;
+		src_pixel += src_x0 + (src_size.width * src_y0);
+		src_newline = src_size.width - src_rect->size.width; // incrément pour passer à la ligne suivante
+	}
+
+	// Vérification des tailles
+	if (!(dst_width == src_width && dst_height == src_height)) {
+		return 1;
+	}
+
+	// Copie de la surface
+	for (y = 0; y < src_height; y++) {
+		for (x = 0; x < src_width; x++) {
+			*dst_pixel = add_pixels(source, src_pixel, NULL, destination, dst_pixel, alpha);
+			dst_pixel++;
+			src_pixel++;
+		}
+		dst_pixel += dst_newline;
+		src_pixel += src_newline;
+	}
+	return 0;
 }
