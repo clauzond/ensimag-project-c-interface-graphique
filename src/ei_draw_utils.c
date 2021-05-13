@@ -5,7 +5,7 @@
 #include "ei_types.h"
 #include "hw_interface.h"
 
-#include "segment.h"
+#include "ei_draw_utils.h"
 
 ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel) {
 	int ir, ig, ib, ia;

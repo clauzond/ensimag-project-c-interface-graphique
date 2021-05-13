@@ -3,7 +3,7 @@
 
 #include "ei_utils.h"
 #include "ei_types.h"
-#include "segment.h"
+#include "ei_draw_utils.h"
 #include "assert.h"
 
 #include "hw_interface.h"

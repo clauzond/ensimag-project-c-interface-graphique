@@ -1,5 +1,5 @@
-#ifndef SEGMENT_H
-#define SEGMENT_H
+#ifndef EI_DRAW_UTILS_H
+#define EI_DRAW_UTILS_H
 
 #include "ei_types.h"
 #include "hw_interface.h"
@@ -174,4 +174,4 @@ ei_point_t find_intersection(int y, ei_side *side);
  */
 void update_scanline(ei_side *tca, int y);
 
-#endif //SEGMENT_H
+#endif //EI_DRAW_UTILS_H
