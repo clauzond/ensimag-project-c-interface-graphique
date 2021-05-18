@@ -156,7 +156,7 @@ void draw_segment_bresenham(ei_surface_t surface,
 ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t *first_point) {
 	int i, x1, x2, y1, y2, tmp, height = hw_surface_get_size(surface).height;
 	const ei_linked_point_t *ptr;
-	ei_side **array = malloc(height * sizeof(ei_side * ));
+	ei_side **array = malloc(height * sizeof(ei_side*));
 	for (i = 0; i < height; i++) {
 		array[i] = NULL;
 	}
@@ -183,11 +183,12 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 		side->dx = x2 - x1;
 		side->dy = y2 - y1; // Notons que dy est toujours positif
 		side->E = 0;
-		side->next = NULL;
 		if (tc.array[y1] == NULL) {
+			side->next = NULL;
 			tc.array[y1] = side;
 		} else {
-			tc.array[y1]->next = side;
+			side->next = tc.array[y1];
+			tc.array[y1] = side;
 		}
 		tc.length++;
 	}
