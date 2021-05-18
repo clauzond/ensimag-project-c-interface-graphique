@@ -5,6 +5,9 @@
 #include "hw_interface.h"
 
 
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+
 typedef struct ei_side {
 	int ymax;
 	int x_ymin;
