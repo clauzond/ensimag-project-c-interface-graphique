@@ -8,6 +8,7 @@
 #include "ei_draw.h"
 #include "ei_types.h"
 #include "ei_event.h"
+#include "ei_button.h"
 
 
 
@@ -130,22 +131,30 @@ void test_dot(ei_surface_t surface, ei_rect_t* clipper)
 	ei_draw_polyline(surface, pts, color, clipper);
 }
 
-void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
-        ei_color_t              color           = {100, 155, 205, 245};
-        ei_linked_point_t       pts[4];
-
-        pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
-        pts[1].point.x = 400; pts[1].point.y = 510; pts[1].next = &(pts[2]);
-        pts[2].point.x = 260; pts[2].point.y = 160; pts[2].next = &(pts[3]);
-        pts[3].point.x = 540; pts[3].point.y = 160; pts[3].next = NULL;
-
-        if (polygon) {
-		ei_draw_polygon(surface, pts, color, clipper);
-        } else {
-		ei_draw_polyline(surface, pts, color, clipper);
-        }
+/* test_arc --
+ *
+ */
+void test_arc(ei_surface_t surface, ei_rect_t* clipper)
+{
+        ei_color_t		color		= { 255, 0, 0, 255 };
+        ei_point_t centre;
+        centre.x = 400; centre.y = 300;
+        float rayon = 200; float debut = 0; float fin = 6;
+        ei_linked_point_t *pts = arc(centre, rayon, debut, fin);
+	ei_draw_polyline(surface, pts, color, clipper);
+        ei_draw_polygon(surface, pts, color, clipper);
 }
 
+void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
+        ei_color_t		color		= { 255, 0, 0, 255 };
+        ei_size_t taille; taille.height = 150; taille.width = 50;
+        ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
+        ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
+        float rayon = 10;
+        ei_linked_point_t *pts = rounded_frame(rect, rayon);
+        ei_draw_polyline(surface, pts, color, clipper);
+        ei_draw_polygon(surface, pts, color, clipper);
+}
 /*
  * ei_main --
  *
@@ -171,46 +180,15 @@ int main(int argc, char** argv)
 	ei_fill		(main_window, &white, clipper_ptr);
 
 	/* Draw polylines. */
-
 	// test_line	(main_window, clipper_ptr);
-	// test_octogone	(main_window, clipper_ptr, 0);
+	// test_octogone	(main_window, clipper_ptr, 1);
 	// test_square	(main_window, clipper_ptr, 0);
-	// test_dot	(main_window, clipper_ptr);
-        // test_triangle   (main_window, clipper_ptr, 0);
 
+        /* arc. */
+	//test_arc	(main_window, clipper_ptr);
 
-        /* Draw polygones. */
-
-        // test_octogone	(main_window, clipper_ptr, 1);
-        test_square	(main_window, clipper_ptr, 1);
-	test_triangle   (main_window, clipper_ptr, 1);
-
-	/* Test ei_copy_surface */
-	ei_bool_t alpha = EI_FALSE;
-	ei_rect_t srect = ei_rect(ei_point(200, 250), ei_size(400, 100));
-	ei_rect_t drect = ei_rect(ei_point(0, 450), ei_size(400, 100));
-	const ei_rect_t *src_rect = &srect;
-	const ei_rect_t *dst_rect = &drect;
-	int copy_bool = ei_copy_surface(main_window, dst_rect, main_window, src_rect, alpha);
-	assert((copy_bool == 0));
-
-	ei_rect_t brect = ei_rect(ei_point(0, 450), ei_size(800, 101));
-	const ei_rect_t *bad_rect = &brect;
-	copy_bool = ei_copy_surface(main_window, dst_rect, main_window, bad_rect, alpha);
-	assert((copy_bool == 1));
-	copy_bool = ei_copy_surface(main_window, NULL, main_window, src_rect, alpha);
-	assert((copy_bool == 1));
-	copy_bool = ei_copy_surface(main_window, dst_rect, main_window, NULL, alpha);
-	assert((copy_bool == 1));
-	copy_bool = ei_copy_surface(main_window, NULL, main_window, NULL, alpha);
-	assert((copy_bool == 0));
-
-	/* Test ei_draw_text */
-	ei_rect_t clip = ei_rect(ei_point(20, 22), ei_size(600, 50));
-	ei_font_t font = hw_text_font_create(ei_default_font_filename, ei_style_bold, 14);
-	ei_point_t where = {15, 15};
-	ei_color_t col = {255, 255, 255, 255};
-	ei_draw_text(main_window, &where, "C'est bon les gars j'ai fini le A.1 avec le clipping du texte!", font, col, &clip);
+        /* rounded_frame. */
+      	test_rounded_frame	(main_window, clipper_ptr);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
