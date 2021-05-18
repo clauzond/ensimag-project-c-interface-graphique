@@ -126,6 +126,7 @@ void ei_draw_polygon(ei_surface_t surface,
 		     const ei_linked_point_t *first_point,
 		     ei_color_t color,
 		     const ei_rect_t *clipper) {
+	/* TODO: link last_point avec first_point */
 	int y = 0;
 	ei_side_table tc = construct_side_table(surface, first_point);
 	ei_side *tca = NULL;
