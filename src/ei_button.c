@@ -89,7 +89,7 @@ ei_linked_point_t *rounded_frame(ei_rect_t rect, float rayon) {
 	while (ptr->next != NULL) {
 		ptr = ptr->next;
 	}
-	ei_linked_point_t *last = malloc(sizeof(*test));
+	ei_linked_point_t *last = malloc(sizeof(*last));
 	last->next = NULL;
 	last->point = premier->point;
 	ptr->next = last;
