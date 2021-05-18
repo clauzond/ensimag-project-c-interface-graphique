@@ -132,7 +132,7 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper)
         ei_color_t		color		= { 255, 0, 0, 255 };
         ei_point_t centre;
         centre.x = 400; centre.y = 300;
-        float rayon = 200; float debut = 0; float fin = 6;
+        float rayon = 200; float debut = 0; float fin = 2*M_PI;
         ei_linked_point_t *pts = malloc(sizeof(*pts));
         pts = arc(centre, rayon, debut, fin);
         ei_draw_polygon(surface, pts, color, clipper);
@@ -143,9 +143,10 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         ei_size_t taille; taille.height = 100; taille.width = 100;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        float rayon = 10;
+        int top_part = 1; int bot_part = 1;
+        float rayon = 25;
         ei_linked_point_t *pts = malloc(sizeof(*pts));
-        pts = rounded_frame(rect, rayon);
+        pts = rounded_frame(rect, rayon, top_part, bot_part);
         ei_draw_polygon(surface, pts, color, clipper);
 }
 /*
