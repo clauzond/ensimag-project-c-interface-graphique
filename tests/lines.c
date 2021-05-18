@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <assert.h>
 
 #include "hw_interface.h"
 #include "ei_utils.h"
@@ -19,12 +20,12 @@
  */
 void test_line(ei_surface_t surface, ei_rect_t* clipper)
 {
-	ei_color_t		color		= { 255, 0, 255, 255 };
+	ei_color_t		color		= { 255, 0, 255, 230 };
 	ei_linked_point_t	pts[2];
 
 	pts[0].point.x = 200; pts[0].point.y = 200; pts[0].next = &pts[1];
 	pts[1].point.x = 600; pts[1].point.y = 400; pts[1].next = NULL;
-	
+
 	ei_draw_polyline(surface, pts, color, clipper);
 }
 
@@ -36,9 +37,9 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
  *	algorithm that draws a polyline in each of the possible octants, that is,
  *	in each quadrant with dx>dy (canonical) and dy>dx (steep).
  */
-void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
+void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 0, 255, 0, 255 };
+	ei_color_t		color		= { 0, 255, 0, 200 };
 	ei_linked_point_t	pts[9];
 	int			i, xdiff, ydiff;
 
@@ -63,8 +64,11 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
 	/* End the linked list */
 	pts[i-1].next = NULL;
 
-	/* Draw the form with polylines */
-	ei_draw_polyline(surface, pts, color, clipper);
+	if (polygon) {
+		ei_draw_polygon(surface, pts, color, clipper);
+	} else {
+		ei_draw_polyline(surface, pts, color, clipper);
+	}
 }
 
 
@@ -75,7 +79,7 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper)
  *	algorithm for the special cases of horizontal and vertical lines, where
  *	dx or dy are zero
  */
-void test_square(ei_surface_t surface, ei_rect_t* clipper)
+void test_square(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
 	ei_color_t		color		= { 255, 0, 0, 255 };
 	ei_linked_point_t	pts[5];
@@ -102,8 +106,11 @@ void test_square(ei_surface_t surface, ei_rect_t* clipper)
 	/* End the linked list */
 	pts[i-1].next = NULL;
 
-	/* Draw the form with polylines */
-	ei_draw_polyline(surface, pts, color, clipper);
+	if (polygon) {
+		ei_draw_polygon(surface, pts, color, clipper);
+	} else {
+		ei_draw_polyline(surface, pts, color, clipper);
+	}
 }
 
 
@@ -157,10 +164,11 @@ int main(int argc, char** argv)
 {
 	ei_size_t		win_size	= ei_size(800, 600);
 	ei_surface_t		main_window	= NULL;
-	ei_color_t		white		= { 0xff, 0xff, 0xff, 0xff };
+	ei_color_t		white		= { 0, 153, 255, 0xff };
 	ei_rect_t*		clipper_ptr	= NULL;
-//	ei_rect_t		clipper		= ei_rect(ei_point(200, 150), ei_size(400, 300));
-//	clipper_ptr		= &clipper;
+	ei_rect_t		clipper		= ei_rect(ei_point(0, 250), ei_size(800, 100));
+	clipper_ptr		= &clipper;
+	clipper_ptr		= NULL;
 	ei_event_t		event;
 
 	hw_init();
