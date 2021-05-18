@@ -82,7 +82,8 @@ include_directories(${HEADER_PATHS})
 
 set(LIB_EI_SOURCES
 	${SRC}/ei_draw.c
-	${SRC}/ei_draw_utils.c)
+	${SRC}/ei_draw_utils.c
+	${SRC}/ei_placer.c)
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
 
