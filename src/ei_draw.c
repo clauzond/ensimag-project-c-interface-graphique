@@ -61,8 +61,9 @@ void ei_draw_polyline(ei_surface_t surface,
 	int x1, x2, y1, y2, dx, dy, sign_x, sign_y;
 	int swap;
 
-	/* Tracé d'un point */
-	if (first_point->next == NULL) {
+	if (first_point == NULL) {
+		return;
+	} else if (first_point->next == NULL) {
 		x1 = first_point->point.x;
 		y1 = first_point->point.y;
 
