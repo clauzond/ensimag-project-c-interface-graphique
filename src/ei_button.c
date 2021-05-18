@@ -2,7 +2,6 @@
 // Created by baptiste on 12/05/2021.
 //
 #include <stdlib.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <math.h>
 
@@ -56,58 +55,44 @@ ei_linked_point_t *rounded_frame(ei_rect_t rect, float rayon) {
 	centre.x = rect.top_left.x + rayon;
 	centre.y = rect.top_left.y + rayon;
 	ei_linked_point_t *angle_top_left = malloc(sizeof(*angle_top_left));
-	angle_top_left = arc(centre, rayon, M_PI, 1.5 * M_PI);
+	angle_top_left = arc(centre, rayon, 1.5* M_PI,  M_PI);
 
 	centre.x = rect.top_left.x + rect.size.width - 1 - rayon;
 	centre.y = rect.top_left.y + rayon;
 	ei_linked_point_t *angle_top_right = malloc(sizeof(*angle_top_right));
-	angle_top_right = arc(centre, rayon, 1.5 * M_PI, 2 * M_PI);
+	angle_top_right = arc(centre, rayon, 2 * M_PI, 1.5 * M_PI);
 
 	centre.x = rect.top_left.x + rayon;
 	centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
 	ei_linked_point_t *angle_bot_left = malloc(sizeof(*angle_bot_left));
-	angle_bot_left = arc(centre, rayon, 0.5 * M_PI, M_PI);
+	angle_bot_left = arc(centre, rayon, M_PI, 0.5*M_PI);
 
 	centre.x = rect.top_left.x + rect.size.width - 1 - rayon;
 	centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
 	ei_linked_point_t *angle_bot_right = malloc(sizeof(*angle_bot_right));
-	angle_bot_right = arc(centre, rayon, 0, 0.5 * M_PI);
-	ei_point_t point;
+	angle_bot_right = arc(centre, rayon, 0.5 * M_PI, 0);
 
-	while (angle_top_right != NULL) { //ajout en tete de l'angle en haut à droite
-		ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-		point = angle_top_right->point;
-		nouveau->point = point;
-		nouveau->next = premier;
-		premier = nouveau;
-		angle_top_right = angle_top_right->next;
+	premier = angle_top_left;
+	ei_linked_point_t *ptr = premier;
+	while (ptr->next != NULL) {
+		ptr = ptr->next;
 	}
+	ptr->next = angle_top_right;
+	while (ptr->next != NULL) {
+		ptr = ptr->next;
+	}
+	ptr->next = angle_bot_right;
+	while (ptr->next != NULL) {
+		ptr = ptr->next;
+	}
+	ptr->next = angle_bot_left;
+	while (ptr->next != NULL) {
+		ptr = ptr->next;
+	}
+	ei_linked_point_t *last = malloc(sizeof(*test));
+	last->next = NULL;
+	last->point = premier->point;
+	ptr->next = last;
 
-	while (angle_top_left != NULL) { //ajout en tete de l'angle en haut à gauche
-		ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-		point = angle_top_left->point;
-		nouveau->point = point;
-		nouveau->next = premier;
-		premier = nouveau;
-		angle_top_left = angle_top_left->next;
-	}
-
-	while (angle_bot_left != NULL) { //ajout en tete de l'angle en bas à gauche
-		ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-		point = angle_bot_left->point;
-		nouveau->point = point;
-		nouveau->next = premier;
-		premier = nouveau;
-		angle_bot_left = angle_bot_left->next;
-	}
-
-	while (angle_bot_right != NULL) { //ajout en tete de l'angle en bas à droite
-		ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-		point = angle_bot_right->point;
-		nouveau->point = point;
-		nouveau->next = premier;
-		premier = nouveau;
-		angle_bot_right = angle_bot_right->next;
-	}
 	return premier;
 }
