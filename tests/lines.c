@@ -140,8 +140,7 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper)
         ei_point_t centre;
         centre.x = 400; centre.y = 300;
         float rayon = 200; float debut = 0; float fin = 6;
-        ei_linked_point_t *pts = malloc(sizeof(*pts));
-        pts = arc(centre, rayon, debut, fin);
+        ei_linked_point_t *pts = arc(centre, rayon, debut, fin);
 	ei_draw_polyline(surface, pts, color, clipper);
         ei_draw_polygon(surface, pts, color, clipper);
 }
@@ -151,9 +150,8 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         ei_size_t taille; taille.height = 100; taille.width = 100;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        float rayon = 5;
-        ei_linked_point_t *pts = malloc(sizeof(*pts));
-        pts = rounded_frame(rect, rayon);
+        float rayon = 1;
+        ei_linked_point_t *pts = rounded_frame(rect, rayon);
         ei_draw_polyline(surface, pts, color, clipper);
         ei_draw_polygon(surface, pts, color, clipper);
 }
@@ -187,7 +185,7 @@ int main(int argc, char** argv)
 	// test_square	(main_window, clipper_ptr, 0);
 
         /* arc. */
-	// test_arc	(main_window, clipper_ptr);
+	//test_arc	(main_window, clipper_ptr);
 
         /* rounded_frame. */
       	test_rounded_frame	(main_window, clipper_ptr);
