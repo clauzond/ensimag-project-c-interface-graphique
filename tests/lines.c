@@ -147,10 +147,10 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper)
 
 void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         ei_color_t		color		= { 255, 0, 0, 255 };
-        ei_size_t taille; taille.height = 100; taille.width = 100;
+        ei_size_t taille; taille.height = 150; taille.width = 50;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        float rayon = 1;
+        float rayon = 10;
         ei_linked_point_t *pts = rounded_frame(rect, rayon);
         ei_draw_polyline(surface, pts, color, clipper);
         ei_draw_polygon(surface, pts, color, clipper);
