@@ -10,6 +10,6 @@
 
 ei_linked_point_t *arc(ei_point_t centre, float rayon, float debut, float fin);
 
-ei_linked_point_t *rounded_frame(ei_rect_t rect, int32_t rayon);
+ei_linked_point_t *rounded_frame(ei_rect_t rect, float rayon);
 
 #endif //PROJETC_IG_EI_BUTTON_H
