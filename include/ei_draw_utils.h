@@ -1,5 +1,5 @@
-#ifndef SEGMENT_H
-#define SEGMENT_H
+#ifndef EI_DRAW_UTILS_H
+#define EI_DRAW_UTILS_H
 
 #include "ei_types.h"
 #include "hw_interface.h"
@@ -20,6 +20,16 @@ typedef struct ei_side_table {
 } ei_side_table;
 
 /**
+ * \brief 	Do the opposite of \ref ei_map_rgba. Converts a 32 bits integer returned by \ref hw_surface_get_buffer
+ * 		into the red, green, blue and alpha components.
+ *
+ * @param 	surface
+ * @param 	pixel
+ * @return			Red, green, blue and alpha components
+ */
+ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel);
+
+/**
  * \brief       Determines if point (x, y) is in clipper
  *
  * @param       x
@@ -37,8 +47,25 @@ int point_in_clipper(int x, int y, const ei_rect_t *clipper);
  * @param 	x
  * @param 	y
  * @param 	color
+ * @param	clipper
+ * @param	alpha		If false, exact copy of color. If true, weighted copy with alpha.
  */
-void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t color, const ei_rect_t *clipper);
+void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_color_t *color, const ei_rect_t *clipper, ei_bool_t alpha);
+
+/**
+ * \brief	Add pixels "src_pixel" and "dst_pixel". If alpha is TRUE, weight with pixels' alpha. If alpha is FALSE,
+ * 		return the exact copy of "src_pixel".
+ *
+ * @param	source
+ * @param 	src_pixel	32 bits integer returned by \ref hw_surface_get_buffer.
+ * 				If NULL, uses "src_color". Both cannot be NULL.
+ * @param	src_color	If NULL, uses "src_pixel". Both cannot be NULL.
+ * @param 	destination
+ * @param 	dst_pixel	32 bits integer returned by \ref hw_surface_get_buffer.
+ * @param 	alpha		If false, exact copy of "src_pixel". If true, weighted copy with alpha.
+ * @return			Corresponding color
+ */
+uint32_t add_pixels(ei_surface_t source, uint32_t *src_pixel, ei_color_t *src_color, ei_surface_t destination, uint32_t *dst_pixel, ei_bool_t alpha);
 
 /**
  * \brief       Draw a straight segment.
@@ -147,4 +174,4 @@ ei_point_t find_intersection(int y, ei_side *side);
  */
 void update_scanline(ei_side *tca, int y);
 
-#endif //SEGMENT_H
+#endif //EI_DRAW_UTILS_H
