@@ -126,7 +126,13 @@ void draw_button(ei_surface_t surface,
                  float rayon) {
         ei_linked_point_t *pts = rounded_frame(rect, rayon, 1,0);
         ei_draw_polygon(surface, pts, top_color, clipper);
-        //pts = rounded_frame(rect, rayon, 0,1);
-        //ei_draw_polygon(surface, pts, bot_color, clipper);
-        //ei_draw_text(surface, where, text, font,text_color, clipper);
+        pts = rounded_frame(rect, rayon, 0,1);
+        ei_draw_polygon(surface, pts, bot_color, clipper);
+        rect.top_left.x += rect.size.width/20;
+        rect.top_left.y += rect.size.height/20;
+        rect.size.width -= rect.size.width*2/20;
+        rect.size.height -= rect.size.width*2/20;
+        pts = rounded_frame(rect, rayon, 1, 1);
+        ei_draw_polygon(surface, pts, inside_color, clipper);
+        ei_draw_text(surface, where, text, font,text_color, clipper);
 }
