@@ -1,4 +1,7 @@
 #include "ei_types.h"
+#include "ei_widget.h"
+
+#include "ei_placer_utils.h"
 
 /**
  * \brief	Configures the geometry of a widget using the "placer" geometry manager.
@@ -31,20 +34,23 @@
  * @param	rel_height	The relative height of the widget: 0.0 corresponds to a height of 0,
  *				1.0 to the height of the master (defaults to 0.0).
  */
-void		ei_place	(struct ei_widget_t*	widget,
-				     ei_anchor_t*		anchor,
-				     int*			x,
-				     int*			y,
-				     int*			width,
-				     int*			height,
-				     float*			rel_x,
-				     float*			rel_y,
-				     float*			rel_width,
-				     float*			rel_height) {
-
+void ei_place(struct ei_widget_t *widget,
+	      ei_anchor_t *anchor,
+	      int *x,
+	      int *y,
+	      int *width,
+	      int *height,
+	      float *rel_x,
+	      float *rel_y,
+	      float *rel_width,
+	      float *rel_height) {
+	init_placer_params(widget);
+	manage_anchor(widget, anchor);
+	manage_coord_x(widget, x, rel_x);
+	manage_coord_y(widget, y, rel_y);
+	manage_width(widget, width, rel_width);
+	manage_height(widget, height, rel_height);
 }
-
-
 
 
 /**
@@ -55,10 +61,9 @@ void		ei_place	(struct ei_widget_t*	widget,
  *
  * @param	widget		The widget which geometry must be re-computed.
  */
-void ei_placer_run(struct ei_widget_t* widget) {
+void ei_placer_run(struct ei_widget_t *widget) {
 
 }
-
 
 
 /**
@@ -67,6 +72,6 @@ void ei_placer_run(struct ei_widget_t* widget) {
  *
  * @param	widget		The widget to remove from screen.
  */
-void ei_placer_forget(struct ei_widget_t* widget) {
+void ei_placer_forget(struct ei_widget_t *widget) {
 
 }
