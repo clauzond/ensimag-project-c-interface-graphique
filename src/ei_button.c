@@ -6,9 +6,13 @@
 #include <math.h>
 
 #include "ei_types.h"
+#include"ei_draw.h"
 
 
-ei_linked_point_t *arc(ei_point_t centre, float rayon, float debut, float fin) {
+ei_linked_point_t *arc(ei_point_t centre,
+                       float rayon,
+                       float debut,
+                       float fin) {
         /* TODO: résoudre bug, cercle pas dessiné en entier */
         ei_linked_point_t *premier = malloc(sizeof(*premier));
         premier = NULL;
@@ -46,89 +50,83 @@ ei_linked_point_t *arc(ei_point_t centre, float rayon, float debut, float fin) {
 
 }
 
-ei_linked_point_t *rounded_frame(ei_rect_t rect, float rayon, int top_part, int bot_part)
-{
-        ei_linked_point_t *premier = malloc(sizeof(*premier));
-        premier = NULL;
+ei_linked_point_t *rounded_frame(ei_rect_t rect,
+                                 float rayon,
+                                 int top_part,
+                                 int bot_part) {
+        /* TODO: résoudre bug, pas dessiné en entier */
+        ei_linked_point_t *premier = NULL;
         ei_point_t centre;
-        ei_linked_point_t *angle_top_left = malloc(sizeof(*angle_top_left));
-        ei_linked_point_t *angle_top_right = malloc(sizeof(*angle_top_right));
-        ei_linked_point_t *angle_bot_left = malloc(sizeof(*angle_bot_left));
-        ei_linked_point_t *angle_bot_right = malloc(sizeof(*angle_bot_right));
 
-        centre.x = rect.top_left.x + rayon; centre.y = rect.top_left.y + rayon;
-        angle_top_left = arc(centre, rayon,M_PI, 1.5*M_PI);
+        centre.x = rect.top_left.x + rayon;
+        centre.y = rect.top_left.y + rayon;
+        ei_linked_point_t *angle_top_left = arc(centre, rayon, 1.5 * M_PI, M_PI);
+        if(top_part == 0){
+                angle_top_left = NULL;
+        }
 
-        centre.x = rect.top_left.x + rect.size.width - 1 - rayon; centre.y = rect.top_left.y + rayon;
-        angle_top_right = arc(centre, rayon, 1.5*M_PI, 2*M_PI);
+        centre.x = rect.top_left.x + rect.size.width - 1 - rayon;
+        centre.y = rect.top_left.y + rayon;
+        ei_linked_point_t *angle_top_right = arc(centre, rayon, (2 - 0.25 * (1 - bot_part)) * M_PI , (1.5 + 0.25 * (1 - top_part)) * M_PI);
 
-        centre.x = rect.top_left.x + rayon; centre.y = rect.top_left.y + rect.size.height -1 - rayon;
-        angle_bot_left = arc(centre, rayon, 0.5*M_PI, M_PI);
+        centre.x = rect.top_left.x + rayon;
+        centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
+        ei_linked_point_t *angle_bot_left = arc(centre, rayon, (1 - 0.25 * (1 - top_part)) * M_PI, (0.5 + 0.25 * (1 - bot_part)) * M_PI);
 
-        centre.x = rect.top_left.x + rect.size.width - 1 - rayon; centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
-        angle_bot_right = arc(centre, rayon, 0, 0.5*M_PI);
+        centre.x = rect.top_left.x + rect.size.width - 1 - rayon;
+        centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
+        ei_linked_point_t *angle_bot_right = arc(centre, rayon, 0.5 * M_PI, 0);
 
-        if(top_part == 1 && bot_part == 0){
-                centre.x = rect.top_left.x + rayon; centre.y = rect.top_left.y + rayon;
-                angle_top_left = arc(centre, rayon,M_PI, 1.5*M_PI);
-
-                centre.x = rect.top_left.x + rect.size.width - 1 - rayon; centre.y = rect.top_left.y + rayon;
-                angle_top_right = arc(centre, rayon, 1.5*M_PI, 1.75*M_PI);
-
-                centre.x = rect.top_left.x + rayon; centre.y = rect.top_left.y + rect.size.height -1 - rayon;
-                angle_bot_left = arc(centre, rayon, 0.25*M_PI, M_PI);
-
+        if(bot_part == 0){
                 angle_bot_right = NULL;
         }
-        else if(top_part == 0 && bot_part == 1){
-                angle_top_left = NULL;
 
-                centre.x = rect.top_left.x + rect.size.width - 1 - rayon; centre.y = rect.top_left.y + rayon;
-                angle_top_right = arc(centre, rayon, 1.75*M_PI, 2*M_PI);
-
-                centre.x = rect.top_left.x + rayon; centre.y = rect.top_left.y + rect.size.height -1 - rayon;
-                angle_bot_left = arc(centre, rayon, 0.5*M_PI, 0.75*M_PI);
-
-                centre.x = rect.top_left.x + rect.size.width - 1 - rayon; centre.y = rect.top_left.y + rect.size.height - 1 - rayon;
-                angle_bot_right = arc(centre, rayon, 0, 0.5*M_PI);
+        ei_linked_point_t *ptr;
+        if(angle_top_left != NULL){
+                premier = angle_top_left;
+                ptr = premier;
+                while (ptr->next != NULL) {
+                        ptr = ptr->next;
+                }
+                ptr->next = angle_top_right;
         }
-
-        ei_point_t point;
-        while(angle_top_right->next != NULL){ //ajout en tete de l'angle en haut à droite
-                ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-                point = angle_top_right->point;
-                nouveau->point = point;
-                nouveau->next = premier;
-                premier = nouveau;
-                angle_top_right = angle_top_right->next;
+        else{
+                premier = angle_top_right;
+                ptr = premier;
         }
-
-        while(angle_top_left->next != NULL){ //ajout en tete de l'angle en haut à gauche
-                ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-                point = angle_top_left->point;
-                nouveau->point = point;
-                nouveau->next = premier;
-                premier = nouveau;
-                angle_top_left = angle_top_left->next;
+        while (ptr->next != NULL) {
+                ptr = ptr->next;
         }
-
-        while(angle_bot_left->next != NULL){ //ajout en tete de l'angle en bas à gauche
-                ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-                point = angle_bot_left->point;
-                nouveau->point = point;
-                nouveau->next = premier;
-                premier = nouveau;
-                angle_bot_left = angle_bot_left->next;
+        ptr->next = angle_bot_right;
+        while (ptr->next != NULL) {
+                ptr = ptr->next;
         }
-
-        while(angle_bot_right->next != NULL){ //ajout en tete de l'angle en bas à droite
-                ei_linked_point_t *nouveau = malloc(sizeof(*nouveau));
-                point = angle_bot_right->point;
-                nouveau->point = point;
-                nouveau->next = premier;
-                premier = nouveau;
-                angle_bot_right = angle_bot_right->next;
+        ptr->next = angle_bot_left;
+        while (ptr->next != NULL) {
+                ptr = ptr->next;
         }
+        ei_linked_point_t *last = malloc(sizeof(*last));
+        last->next = NULL;
+        last->point = premier->point;
+        ptr->next = last;
+
         return premier;
 }
 
+void draw_button(ei_surface_t surface,
+                 const ei_point_t *where,
+                 const char *text,
+                 ei_font_t font,
+                 ei_color_t text_color,
+                 const ei_rect_t *clipper,
+                 ei_rect_t rect,
+                 ei_color_t top_color,
+                 ei_color_t bot_color,
+                 ei_color_t inside_color,
+                 float rayon) {
+        ei_linked_point_t *pts = rounded_frame(rect, rayon, 1,0);
+        ei_draw_polygon(surface, pts, top_color, clipper);
+        //pts = rounded_frame(rect, rayon, 0,1);
+        //ei_draw_polygon(surface, pts, bot_color, clipper);
+        //ei_draw_text(surface, where, text, font,text_color, clipper);
+}
