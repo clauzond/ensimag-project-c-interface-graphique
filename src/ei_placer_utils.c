@@ -15,20 +15,28 @@ void init_placer_params(struct ei_widget_t *widget) {
 	param->anchor = NULL;
 	param->x = malloc(sizeof(int));
 	param->x = NULL;
+	param->x_data = 0;
 	param->y = malloc(sizeof(int));
 	param->y = NULL;
+	param->y_data = 0;
 	param->w = malloc(sizeof(int));
 	param->w = NULL;
+	param->w_data = 0;
 	param->h = malloc(sizeof(int));
 	param->h = NULL;
+	param->h_data = 0;
 	param->rx = malloc(sizeof(float));
 	param->rx = NULL;
+	param->rx_data = 0;
 	param->ry = malloc(sizeof(float));
 	param->ry = NULL;
+	param->ry_data = 0;
 	param->rw = malloc(sizeof(float));
 	param->rw = NULL;
+	param->rw_data = 0;
 	param->rh = malloc(sizeof(float));
 	param->rh = NULL;
+	param->rh_data = 0;
 
 	widget->placer_params = param;
 }
@@ -44,8 +52,8 @@ ei_bool_t is_valid_coord(int c, int dimension) {
 
 void manage_anchor(ei_widget_t *widget, ei_anchor_t *anchor) {
 	if (anchor != NULL) {
-		widget->placer_params->anchor = anchor;
 		widget->placer_params->anchor_data = *anchor;
+		widget->placer_params->anchor = &(widget->placer_params->anchor_data);
 	}
 }
 
@@ -56,7 +64,7 @@ void manage_coord_x(ei_widget_t *widget, int *x, float *rel_x) {
 	// 2. default value (placer_params)
 	// 3. x = 0, rel_x = 0.0
 	if (rel_x != NULL && (0 <= *rel_x && *rel_x <= 1)) {
-		if (x != NULL && is_valid_padding(*rel_x, *x, widget->parent->content_rect->size.width)) {
+		if (x != NULL) {
 			widget->placer_params->rx_data = *rel_x;
 			widget->placer_params->rx = &(widget->placer_params->rx_data);
 			widget->placer_params->x_data = *x;
@@ -67,7 +75,7 @@ void manage_coord_x(ei_widget_t *widget, int *x, float *rel_x) {
 			widget->placer_params->x_data = 0;
 			widget->placer_params->x = NULL;
 		}
-	} else if (x != NULL && is_valid_coord(*x, widget->parent->content_rect->size.width)) {
+	} else if (x != NULL) {
 		widget->placer_params->rx_data = 0;
 		widget->placer_params->rx = NULL;
 		widget->placer_params->x_data = *x;
@@ -89,7 +97,7 @@ void manage_coord_y(ei_widget_t *widget, int *y, float *rel_y) {
 	// 2. default value (placer_params)
 	// 3. y = 0, rel_y = 0.0
 	if (rel_y != NULL && (0 <= *rel_y && *rel_y <= 1)) {
-		if (y != NULL && is_valid_padding(*rel_y, *y, widget->parent->content_rect->size.width)) {
+		if (y != NULL) {
 			widget->placer_params->ry_data = *rel_y;
 			widget->placer_params->ry = &(widget->placer_params->ry_data);
 			widget->placer_params->y_data = *y;
@@ -100,7 +108,7 @@ void manage_coord_y(ei_widget_t *widget, int *y, float *rel_y) {
 			widget->placer_params->y_data = 0;
 			widget->placer_params->y = NULL;
 		}
-	} else if (y != NULL && is_valid_coord(*y, widget->parent->content_rect->size.width)) {
+	} else if (y != NULL) {
 		widget->placer_params->ry_data = 0;
 		widget->placer_params->ry = NULL;
 		widget->placer_params->y_data = *y;
@@ -190,41 +198,22 @@ void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
 	// 1. requested_size
 	// 2. valeur par default (placer_params)
 	// 3. = 0
-	int pos_x, left_most, right_most, w = 0, rw = 0;
-	int parent_width = widget->parent->content_rect->size.width;
-	struct anchor_shift as = create_anchor_shift(widget->placer_params->anchor_data);
+	int w = 0, rw = 0;
 
-	// x position
-	if (widget->placer_params->rx != NULL) {
-		pos_x = widget->placer_params->rx_data * parent_width;
-		if (widget->placer_params->x != NULL) {
-			pos_x += widget->placer_params->x_data;
-		}
-	} else {
-		pos_x = widget->placer_params->x_data;
-	}
-
-	if (rel_width != NULL &&
-	    is_valid_dimension(parent_width, rel_width, NULL, pos_x, as.left_direction,
-			       as.right_direction)) {
+	if (rel_width != NULL) {
 		// rel_width
 		rw = *rel_width;
-	} else if (width != NULL &&
-		   is_valid_dimension(parent_width, NULL, width, pos_x, as.left_direction, as.right_direction)) {
+	} else if (width != NULL) {
 		// width
 		w = *width;
-	} else if (is_valid_dimension(parent_width, NULL, widget->requested_size.width, pos_x, as.left_direction,
-				      as.right_direction)) {
+	} else if (widget->requested_size.width != 0) {
 		// requested width
 		w = widget->requested_size.width;
-	} else if (is_valid_dimension(parent_width, widget->placer_params->rw, widget->placer_params->w, pos_x,
-				      as.left_direction, as.right_direction)) {
+	} else if (widget->placer_params->rw != NULL) {
 		// default
-		if (widget->placer_params->w != NULL) {
-			w = widget->placer_params->w_data;
-		} else {
-			rw = widget->placer_params->rw_data;
-		}
+		rw = widget->placer_params->rw_data;
+	} else if (widget->placer_params->w != NULL) {
+		w = widget->placer_params->w_data;
 	} // else zero
 
 	if (rw == 0) {
@@ -248,6 +237,35 @@ void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 	// 1. requested_size
 	// 2. valeur default (placer_params)
 	// 3. = 0
+	int h = 0, rh = 0;
+
+	if (rel_height != NULL) {
+		// rel_height
+		rh = *rel_height;
+	} else if (height != NULL) {
+		// height
+		h = *height;
+	} else if (widget->requested_size.height != 0) {
+		// requested height
+		h = widget->requested_size.height;
+	} else if (widget->placer_params->rh != NULL) {
+		// default
+		rh = widget->placer_params->rw_data;
+	} else if (widget->placer_params->h != NULL) {
+		h = widget->placer_params->w_data;
+	} // else zero
+
+	if (rh == 0) {
+		widget->placer_params->rw_data = 0;
+		widget->placer_params->rh = NULL;
+		widget->placer_params->w_data = h;
+		widget->placer_params->h = &(widget->placer_params->w_data);
+	} else {
+		widget->placer_params->w_data = 0;
+		widget->placer_params->h = NULL;
+		widget->placer_params->rw_data = rh;
+		widget->placer_params->rh = &(widget->placer_params->rw_data);
+	}
 }
 
 
