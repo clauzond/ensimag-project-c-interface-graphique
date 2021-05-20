@@ -181,17 +181,17 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
 }
 
 void test_text(ei_surface_t surface, ei_rect_t *clipper){
-        ei_point_t *where; where->x = 200; where->y = 200;
+        ei_point_t where; where.x = 200; where.y = 200;
         char *text = "hello";
         ei_font_t font = ei_default_font;
         ei_color_t color = {255, 0, 0, 255};
-        ei_draw_text(surface, where, text, font, color, clipper);
+        ei_draw_text(surface, &where, text, font, color, clipper);
 }
 
 void test_button(ei_surface_t surface, ei_rect_t *clipper){
         const char *text = "button";
-        ei_point_t *where; where->x = 200; where->y = 200;
-        ei_font_t font = NULL;
+        ei_point_t where; where.x = 200; where.y = 200;
+        ei_font_t font = ei_default_font;
         ei_color_t text_color = {255, 0, 0, 255};
         float rayon = 25;
         ei_color_t top_color = {255,0,0,255};
@@ -200,7 +200,7 @@ void test_button(ei_surface_t surface, ei_rect_t *clipper){
         ei_size_t taille; taille.height = 100; taille.width = 100;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        draw_button(surface, where, text, font, text_color, clipper,
+        draw_button(surface, &where, text, font, text_color, clipper,
                     rect, top_color, bot_color, inside_color, rayon);
 }
 
