@@ -9,4 +9,6 @@ void		ei_place	(struct ei_widget_t*	widget,
                          float*			rel_x,
                          float*			rel_y,
                          float*			rel_width,
-                         float*			rel_height);
+                         float*			rel_height){
+
+}

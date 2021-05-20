@@ -81,7 +81,8 @@ void ei_app_quit_request(void) {
 	event.type = ei_ev_app;
 	int quit = get_quit_number();
 	event.param.application.user_param = &quit;
-	ei_event_get_default_handle_func()(&event);
+	//ei_event_get_default_handle_func()(&event);
+
 }
 
 /**
@@ -90,7 +91,9 @@ void ei_app_quit_request(void) {
  *
  * @return 			The root widget.
  */
-ei_widget_t* ei_app_root_widget(void);
+ei_widget_t* ei_app_root_widget(void){
+
+}
 
 /**
  * \brief	Returns the surface of the root window. Can be usesd to create surfaces with similar
@@ -98,4 +101,6 @@ ei_widget_t* ei_app_root_widget(void);
  *
  * @return 			The surface of the root window.
  */
-ei_surface_t ei_app_root_surface(void);
+ei_surface_t ei_app_root_surface(void){
+
+}
