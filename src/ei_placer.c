@@ -73,5 +73,5 @@ void ei_placer_run(struct ei_widget_t *widget) {
  * @param	widget		The widget to remove from screen.
  */
 void ei_placer_forget(struct ei_widget_t *widget) {
-
+	forget_placer_params(widget);
 }

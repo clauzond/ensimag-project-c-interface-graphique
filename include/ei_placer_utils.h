@@ -12,6 +12,8 @@ struct anchor_shift {
 
 void init_placer_params(struct ei_widget_t *widget);
 
+void forget_placer_params(ei_widget_t *widget);
+
 ei_bool_t is_valid_padding(float rel_c, int c, int dimension);
 
 ei_bool_t is_valid_coord(int c, int dimension);

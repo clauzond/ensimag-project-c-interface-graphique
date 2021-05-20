@@ -41,6 +41,29 @@ void init_placer_params(struct ei_widget_t *widget) {
 	widget->placer_params = param;
 }
 
+void forget_placer_params(ei_widget_t *widget) {
+	ei_placer_params_t *param = widget->placer_params;
+	param->anchor = NULL;
+	param->anchor_data = ei_anc_none;
+	param->x = NULL;
+	param->x_data = 0;
+	param->y = NULL;
+	param->y_data = 0;
+	param->w = NULL;
+	param->w_data = 0;
+	param->h = NULL;
+	param->h_data = 0;
+	param->rx = NULL;
+	param->rx_data = 0;
+	param->ry = NULL;
+	param->ry_data = 0;
+	param->rw = NULL;
+	param->rw_data = 0;
+	param->rh = NULL;
+	param->rh_data = 0;
+}
+
+
 ei_bool_t is_valid_padding(float rel_c, int c, int dimension) {
 	int pos_c = c + rel_c * dimension;
 	return (ei_bool_t) (0 <= pos_c && pos_c <= dimension);
@@ -54,6 +77,9 @@ void manage_anchor(ei_widget_t *widget, ei_anchor_t *anchor) {
 	if (anchor != NULL) {
 		widget->placer_params->anchor_data = *anchor;
 		widget->placer_params->anchor = &(widget->placer_params->anchor_data);
+	} else if (widget->placer_params->anchor == NULL) { // no default value
+		widget->placer_params->anchor_data = ei_anc_northwest;
+		widget->placer_params->anchor = &(widget->placer_params->anchor_data);
 	}
 }
 
@@ -63,6 +89,7 @@ void manage_coord_x(ei_widget_t *widget, int *x, float *rel_x) {
 	// 1. x
 	// 2. default value (placer_params)
 	// 3. x = 0, rel_x = 0.0
+
 	if (rel_x != NULL && (0 <= *rel_x && *rel_x <= 1)) {
 		if (x != NULL) {
 			widget->placer_params->rx_data = *rel_x;
@@ -80,13 +107,11 @@ void manage_coord_x(ei_widget_t *widget, int *x, float *rel_x) {
 		widget->placer_params->rx = NULL;
 		widget->placer_params->x_data = *x;
 		widget->placer_params->x = &(widget->placer_params->x_data);
-	} else if (widget->placer_params->rx == NULL) {
-		if (widget->placer_params->x == NULL) {
-			widget->placer_params->rx_data = 0;
-			widget->placer_params->rx = &(widget->placer_params->rx_data);
-			widget->placer_params->x_data = 0;
-			widget->placer_params->x = &(widget->placer_params->x_data);
-		}
+	} else if (widget->placer_params->x == NULL && widget->placer_params->rx == NULL) { // no default value
+		widget->placer_params->rx_data = 0;
+		widget->placer_params->rx = &(widget->placer_params->rx_data);
+		widget->placer_params->x_data = 0;
+		widget->placer_params->x = &(widget->placer_params->x_data);
 	}
 }
 
@@ -96,6 +121,7 @@ void manage_coord_y(ei_widget_t *widget, int *y, float *rel_y) {
 	// 1. y
 	// 2. default value (placer_params)
 	// 3. y = 0, rel_y = 0.0
+
 	if (rel_y != NULL && (0 <= *rel_y && *rel_y <= 1)) {
 		if (y != NULL) {
 			widget->placer_params->ry_data = *rel_y;
@@ -113,13 +139,11 @@ void manage_coord_y(ei_widget_t *widget, int *y, float *rel_y) {
 		widget->placer_params->ry = NULL;
 		widget->placer_params->y_data = *y;
 		widget->placer_params->y = &(widget->placer_params->y_data);
-	} else if (widget->placer_params->ry == NULL) {
-		if (widget->placer_params->y == NULL) {
-			widget->placer_params->ry_data = 0;
-			widget->placer_params->ry = &(widget->placer_params->ry_data);
-			widget->placer_params->y_data = 0;
-			widget->placer_params->y = &(widget->placer_params->y_data);
-		}
+	} else if (widget->placer_params->y == NULL && widget->placer_params->ry == NULL) { // no default value
+		widget->placer_params->ry_data = 0;
+		widget->placer_params->ry = &(widget->placer_params->ry_data);
+		widget->placer_params->y_data = 0;
+		widget->placer_params->y = &(widget->placer_params->y_data);
 	}
 }
 
@@ -191,8 +215,6 @@ is_valid_dimension(int parent_dimension, float *rel_dimension, int *dimension, i
 }
 
 void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
-	// Prérequis : anchor et x gérés
-
 	// Gestion width
 	// 0. Paramètres
 	// 1. requested_size
@@ -230,8 +252,6 @@ void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
 }
 
 void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
-	// Prérequis : anchor et y gérés
-
 	// Gestion height
 	// 0. Paramètres
 	// 1. requested_size
@@ -267,5 +287,3 @@ void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 		widget->placer_params->rh = &(widget->placer_params->rw_data);
 	}
 }
-
-
