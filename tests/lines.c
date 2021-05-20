@@ -23,7 +23,7 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
 	ei_linked_point_t	pts[2];
 
 	pts[0].point.x = 200; pts[0].point.y = 200; pts[0].next = &pts[1];
-	pts[1].point.x = 600; pts[1].point.y = 400; pts[1].next = NULL;
+	pts[1].point.x = 1000; pts[1].point.y = 400; pts[1].next = NULL;
 
 	ei_draw_polyline(surface, pts, color, clipper);
 }
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
 
 	/* Draw polylines. */
 
-	// test_line	(main_window, clipper_ptr);
+	test_line	(main_window, clipper_ptr);
 	// test_octogone	(main_window, clipper_ptr, 0);
 	// test_square	(main_window, clipper_ptr, 0);
 	// test_dot	(main_window, clipper_ptr);
