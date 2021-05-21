@@ -194,13 +194,13 @@ void test_text(ei_surface_t surface, ei_rect_t *clipper){
 void test_button(ei_surface_t surface, ei_rect_t *clipper){
         const char *text = "button";
         ei_font_t font = ei_default_font;
-        ei_color_t text_color = {255, 0, 0, 255};
+        ei_color_t text_color = {102, 153, 204, 255};
         float rayon = 25;
-        ei_color_t top_color = {255,0,0,255};
-        ei_color_t bot_color = {0,255,0,255};
-        ei_color_t inside_color = {0, 0, 255, 255};
+        ei_color_t top_color = {51,153,102,255};
+        ei_color_t bot_color = {153,204,204,255};
+        ei_color_t inside_color = {204, 255, 255, 255};
         ei_size_t taille; taille.height = 100; taille.width = 100;
-        ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
+        ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 200;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
         draw_button(surface, text, font, text_color, clipper,
                     rect, top_color, bot_color, inside_color, rayon);

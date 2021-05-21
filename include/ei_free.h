@@ -7,6 +7,11 @@
 
 #include "ei_types.h"
 
+/**
+ * \brief 	frees the points of the linked point.
+ *
+ * @param 	ptr        The pointer on the linked point
+ */
 void            free_points             (ei_linked_point_t *ptr);
 
 #endif //PROJETC_IG_EI_FREE_H

@@ -50,10 +50,10 @@ ei_linked_point_t *arc(ei_point_t centre,
         return premier;
 }
 
-ei_linked_point_t *rounded_frame(ei_rect_t rect,
+ei_linked_point_t *rounded_frame (ei_rect_t rect,
                                  float rayon,
-                                 int top_part,
-                                 int bot_part) {
+                                 ei_bool_t top_part,
+                                 ei_bool_t bot_part) {
         /* TODO: résoudre bug, pas dessiné en entier */
         ei_linked_point_t *premier = NULL;
         ei_point_t centre;
@@ -122,17 +122,17 @@ void draw_button(ei_surface_t surface,
                  ei_color_t bot_color,
                  ei_color_t inside_color,
                  float rayon) {
-        ei_linked_point_t *pts = rounded_frame(rect, rayon, 1,0);
+        ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_FALSE);
         ei_draw_polygon(surface, pts, top_color, clipper);
         free_points(pts);
-        pts = rounded_frame(rect, rayon, 0,1);
+        pts = rounded_frame(rect, rayon, EI_FALSE,EI_TRUE);
         ei_draw_polygon(surface, pts, bot_color, clipper);
         free_points(pts);
         rect.top_left.x += rect.size.width/20;
         rect.top_left.y += rect.size.height/20;
         rect.size.width -= rect.size.width*2/20;
         rect.size.height -= rect.size.width*2/20;
-        pts = rounded_frame(rect, rayon, 1, 1);
+        pts = rounded_frame(rect, rayon, EI_TRUE, EI_TRUE);
         ei_draw_polygon(surface, pts, inside_color, clipper);
         free_points(pts);
         ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + rect.size.height*3/10;

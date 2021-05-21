@@ -33,8 +33,8 @@ ei_linked_point_t               *arc           (ei_point_t centre,
  */
 ei_linked_point_t          *rounded_frame                 (ei_rect_t rect,
                                                            float rayon,
-                                                           int top_part,
-                                                           int bot_part);
+                                                           ei_bool_t top_part,
+                                                           ei_bool_t bot_part);
 /**
  * \brief 	Draw a button in relief.
  *
