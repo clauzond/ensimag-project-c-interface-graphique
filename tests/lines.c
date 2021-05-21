@@ -8,6 +8,7 @@
 #include "ei_types.h"
 #include "ei_event.h"
 #include "ei_button.h"
+#include "ei_free.h"
 
 
 
@@ -167,30 +168,32 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         float rayon = 25;
         ei_linked_point_t *pts = rounded_frame(rect, rayon, 1, 0);
         ei_draw_polyline(surface, pts, color, clipper);
+        free_points(pts);
         ei_color_t bot_color = {0, 255, 0, 255};
         pts = rounded_frame(rect, rayon, 0, 1);
-        //ei_draw_polygon(surface, pts, bot_color, clipper);
+        ei_draw_polygon(surface, pts, bot_color, clipper);
+        free_points(pts);
         rect.top_left.x += rect.size.width/20;
         rect.top_left.y += rect.size.height/20;
         rect.size.width -= rect.size.width*2/20;
         rect.size.height -= rect.size.width*2/20;
         pts = rounded_frame(rect, rayon, 1, 1);
         ei_color_t inside_color = {0,0,255,255};
-        //ei_draw_polygon(surface, pts, inside_color, clipper);
+        ei_draw_polygon(surface, pts, inside_color, clipper);
+        free_points(pts);
 }
 
 void test_text(ei_surface_t surface, ei_rect_t *clipper){
-        ei_point_t *where; where->x = 200; where->y = 200;
+        ei_point_t where; where.x = 200; where.y = 200;
         char *text = "hello";
         ei_font_t font = ei_default_font;
         ei_color_t color = {255, 0, 0, 255};
-        ei_draw_text(surface, where, text, font, color, clipper);
+        ei_draw_text(surface, &where, text, font, color, clipper);
 }
 
 void test_button(ei_surface_t surface, ei_rect_t *clipper){
         const char *text = "button";
-        ei_point_t *where; where->x = 200; where->y = 200;
-        ei_font_t font = NULL;
+        ei_font_t font = ei_default_font;
         ei_color_t text_color = {255, 0, 0, 255};
         float rayon = 25;
         ei_color_t top_color = {255,0,0,255};
@@ -199,7 +202,7 @@ void test_button(ei_surface_t surface, ei_rect_t *clipper){
         ei_size_t taille; taille.height = 100; taille.width = 100;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        draw_button(surface, where, text, font, text_color, clipper,
+        draw_button(surface, text, font, text_color, clipper,
                     rect, top_color, bot_color, inside_color, rayon);
 }
 
@@ -233,9 +236,9 @@ int main(int argc, char** argv)
 
         /* button. */
 //        test_arc	(main_window, clipper_ptr);
-        test_rounded_frame (main_window, clipper_ptr);
+//        test_rounded_frame (main_window, clipper_ptr);
 //        test_text (main_window, clipper_ptr);
-//        test_button	(main_window, clipper_ptr);
+        test_button	(main_window, clipper_ptr);
 
 	/*
 	test_line	(main_window, clipper_ptr);

@@ -6,7 +6,9 @@
 #include <math.h>
 
 #include "ei_types.h"
-#include"ei_draw.h"
+#include "ei_draw.h"
+#include "ei_button.h"
+#include "ei_free.h"
 
 
 ei_linked_point_t *arc(ei_point_t centre,
@@ -30,7 +32,6 @@ ei_linked_point_t *arc(ei_point_t centre,
                         }
                         angle = angle + 0.01;
                 }
-                return premier;
         } else { // Parcours dans l'ordre décroissant des angles
                 float angle = debut;
                 while (angle >= fin) {
@@ -45,9 +46,8 @@ ei_linked_point_t *arc(ei_point_t centre,
                         }
                         angle = angle - 0.01;
                 }
-                return premier;
         }
-
+        return premier;
 }
 
 ei_linked_point_t *rounded_frame(ei_rect_t rect,
@@ -109,12 +109,10 @@ ei_linked_point_t *rounded_frame(ei_rect_t rect,
         last->next = NULL;
         last->point = premier->point;
         ptr->next = last;
-
         return premier;
 }
 
 void draw_button(ei_surface_t surface,
-                 const ei_point_t *where,
                  const char *text,
                  ei_font_t font,
                  ei_color_t text_color,
@@ -126,13 +124,17 @@ void draw_button(ei_surface_t surface,
                  float rayon) {
         ei_linked_point_t *pts = rounded_frame(rect, rayon, 1,0);
         ei_draw_polygon(surface, pts, top_color, clipper);
+        free_points(pts);
         pts = rounded_frame(rect, rayon, 0,1);
         ei_draw_polygon(surface, pts, bot_color, clipper);
+        free_points(pts);
         rect.top_left.x += rect.size.width/20;
         rect.top_left.y += rect.size.height/20;
         rect.size.width -= rect.size.width*2/20;
         rect.size.height -= rect.size.width*2/20;
         pts = rounded_frame(rect, rayon, 1, 1);
         ei_draw_polygon(surface, pts, inside_color, clipper);
-        ei_draw_text(surface, where, text, font,text_color, clipper);
+        free_points(pts);
+        ei_point_t where; where.x = 120; where.y = 130;
+        ei_draw_text(surface, &where, text, font,text_color, clipper);
 }
