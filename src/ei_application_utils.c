@@ -21,9 +21,18 @@ ei_bool_t is_quit_event(ei_event_t event) {
 }
 
 void draw_root_widget(void) {
-	current_widget = ei_app_root_widget();
-	root_window = ei_app_root_surface();
-	while (current_widget->next_sibling != NULL) {
+	ei_widget_t* root_widget = ei_app_root_widget();
+	ei_surface_t root_window = ei_app_root_surface();
+	draw_widget_recursively(root_widget, root_window);
+}
 
+void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window) {
+	// Traitement pour un widget
+
+	// Prochain widget à traiter
+	if (widget->next_sibling != NULL) {
+		draw_widget_recursively(widget->next_sibling, root_window);
+	} else if (widget->children_head != NULL) {
+		draw_widget_recursively(widget->children_head, root_window);
 	}
 }
