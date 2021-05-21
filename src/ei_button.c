@@ -135,6 +135,6 @@ void draw_button(ei_surface_t surface,
         pts = rounded_frame(rect, rayon, 1, 1);
         ei_draw_polygon(surface, pts, inside_color, clipper);
         free_points(pts);
-        ei_point_t where; where.x = 120; where.y = 130;
+        ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + rect.size.height*3/10;
         ei_draw_text(surface, &where, text, font,text_color, clipper);
 }
