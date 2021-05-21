@@ -10,8 +10,11 @@
 #include "ei_application_utils.h"
 
 /** Global variables **/
+/**                  **/
 ei_surface_t root_window;
 ei_widget_t *root_frame;
+/**                  **/
+/** ---------------- **/
 
 /**
  * \brief	Creates an application.
@@ -31,17 +34,15 @@ ei_widget_t *root_frame;
  *					is a system window.
  */
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
-    hw_init();
-    // TODO: initialisation de toutes les classes widgets (un par un) avec ei_widgetclass_register
-    //ei_widgetclass_t frameclass;
-    //frameclass.name = "frame";
-    //ei_widgetclass_register(&frameclass);
-
-
-    ei_surface_t main_window = hw_create_window(main_window_size, fullscreen);
-    ei_size_t real_size = hw_surface_get_size(main_window);
-    ei_surface_t offscreen = hw_surface_create(main_window, real_size, EI_FALSE);
-
+	hw_init();
+	// TODO: initialisation de toutes les classes widgets (un par un) avec ei_widgetclass_register
+	// ei_widgetclass_t frameclass;
+	// frameclass.name = "frame";
+	// ei_widgetclass_register(&frameclass);
+	root_window = hw_create_window(main_window_size, fullscreen);
+	ei_size_t real_size = hw_surface_get_size(root_window);
+	ei_surface_t pick_surface = hw_surface_create(root_window, real_size, EI_FALSE);
+	ei_set_pick_surface(pick_surface);
 }
 
 /**
@@ -49,6 +50,13 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 *		(ie. calls \ref hw_quit).
 */
 void ei_app_free(void) {
+	// Free every widget
+	free_widget_recursively(root_frame);
+
+	// Free both root window and pick surface
+	free_root_window(root_window);
+
+	// Release hardware
 	hw_quit();
 }
 
@@ -60,7 +68,7 @@ void ei_app_run() {
 	ei_event_t event;
 
 	// Dessiner tout une fois
-	draw_root_widget();
+	draw_widget_recursively(root_frame, root_window);
 
 	event.type = ei_ev_none;
 	while (!is_quit_event(event)) {
