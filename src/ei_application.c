@@ -13,6 +13,7 @@
 /**                  **/
 ei_surface_t root_window;
 ei_widget_t *root_frame;
+ei_linked_rect_t *rectangle_list;
 /**                  **/
 /** ---------------- **/
 
@@ -35,14 +36,23 @@ ei_widget_t *root_frame;
  */
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 	hw_init();
+
 	// TODO: initialisation de toutes les classes widgets (un par un) avec ei_widgetclass_register
 	// ei_widgetclass_t frameclass;
 	// frameclass.name = "frame";
 	// ei_widgetclass_register(&frameclass);
+
+	// Create root window
 	root_window = hw_create_window(main_window_size, fullscreen);
 	ei_size_t real_size = hw_surface_get_size(root_window);
+
+	// Create pick surface
 	ei_surface_t pick_surface = hw_surface_create(root_window, real_size, EI_FALSE);
 	ei_set_pick_surface(pick_surface);
+
+	// Create rectangle list (for ei_app_invalidate_rects)
+	rectangle_list = malloc(sizeof(ei_linked_rect_t));
+	rectangle_list = NULL;
 }
 
 /**
@@ -72,6 +82,8 @@ void ei_app_run() {
 
 	event.type = ei_ev_none;
 	while (!is_quit_event(event)) {
+		// Si une mise à jour nécessaire à l'écran, ei_app_invalidate_rect
+		// Dès qu'on a fini le traitement (?), une fonction se charge d'update tous ces rectangles
 		if (is_located_event(event)) {
 			// ...
 		} else {
@@ -89,7 +101,10 @@ void ei_app_run() {
  *				A copy is made, so it is safe to release the rectangle on return.
  */
 void ei_app_invalidate_rect(ei_rect_t *rect) {
-
+	ei_linked_rect_t *new = malloc(sizeof(ei_linked_rect_t));
+	new->rect = *rect;
+	new->next = rectangle_list;
+	rectangle_list = new;
 }
 
 /**
