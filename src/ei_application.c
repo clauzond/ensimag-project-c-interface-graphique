@@ -11,9 +11,10 @@
 
 /** Global variables **/
 /**                  **/
-ei_surface_t root_window;
-ei_widget_t *root_frame;
-ei_linked_rect_t *rectangle_list;
+ei_bool_t DO_QUIT = EI_FALSE;
+ei_surface_t ROOT_WINDOW;
+ei_widget_t *ROOT_FRAME;
+ei_linked_rect_t *RECTANGLE_LIST;
 /**                  **/
 /** ---------------- **/
 
@@ -43,16 +44,16 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 	// ei_widgetclass_register(&frameclass);
 
 	// Create root window
-	root_window = hw_create_window(main_window_size, fullscreen);
-	ei_size_t real_size = hw_surface_get_size(root_window);
+	ROOT_WINDOW = hw_create_window(main_window_size, fullscreen);
+	ei_size_t real_size = hw_surface_get_size(ROOT_WINDOW);
 
 	// Create pick surface
-	ei_surface_t pick_surface = hw_surface_create(root_window, real_size, EI_FALSE);
+	ei_surface_t pick_surface = hw_surface_create(ROOT_WINDOW, real_size, EI_FALSE);
 	ei_set_pick_surface(pick_surface);
 
 	// Create rectangle list (for ei_app_invalidate_rects)
-	rectangle_list = malloc(sizeof(ei_linked_rect_t));
-	rectangle_list = NULL;
+	RECTANGLE_LIST = malloc(sizeof(ei_linked_rect_t));
+	RECTANGLE_LIST = NULL;
 }
 
 /**
@@ -61,10 +62,10 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 */
 void ei_app_free(void) {
 	// Free every widget
-	free_widget_recursively(root_frame);
+	free_widget_recursively(ROOT_FRAME);
 
 	// Free both root window and pick surface
-	free_root_window(root_window);
+	free_root_window(ROOT_WINDOW);
 
 	// Release hardware
 	hw_quit();
@@ -78,10 +79,10 @@ void ei_app_run() {
 	ei_event_t event;
 
 	// Dessiner tout une fois
-	draw_widget_recursively(root_frame, root_window);
+	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW);
 
 	event.type = ei_ev_none;
-	while (!is_quit_event(event)) {
+	while (!DO_QUIT) {
 		// Si une mise à jour nécessaire à l'écran, ei_app_invalidate_rect
 		// Dès qu'on a fini le traitement (?), une fonction se charge d'update tous ces rectangles
 		if (is_located_event(event)) {
@@ -103,8 +104,8 @@ void ei_app_run() {
 void ei_app_invalidate_rect(ei_rect_t *rect) {
 	ei_linked_rect_t *new = malloc(sizeof(ei_linked_rect_t));
 	new->rect = *rect;
-	new->next = rectangle_list;
-	rectangle_list = new;
+	new->next = RECTANGLE_LIST;
+	RECTANGLE_LIST = new;
 }
 
 /**
@@ -112,14 +113,7 @@ void ei_app_invalidate_rect(ei_rect_t *rect) {
  *		when pressing the "Escape" key).
  */
 void ei_app_quit_request(void) {
-	// On suppose qu'en donnant un event "quit" à la fonction default_handle_func, cela stop la boucle
-	// de ei_app_run
-	ei_event_t event;
-	event.type = ei_ev_app;
-	int quit = get_quit_number();
-	event.param.application.user_param = &quit;
-	//ei_event_get_default_handle_func()(&event);
-
+	DO_QUIT = EI_TRUE;
 }
 
 /**
@@ -129,7 +123,7 @@ void ei_app_quit_request(void) {
  * @return 			The root widget.
  */
 ei_widget_t *ei_app_root_widget(void) {
-	return root_frame;
+	return ROOT_FRAME;
 }
 
 /**
@@ -139,5 +133,5 @@ ei_widget_t *ei_app_root_widget(void) {
  * @return 			The surface of the root window.
  */
 ei_surface_t ei_app_root_surface(void) {
-	return root_window;
+	return ROOT_WINDOW;
 }
