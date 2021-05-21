@@ -1,15 +1,12 @@
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
 
+/**
+ * @brief	Registers a class to the program so that widgets of this class can be created.
+ *		This must be done only once per widged class in the application.
+ *
+ * @param	widgetclass	The structure describing the class.
+ */
+void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass){
 
-
-typedef struct ei_widgetclass_t {
-    ei_widgetclass_name_t               name;
-    ei_widgetclass_allocfunc_t          allocfunc;
-    ei_widgetclass_releasefunc_t        releasefunc;
-    ei_widgetclass_drawfunc_t           drawfunc;
-    ei_widgetclass_setdefaultsfunc_t    setdefaultsfunc;
-    ei_widgetclass_geomnotifyfunc_t     geomnotifyfunc;
-    ei_widgetclass_handlefunc_t         handlefunc;
-    struct ei_widgetclass_t*            next;
-} ei_widgetclass_t;
+}
