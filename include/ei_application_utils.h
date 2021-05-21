@@ -10,4 +10,6 @@ ei_bool_t is_located_event(ei_event_t event);
 
 ei_bool_t is_quit_event(ei_event_t event);
 
+void draw_root_widget(void);
+
 #endif //EI_APPLICATION_UTILS_H
