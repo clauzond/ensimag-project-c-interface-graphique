@@ -6,6 +6,20 @@
 
 #include "ei_application_utils.h"
 
+/** Global variables **/
+/**                  **/
+ei_surface_t pick_surface;
+/**                  **/
+/** ---------------- **/
+
+void ei_set_pick_surface(ei_surface_t surface) {
+	pick_surface = surface;
+}
+
+ei_surface_t ei_get_pick_surface(void) {
+	return pick_surface;
+}
+
 int get_quit_number(void) {
 	return 666;
 }
@@ -20,14 +34,13 @@ ei_bool_t is_quit_event(ei_event_t event) {
 	return (ei_bool_t) (user_param == get_quit_number());
 }
 
-void draw_root_widget(void) {
-	ei_widget_t* root_widget = ei_app_root_widget();
-	ei_surface_t root_window = ei_app_root_surface();
-	draw_widget_recursively(root_widget, root_window);
-}
-
 void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window) {
 	// Traitement pour un widget
+	ei_rect_t *clipper = NULL;
+	if (widget->parent != NULL) {
+		clipper = widget->parent->content_rect;
+	}
+	widget->wclass->drawfunc(widget, root_window, pick_surface, clipper);
 
 	// Prochain widget à traiter
 	if (widget->next_sibling != NULL) {
@@ -35,4 +48,26 @@ void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window) {
 	} else if (widget->children_head != NULL) {
 		draw_widget_recursively(widget->children_head, root_window);
 	}
+}
+
+void free_widget_recursively(ei_widget_t *widget) {
+	// Traitement pour un widget
+	ei_widget_destroy(widget);
+
+	// Prochain widget à traiter
+	if (widget->next_sibling != NULL) {
+		free_widget_recursively(widget->next_sibling);
+	} else if (widget->children_head != NULL) {
+		free_widget_recursively(widget->children_head);
+	}
+}
+
+void free_root_window(ei_surface_t root_window) {
+	// Free root window
+	hw_surface_unlock(root_window);
+	hw_surface_free(root_window);
+
+	// Free pick surface
+	hw_surface_unlock(pick_surface);
+	hw_surface_free(pick_surface);
 }
