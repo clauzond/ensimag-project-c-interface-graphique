@@ -2,11 +2,16 @@
 #include <stdio.h>
 
 #include "ei_event.h"
+#include "ei_widget.h"
 #include "ei_widgetclass.h"
 #include "hw_interface.h"
 #include "ei_application.h"
 
 #include "ei_application_utils.h"
+
+/** Global variables **/
+ei_surface_t root_window;
+ei_widget_t *root_frame;
 
 /**
  * \brief	Creates an application.
@@ -26,12 +31,13 @@
  *					is a system window.
  */
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
-    hw_init();
-    // TODO: initialisation de tous les widgets (un par un) avec ei_widgetclass_register
-    ei_surface_t main_window = hw_create_window(main_window_size, fullscreen);
-    ei_size_t real_size = hw_surface_get_size(main_window);
-    ei_surface_t offscreen = hw_surface_create(main_window, real_size, EI_FALSE);
-    // ei_widget_t* frame_root = ei_widget_create(root, NULL, NULL, NULL );
+	hw_init();
+	// TODO: initialisation de tous les widgets (un par un) avec ei_widgetclass_register
+
+	root_window = hw_create_window(main_window_size, fullscreen);
+	ei_size_t real_size = hw_surface_get_size(root_window);
+	ei_surface_t offscreen = hw_surface_create(root_window, real_size, EI_FALSE);
+	// root_frame = ei_widget_create(root, NULL, NULL, NULL );
 }
 
 /**
@@ -46,10 +52,14 @@ void ei_app_free(void) {
 * \brief	Runs the application: enters the main event loop. Exits when
 *		\ref ei_app_quit_request is called.
 */
-void ei_app_run(){
+void ei_app_run() {
 	ei_event_t event;
+
+	// Dessiner tout une fois
+	draw_root_widget();
+
 	event.type = ei_ev_none;
-	while (!is_quit_event(event)){
+	while (!is_quit_event(event)) {
 		if (is_located_event(event)) {
 			// ...
 		} else {
@@ -66,7 +76,7 @@ void ei_app_run(){
  * @param	rect		The rectangle to add, expressed in the root window coordinates.
  *				A copy is made, so it is safe to release the rectangle on return.
  */
-void ei_app_invalidate_rect(ei_rect_t* rect) {
+void ei_app_invalidate_rect(ei_rect_t *rect) {
 
 }
 
@@ -91,8 +101,8 @@ void ei_app_quit_request(void) {
  *
  * @return 			The root widget.
  */
-ei_widget_t* ei_app_root_widget(void){
-
+ei_widget_t *ei_app_root_widget(void) {
+	return root_frame;
 }
 
 /**
@@ -101,6 +111,6 @@ ei_widget_t* ei_app_root_widget(void){
  *
  * @return 			The surface of the root window.
  */
-ei_surface_t ei_app_root_surface(void){
-
+ei_surface_t ei_app_root_surface(void) {
+	return root_window;
 }
