@@ -46,10 +46,9 @@ ei_linked_point_t          *rounded_frame                 (ei_rect_t rect,
  * @param	color		The text color. Can't be NULL. The alpha parameter is not used.
  * @param	clipper		If not NULL, the drawing is restricted within this rectangle.
  * @param 	rect            The rectangle where to draw the button.
- * @param       top_color       The color of the top part of the button.
- * @param       bot_color       The color of the bottom part of the button.
- * @param       inside_color    The color of the part inside the button.
+ * @param       button_color    The color of the part inside the button.
  * @param       rayon           The ray of the corners of the button.
+ * @param       relief          Relief of the button.
  * @return			nothing
  */
 void            draw_button              (ei_surface_t surface,
@@ -58,9 +57,8 @@ void            draw_button              (ei_surface_t surface,
                                          ei_color_t text_color,
                                          const ei_rect_t *clipper,
                                          ei_rect_t rect,
-                                         ei_color_t top_color,
-                                         ei_color_t bot_color,
-                                         ei_color_t inside_color,
-                                         float rayon);
+                                         ei_color_t button_color,
+                                         float rayon,
+                                         ei_relief_t relief);
 
 #endif //PROJETC_IG_EI_BUTTON_H

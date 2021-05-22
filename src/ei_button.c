@@ -118,10 +118,23 @@ void draw_button(ei_surface_t surface,
                  ei_color_t text_color,
                  const ei_rect_t *clipper,
                  ei_rect_t rect,
-                 ei_color_t top_color,
-                 ei_color_t bot_color,
-                 ei_color_t inside_color,
-                 float rayon) {
+                 ei_color_t button_color,
+                 float rayon,
+                 ei_relief_t relief) {
+        ei_color_t top_color;
+        ei_color_t bot_color;
+        if(relief == ei_relief_sunken) {
+                top_color.red = button_color.red * 0.9; top_color.green = button_color.green * 0.9;
+                top_color.blue = button_color.blue * 0.9, top_color.alpha = button_color.alpha;
+                bot_color.red = button_color.red * 1.1; bot_color.green = button_color.green * 1.1;
+                bot_color.blue = button_color.blue * 1.1, bot_color.alpha = button_color.alpha;
+        }
+        else {
+                top_color.red = button_color.red * 1.1; top_color.green = button_color.green * 1.1;
+                top_color.blue = button_color.blue * 1.1, top_color.alpha = button_color.alpha;
+                bot_color.red = button_color.red * 0.9; bot_color.green = button_color.green * 0.9;
+                bot_color.blue = button_color.blue * 0.9, bot_color.alpha = button_color.alpha;
+        }
         ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_FALSE);
         ei_draw_polygon(surface, pts, top_color, clipper);
         free_points(pts);
@@ -133,7 +146,7 @@ void draw_button(ei_surface_t surface,
         rect.size.width -= rect.size.width*2/20;
         rect.size.height -= rect.size.width*2/20;
         pts = rounded_frame(rect, rayon, EI_TRUE, EI_TRUE);
-        ei_draw_polygon(surface, pts, inside_color, clipper);
+        ei_draw_polygon(surface, pts, button_color, clipper);
         free_points(pts);
         ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + rect.size.height*3/10;
         ei_draw_text(surface, &where, text, font,text_color, clipper);
