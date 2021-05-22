@@ -77,21 +77,34 @@ void ei_app_free(void) {
 */
 void ei_app_run() {
 	ei_event_t event;
+	ei_widget_t *active_widget = NULL;
+	ei_bool_t event_handled;
 
-	// Dessiner tout une fois
+	// Dessiner tout une première fois
 	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW);
 
 	event.type = ei_ev_none;
 	while (!DO_QUIT) {
-		// Si une mise à jour nécessaire à l'écran, ei_app_invalidate_rect
-		// Dès qu'on a fini le traitement (?), une fonction se charge d'update tous ces rectangles
+		event_handled = EI_FALSE;
 		if (is_located_event(event)) {
-			// ...
-		} else {
+			if (event.type == ei_ev_mouse_buttondown) { // Set active
+				ei_event_set_active_widget(ei_widget_pick(&event.param.mouse.where));
+			} else if (event.type == ei_ev_mouse_buttonup) { // Unset active
+				ei_event_set_active_widget(NULL);
+			}
+		}
+		active_widget = ei_event_get_active_widget();
+		if (active_widget != NULL) {
+			event_handled = active_widget->wclass->handlefunc(active_widget, &event);
+		}
+		if (!event_handled && !is_located_event(event)) {
 			// Si ce n’est pas un évènement situé, le traitant concerné est celui
 			// qui a été défini par le programmeur
 			ei_event_get_default_handle_func()(&event);
 		}
+
+		// TODO: fonction pour dessiner les rectangles invalidés
+		ei_update_rectangle_list(RECTANGLE_LIST);
 		hw_event_wait_next(&event);
 	}
 }
