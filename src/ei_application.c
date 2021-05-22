@@ -88,7 +88,9 @@ void ei_app_run() {
 		if (is_located_event(event)) {
 			// ...
 		} else {
-			// ...
+			// Si ce n’est pas un évènement situé, le traitant concerné est celui
+			// qui a été défini par le programmeur
+			ei_event_get_default_handle_func()(&event);
 		}
 		hw_event_wait_next(&event);
 	}
