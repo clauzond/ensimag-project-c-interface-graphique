@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
 #include "ei_types.h"
@@ -25,19 +27,28 @@ ei_bool_t is_located_event(ei_event_t event) {
 			    event.type == ei_ev_mouse_move);
 }
 
-void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window) {
+ei_rect_t rect_intersection(ei_rect_t r1, ei_rect_t r2) {
+	
+}
+
+void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window, ei_rect_t *clipper) {
 	// Traitement pour un widget
-	ei_rect_t *clipper = NULL;
-	if (widget->parent != NULL) {
-		clipper = widget->parent->content_rect;
+	ei_rect_t *current_clipper = malloc(sizeof(ei_rect_t));
+	if (clipper == NULL && widget->parent != NULL) {
+		*current_clipper = *widget->parent->content_rect;
+	} else if (widget->parent != NULL && widget->parent->content_rect != NULL) {
+		*current_clipper = rect_intersection(*clipper, *widget->parent->content_rect);
+	} else {
+		current_clipper = NULL;
 	}
-	widget->wclass->drawfunc(widget, root_window, PICK_SURFACE, clipper);
+	widget->wclass->drawfunc(widget, root_window, PICK_SURFACE, current_clipper);
+	free(current_clipper);
 
 	// Prochain widget à traiter
 	if (widget->next_sibling != NULL) {
-		draw_widget_recursively(widget->next_sibling, root_window);
+		draw_widget_recursively(widget->next_sibling, root_window, clipper);
 	} else if (widget->children_head != NULL) {
-		draw_widget_recursively(widget->children_head, root_window);
+		draw_widget_recursively(widget->children_head, root_window, clipper);
 	}
 }
 
@@ -65,4 +76,8 @@ void free_root_window(ei_surface_t root_window) {
 	// Free pick surface
 	hw_surface_unlock(PICK_SURFACE);
 	hw_surface_free(PICK_SURFACE);
+}
+
+void ei_update_rectangle_list(ei_linked_rect_t rectangle_list) {
+
 }
