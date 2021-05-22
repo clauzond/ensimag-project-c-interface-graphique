@@ -24,8 +24,8 @@ ei_surface_t ei_get_pick_surface(void) {
 }
 
 ei_bool_t is_located_event(ei_event_t event) {
-	return (ei_bool_t)(event.type == ei_ev_mouse_buttondown || event.type == ei_ev_mouse_buttonup ||
-			   event.type == ei_ev_mouse_move);
+	return (ei_bool_t) (event.type == ei_ev_mouse_buttondown || event.type == ei_ev_mouse_buttonup ||
+			    event.type == ei_ev_mouse_move);
 }
 
 ei_rect_t rect_intersection(ei_rect_t r1, ei_rect_t r2) {
@@ -33,25 +33,30 @@ ei_rect_t rect_intersection(ei_rect_t r1, ei_rect_t r2) {
 	r0.top_left.x = max(r1.top_left.x, r2.top_left.x);
 	r0.top_left.y = max(r1.top_left.y, r2.top_left.y);
 	r0.size.width = min(r1.top_left.x + r1.size.width, r2.top_left.x + r2.size.width) - r0.top_left.x;
-	r0.size.height = min(r1.top_left.y + r1.size.height, r2.top_left.y + r2.size.height) - r0.top_left.x;
+	r0.size.height = min(r1.top_left.y + r1.size.height, r2.top_left.y + r2.size.height) - r0.top_left.y;
+	return r0;
+}
 
-	if (r0.size.width == 0 || r0.size.height == 0) {
-		r0 = ei_rect_zero();
-	}
+ei_rect_t rect_union(ei_rect_t r1, ei_rect_t r2) {
+	ei_rect_t r0;
+	r0.top_left.x = min(r1.top_left.x, r2.top_left.x);
+	r0.top_left.y = min(r1.top_left.y, r2.top_left.y);
+	r0.size.width = max(r1.top_left.x + r1.size.width, r2.top_left.x + r2.size.width) - r0.top_left.x;
+	r0.size.height = max(r1.top_left.y + r1.size.height, r2.top_left.y + r2.size.height) - r0.top_left.y;
 	return r0;
 }
 
 void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window, ei_rect_t *clipper) {
 	// Traitement pour un widget
 	ei_rect_t *current_clipper = malloc(sizeof(ei_rect_t));
-	if (clipper == NULL && widget->parent != NULL) {
-		*current_clipper = *widget->parent->content_rect;
-	} else if (widget->parent != NULL && widget->parent->content_rect != NULL) {
-		*current_clipper = rect_intersection(*clipper, *widget->parent->content_rect);
+	if (clipper == NULL) {
+		*current_clipper = widget->screen_location;
 	} else {
-		current_clipper = NULL;
+		*current_clipper = rect_intersection(*clipper, widget->screen_location);
 	}
-	widget->wclass->drawfunc(widget, root_window, PICK_SURFACE, current_clipper);
+	if (current_clipper->size.width != 0 && current_clipper->size.height != 0) {
+		widget->wclass->drawfunc(widget, root_window, PICK_SURFACE, current_clipper);
+	}
 	free(current_clipper);
 
 	// Prochain widget à traiter
@@ -88,6 +93,11 @@ void free_root_window(ei_surface_t root_window) {
 	hw_surface_free(PICK_SURFACE);
 }
 
-void ei_update_rectangle_list(ei_linked_rect_t rectangle_list) {
-
+ei_rect_t big_union_rect(ei_linked_rect_t **rectangle_list) {
+	ei_rect_t big_rect;
+	while (*rectangle_list != NULL) {
+		big_rect = rect_union(big_rect, (*rectangle_list)->rect);
+		*rectangle_list = (*rectangle_list)->next;
+	}
+	return big_rect;
 }
