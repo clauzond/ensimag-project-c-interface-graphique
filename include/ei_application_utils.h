@@ -4,6 +4,9 @@
 #include "ei_event.h"
 #include "ei_types.h"
 
+#define max(a,b) (((a) > (b)) ? (a) : (b))
+#define min(a,b) (((a) < (b)) ? (a) : (b))
+
 void ei_set_pick_surface(ei_surface_t surface);
 
 ei_surface_t ei_get_pick_surface(void);
