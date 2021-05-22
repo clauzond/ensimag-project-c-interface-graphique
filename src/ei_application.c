@@ -79,11 +79,16 @@ void ei_app_run() {
 	ei_event_t event;
 	ei_widget_t *active_widget = NULL;
 	ei_bool_t event_handled;
+	ei_rect_t big_rect;
 
 	// Dessiner tout une première fois
-	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW);
+	hw_surface_lock(ROOT_WINDOW);
+	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, NULL);
+	hw_surface_unlock(ROOT_WINDOW);
+	hw_surface_update_rects(ROOT_WINDOW, NULL);
 
 	event.type = ei_ev_none;
+	hw_event_wait_next(&event);
 	while (!DO_QUIT) {
 		event_handled = EI_FALSE;
 		if (is_located_event(event)) {
@@ -103,8 +108,13 @@ void ei_app_run() {
 			ei_event_get_default_handle_func()(&event);
 		}
 
-		// TODO: fonction pour dessiner les rectangles invalidés
-		ei_update_rectangle_list(RECTANGLE_LIST);
+		// Update necessary rectangles
+		hw_surface_lock(ROOT_WINDOW);
+		big_rect = big_union_rect(&RECTANGLE_LIST);
+		draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, &big_rect);
+		hw_surface_unlock(ROOT_WINDOW);
+		hw_surface_update_rects(ROOT_WINDOW, NULL);
+
 		hw_event_wait_next(&event);
 	}
 }
