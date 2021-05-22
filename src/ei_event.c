@@ -7,7 +7,7 @@
 /** Global variables **/
 /**                  **/
 ei_default_handle_func_t DEFAULT_HANDLE_FUNC;
-ei_widget_t *ACTIVE_WIDGET;
+ei_widget_t *ACTIVE_WIDGET = NULL;
 /**                  **/
 /** ---------------- **/
 
@@ -18,7 +18,7 @@ ei_widget_t *ACTIVE_WIDGET;
  * @param	widget		The widget to declare as active, or NULL to declare
  *				that a widget is no more being manipulated.
  */
-void ei_event_set_active_widget(ei_widget_t* widget) {
+void ei_event_set_active_widget(ei_widget_t *widget) {
 	ACTIVE_WIDGET = widget;
 }
 
@@ -27,7 +27,7 @@ void ei_event_set_active_widget(ei_widget_t* widget) {
  *
  * @return			The widget currenlty being manipulated, or NULL.
  */
-ei_widget_t* ei_event_get_active_widget(void) {
+ei_widget_t *ei_event_get_active_widget(void) {
 	return ACTIVE_WIDGET;
 }
 
