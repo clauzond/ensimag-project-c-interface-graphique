@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "ei_types.h"
 #include "ei_widget.h"
 #include "ei_event.h"
@@ -5,8 +7,20 @@
 /** Global variables **/
 /**                  **/
 ei_default_handle_func_t default_handle_func;
+ei_widget_t *active_widget;
 /**                  **/
 /** ---------------- **/
+
+
+/**
+ * Sets the widget which is currently being manipulated by the user.
+ *
+ * @param	widget		The widget to declare as active, or NULL to declare
+ *				that a widget is no more being manipulated.
+ */
+void ei_event_set_active_widget(ei_widget_t* widget) {
+	active_widget = widget;
+}
 
 /**
  * Returns the widget currently being manipulated by the user.
@@ -14,7 +28,7 @@ ei_default_handle_func_t default_handle_func;
  * @return			The widget currenlty being manipulated, or NULL.
  */
 ei_widget_t* ei_event_get_active_widget(void) {
-
+	return active_widget;
 }
 
 /**
