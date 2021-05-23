@@ -81,11 +81,18 @@ include_directories(${HEADER_PATHS})
 # target ei (libei)
 
 set(LIB_EI_SOURCES
-	${SRC}/ei_draw.c
-	${SRC}/ei_draw_utils.c
-	${SRC}/ei_button.c
-	${SRC}/ei_placer.c
-	${SRC}/ei_placer_utils.c)
+${SRC}/ei_application.c
+${SRC}/ei_application_utils.c
+${SRC}/ei_button.c
+${SRC}/ei_draw.c
+${SRC}/ei_draw_utils.c
+${SRC}/ei_event.c
+${SRC}/ei_free.c
+${SRC}/ei_placer.c
+${SRC}/ei_placer_utils.c
+${SRC}/ei_widget.c
+${SRC}/ei_widgetclass.c
+${SRC}/ei_widget_utils.c)
 
 add_library(ei STATIC			${LIB_EI_SOURCES})
 
