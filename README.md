@@ -1,12 +1,14 @@
 ## Étapes de progression
 - [x] A.1 (Damien)
-- [ ] A.2 (Baptiste)  
-- [ ] A.3 (Esteban)  
-- [ ] A.4  (Esteban)
+- [x] A.2 (Baptiste)  
+- [x] A.3 (Esteban)  
+- [ ] A.4  (Esteban)  
+    - Manque la création d'une structure de type `ei_widgetclass_t`
+    - Manque l'enregistrement des classes
 - [ ] A.5  (Damien)
-- [ ] A.6  
-- [ ] A.7  
-- [ ] A.8  
+    - Manque la "bonne" implémentation de `ei_placer_run`
+- [ ] A.7
+    - Manque (?) l'apparence enfoncée du bouton selon emplacement souris
 
 
 ## Utilisation du fichier CMakeLists.txt
