@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
 	uint32_t*			pixel_ptr;
 	int				i;
 
-	// Init access to hardware.
+	// Init acces to hardware.
 	hw_init();
 
 	// Create the main window.
@@ -24,18 +24,16 @@ int main(int argc, char* argv[])
 	hw_surface_lock(main_window);
 	
 	pixel_ptr = (uint32_t*)hw_surface_get_buffer(main_window);
-        for (i = 0; i < (main_window_size.width * main_window_size.height); i++) {
-                *pixel_ptr++ = white;
-        }
+	for (i = 0; i < (main_window_size.width * main_window_size.height); i++)
+		*pixel_ptr++ = white;
 	
 	hw_surface_unlock(main_window);
 	hw_surface_update_rects(main_window, NULL);
 
 	// Wait for a key press.
 	event.type = ei_ev_none;
-	while (event.type != ei_ev_keydown) {
+	while (event.type != ei_ev_keydown)
 		hw_event_wait_next(&event);
-	}
 
 	// Free hardware resources.
 	hw_quit();
