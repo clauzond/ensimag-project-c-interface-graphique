@@ -8,11 +8,11 @@
 #include"ei_types.h"
 #include"ei_free.h"
 
-void            free_points             (ei_linked_point_t *ptr) {
-        ei_linked_point_t *point;
-        while(ptr != NULL){
-                point = ptr->next;
-                free(ptr);
-                ptr = point;
-        }
+void free_points(ei_linked_point_t *ptr) {
+	ei_linked_point_t *point;
+	while (ptr != NULL) {
+		point = ptr->next;
+		free(ptr);
+		ptr = point;
+	}
 }

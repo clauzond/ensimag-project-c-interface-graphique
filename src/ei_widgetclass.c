@@ -10,3 +10,14 @@
 void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass){
 
 }
+
+/**
+ * @brief	Returns the structure describing a class, from its name.
+ *
+ * @param	name		The name of the class of widget.
+ *
+ * @return			The structure describing the class.
+ */
+ei_widgetclass_t*	ei_widgetclass_from_name	(ei_widgetclass_name_t name) {
+
+}
