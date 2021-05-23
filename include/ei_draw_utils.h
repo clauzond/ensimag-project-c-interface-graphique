@@ -40,7 +40,7 @@ ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel);
  * @param       clipper         If not NULL, the drawing is restricted within this rectangle.
  * @return                      0 iff point not in clipper
  */
-int point_in_clipper(int x, int y, const ei_rect_t *clipper);
+ei_bool_t point_in_clipper(int x, int y, const ei_rect_t *clipper);
 
 /**
  * \brief	Draw pixel where pixel_ptr is pointing
