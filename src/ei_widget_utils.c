@@ -1,6 +1,14 @@
 #include <stdlib.h>
 
+#include "ei_utils.h"
+#include "ei_types.h"
 #include "ei_widget.h"
+
+#include "ei_widget_utils.h"
+
+void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_param) {
+	return;
+}
 
 void ei_widget_destroy_child(ei_widget_t *widget) {
 	// Call destructor if provided
@@ -25,4 +33,47 @@ ei_widget_t *ei_find_widget_by_id(uint32_t id) {
 
 }
 
-#include "ei_widget_utils.h"
+ei_frame_t ei_init_default_frame() {
+	ei_frame_t frame;
+	// frame.widget is not initialized
+	frame.color = ei_default_background_color;
+	frame.border_width = 0;
+	frame.relief = ei_relief_none;
+	frame.text = NULL;
+	frame.text_font = ei_default_font;
+	frame.text_color = ei_font_default_color;
+	frame.text_anchor = ei_anc_center;
+	frame.img = NULL;
+	frame.img_rect = NULL;
+	frame.img_anchor = ei_anc_center;
+	return frame;
+}
+
+ei_button_t ei_init_default_button() {
+	ei_button_t button;
+	// button.widget is not initialized
+	button.color = ei_default_background_color;
+	button.border_width = k_default_button_border_width;
+	button.corner_radius = k_default_button_corner_radius;
+	button.relief = ei_relief_raised;
+	button.text = NULL;
+	button.text_font = ei_default_font;
+	button.text_color = ei_font_default_color;
+	button.text_anchor = ei_anc_center;
+	button.img = NULL;
+	button.img_rect = NULL;
+	button.img_anchor = ei_anc_center;
+	button.callback = empty_callback;
+	button.user_param = NULL;
+}
+
+ei_toplevel_t ei_init_default_toplevel() {
+	ei_toplevel_t toplevel;
+	// toplevel.widget is not initialized
+	toplevel.color = ei_default_background_color;
+	toplevel.border_width = 4;
+	toplevel.title = "Toplevel";
+	toplevel.closable = EI_TRUE;
+	toplevel.resizable = ei_axis_both;
+	toplevel.min_size = ei_size(160, 120);
+}

@@ -2,9 +2,10 @@
 #include <stdio.h>
 
 #include "ei_application.h"
+#include "ei_types.h"
+#include "ei_utils.h"
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
-#include "ei_types.h"
 
 #include "ei_widget_utils.h"
 #include "ei_application_utils.h"
@@ -111,22 +112,6 @@ ei_widget_t *ei_widget_pick(ei_point_t *where) {
 }
 
 
-typedef struct ei_frame_t {
-	ei_widget_t *widget; // Doit être de type "ei_widget_t" pour polymorphisme
-	ei_size_t *requested_size;
-	const ei_color_t *color;
-	int *border_width;
-	ei_relief_t *relief;
-	char **text;
-	ei_font_t *text_font;
-	ei_color_t *text_color;
-	ei_anchor_t *text_anchor;
-	ei_surface_t *img;
-	ei_rect_t **img_rect;
-	ei_anchor_t *img_anchor;
-} ei_frame_t;
-
-
 void ei_frame_configure(ei_widget_t *widget,
 			ei_size_t *requested_size,
 			const ei_color_t *color,
@@ -140,35 +125,43 @@ void ei_frame_configure(ei_widget_t *widget,
 			ei_rect_t **img_rect,
 			ei_anchor_t *img_anchor) {
 	// Polymorphisme
-	ei_frame_t *button = (ei_frame_t *)widget;
+	ei_frame_t *frame = (ei_frame_t *) widget;
+
+	if (requested_size != NULL) {
+		// TODO: requested_size (read doc of function)
+		// Concerne frame->widget
+	}
+	if (color != NULL) {
+		frame->color = *color;
+	}
+	if (border_width != NULL) {
+		frame->border_width = *border_width;
+	}
+	if (relief != NULL) {
+		frame->relief = *relief;
+	}
+	if (text != NULL) {
+		frame->text = *text;
+	}
+	if (text_font != NULL) {
+		frame->text_font = *text_font;
+	}
+	if (text_color != NULL) {
+		frame->text_color = *text_color;
+	}
+	if (text_anchor != NULL) {
+		frame->text_anchor = *text_anchor;
+	}
+	if (img != NULL) {
+		frame->img = img;
+	}
+	if (img_rect != NULL) {
+		frame->img_rect = *img_rect;
+	}
+	if (img_anchor != NULL) {
+		frame->img_anchor = *img_anchor;
+	}
 }
-
-
-typedef struct ei_button_t {
-	ei_widget_t widget; // Doit être de type "ei_widget_t" pour polymorphisme
-	ei_size_t *requested_size;
-	const ei_color_t *color;
-	int *border_width;
-	int *corner_radius;
-	ei_relief_t *relief;
-	char **text;
-	ei_font_t *text_font;
-	ei_color_t *text_color;
-	ei_anchor_t *text_anchor;
-	ei_surface_t *img;
-	ei_rect_t **img_rect;
-	ei_anchor_t *img_anchor;
-	ei_callback_t *callback;
-	void **user_param;
-
-	// Paramètres hors config
-	ei_rect_t *button_rect;
-	ei_color_t *top_color;
-	ei_color_t *bot_color;
-	ei_color_t *inside_color;
-	float *rayon;
-	ei_anchor_t *button_anchor;
-} ei_button_t;
 
 
 void ei_button_configure(ei_widget_t *widget,
@@ -187,34 +180,51 @@ void ei_button_configure(ei_widget_t *widget,
 			 ei_callback_t *callback,
 			 void **user_param) {
 	// Polymorphisme
-	ei_button_t *button = (ei_button_t *)widget;
+	ei_button_t *button = (ei_button_t *) widget;
 
-	/* TODO: requested_size */
-	if (color == NULL) {
-//                widget->wclass-> = ei_default_background_color;
+	if (requested_size != NULL) {
+		// TODO: requested_size (read doc of function)
+		// Concerne button->widget
 	}
-	if (border_width == NULL) {
-		border_width = k_default_button_border_width;
+	if (color != NULL) {
+		button->color = *color;
 	}
-	if (corner_radius == NULL) {
-		corner_radius = k_default_button_corner_radius;
+	if (border_width != NULL) {
+		button->border_width = *border_width;
 	}
-	if (relief == NULL) {
-		relief = ei_relief_none;
+	if (corner_radius != NULL) {
+		button->corner_radius = *corner_radius;
 	}
-	if (text_font == NULL) {
-		text_font = ei_default_font;
+	if (relief != NULL) {
+		button->relief = *relief;
 	}
-	if (text_color == NULL) {
-//                text_color = ei_font_default_color;
+	if (text != NULL) {
+		button->text = *text;
 	}
-	if (text_anchor == NULL) {
-		text_anchor = ei_anc_center;
+	if (text_font != NULL) {
+		button->text_font = *text_font;
 	}
-	if (img_anchor == NULL) {
-		img_anchor = ei_anc_center;
+	if (text_color != NULL) {
+		button->text_color = *text_color;
 	}
-
+	if (text_anchor != NULL) {
+		button->text_anchor = *text_anchor;
+	}
+	if (img != NULL) {
+		button->img = img;
+	}
+	if (img_rect != NULL) {
+		button->img_rect = *img_rect;
+	}
+	if (img_anchor != NULL) {
+		button->img_anchor = *img_anchor;
+	}
+	if (callback != NULL) {
+		button->callback = *callback;
+	}
+	if (user_param != NULL) {
+		button->user_param = *user_param;
+	}
 }
 
 
@@ -226,5 +236,34 @@ void ei_toplevel_configure(ei_widget_t *widget,
 			   ei_bool_t *closable,
 			   ei_axis_set_t *resizable,
 			   ei_size_t **min_size) {
+	// Polymorphisme
+	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 
+	if (requested_size != NULL) {
+		// TODO: requested_size (read doc of function)
+		// Concerne toplevel->widget
+	}
+	if (color != NULL) {
+		toplevel->color = *color;
+	}
+	if (border_width != NULL) {
+		toplevel->border_width = *border_width;
+	}
+	if (title != NULL) {
+		toplevel->title = *title;
+	}
+	if (closable != NULL) {
+		toplevel->closable = *closable;
+	}
+	if (resizable != NULL) {
+		toplevel->resizable = *resizable;
+	}
+	if (min_size != NULL) {
+		if (*min_size != NULL) {
+			// TODO: vérifier que c'est le comportement "standard"
+			toplevel->min_size = ei_size(160, 120);
+		} else {
+			toplevel->min_size = **min_size;
+		}
+	}
 }
