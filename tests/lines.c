@@ -9,6 +9,7 @@
 #include "ei_types.h"
 #include "ei_event.h"
 #include "ei_button.h"
+#include "ei_free.h"
 
 
 
@@ -131,6 +132,22 @@ void test_dot(ei_surface_t surface, ei_rect_t* clipper)
 	ei_draw_polyline(surface, pts, color, clipper);
 }
 
+void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
+        ei_color_t              color           = {100, 155, 205, 255};
+        ei_linked_point_t       pts[4];
+
+        pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
+        pts[1].point.x = 400; pts[1].point.y = 510; pts[1].next = &(pts[2]);
+        pts[2].point.x = 260; pts[2].point.y = 160; pts[2].next = &(pts[3]);
+        pts[3].point.x = 540; pts[3].point.y = 160; pts[3].next = NULL;
+
+        if (polygon) {
+                ei_draw_polygon(surface, pts, color, clipper);
+        } else {
+                ei_draw_polyline(surface, pts, color, clipper);
+        }
+}
+
 /* test_arc --
  *
  */
@@ -139,9 +156,8 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper)
         ei_color_t		color		= { 255, 0, 0, 255 };
         ei_point_t centre;
         centre.x = 400; centre.y = 300;
-        float rayon = 200; float debut = 0; float fin = 6;
+        float rayon = 200; float debut = 0; float fin = 2*M_PI;
         ei_linked_point_t *pts = arc(centre, rayon, debut, fin);
-	ei_draw_polyline(surface, pts, color, clipper);
         ei_draw_polygon(surface, pts, color, clipper);
 }
 
@@ -150,11 +166,46 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         ei_size_t taille; taille.height = 150; taille.width = 50;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
-        float rayon = 10;
-        ei_linked_point_t *pts = rounded_frame(rect, rayon);
+        float rayon = 25;
+        ei_linked_point_t *pts = rounded_frame(rect, rayon, 1, 0);
         ei_draw_polyline(surface, pts, color, clipper);
-        ei_draw_polygon(surface, pts, color, clipper);
+        free_points(pts);
+        ei_color_t bot_color = {0, 255, 0, 255};
+        pts = rounded_frame(rect, rayon, 0, 1);
+        ei_draw_polygon(surface, pts, bot_color, clipper);
+        free_points(pts);
+        rect.top_left.x += rect.size.width/20;
+        rect.top_left.y += rect.size.height/20;
+        rect.size.width -= rect.size.width*2/20;
+        rect.size.height -= rect.size.width*2/20;
+        pts = rounded_frame(rect, rayon, 1, 1);
+        ei_color_t inside_color = {0,0,255,255};
+        ei_draw_polygon(surface, pts, inside_color, clipper);
+        free_points(pts);
 }
+
+void test_text(ei_surface_t surface, ei_rect_t *clipper){
+        ei_point_t where; where.x = 200; where.y = 200;
+        char *text = "hello";
+        ei_font_t font = ei_default_font;
+        ei_color_t color = {255, 0, 0, 255};
+        ei_draw_text(surface, &where, text, font, color, clipper);
+}
+
+void test_button(ei_surface_t surface, ei_rect_t *clipper){
+        const char *text = "button";
+        ei_font_t font = ei_default_font;
+        ei_color_t text_color = {255, 255, 255, 255};
+        float rayon = 25;
+        ei_color_t inside_color = {100, 100, 100, 255};
+        ei_size_t taille; taille.height = 100; taille.width = 100;
+        ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 200;
+        ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
+        ei_relief_t relief = ei_relief_sunken;
+        draw_button(surface, text, font, text_color, clipper,
+                    rect, inside_color, rayon, relief);
+}
+
 /*
  * ei_main --
  *
