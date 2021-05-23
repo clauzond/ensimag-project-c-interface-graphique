@@ -26,15 +26,18 @@ ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel) {
 }
 
 
-int point_in_clipper(int x, int y, const ei_rect_t *clipper) {
+ei_bool_t point_in_clipper(int x, int y, const ei_rect_t *clipper) {
 	/* TODO: Clipping force brute à remplacer */
 
 	if (clipper == NULL) {
-		return 1;
+		return EI_TRUE;
+		// TODO: clipper inside root window
+		// ei_size_t size = hw_surface_get_size(ei_app_root_surface());
+		// return (0 <= x && x <= size.width && 0 <= y && y <= size.height);
 	} else {
 		int cx = clipper->top_left.x;
 		int cy = clipper->top_left.y;
-		return (cx <= x && x <= (cx + clipper->size.width) && cy <= y && y <= (cy + clipper->size.height));
+		return (ei_bool_t)(cx <= x && x <= (cx + clipper->size.width) && cy <= y && y <= (cy + clipper->size.height));
 	}
 }
 
