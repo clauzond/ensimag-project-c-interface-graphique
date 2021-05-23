@@ -48,7 +48,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 	ei_size_t real_size = hw_surface_get_size(ROOT_WINDOW);
 
 	// Create pick surface
-	ei_surface_t pick_surface = hw_surface_create(ROOT_WINDOW, real_size, EI_FALSE);
+	ei_surface_t pick_surface = hw_surface_create(ROOT_WINDOW, real_size, EI_TRUE);
 	ei_set_pick_surface(pick_surface);
 
 	// Create rectangle list (for ei_app_invalidate_rects)
