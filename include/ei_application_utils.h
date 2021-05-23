@@ -23,6 +23,6 @@ void free_widget_recursively(ei_widget_t *widget);
 
 void free_root_window(ei_surface_t root_window);
 
-ei_rect_t big_union_rect(ei_linked_rect_t **rectangle_list);
+ei_rect_t big_union_rect(ei_linked_rect_t *rectangle_list);
 
 #endif //EI_APPLICATION_UTILS_H
