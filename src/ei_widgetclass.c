@@ -7,7 +7,7 @@
  *
  * @param	widgetclass	The structure describing the class.
  */
-void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass){
+void ei_widgetclass_register(ei_widgetclass_t *widgetclass) {
 
 }
 
@@ -18,6 +18,6 @@ void			ei_widgetclass_register		(ei_widgetclass_t* widgetclass){
  *
  * @return			The structure describing the class.
  */
-ei_widgetclass_t*	ei_widgetclass_from_name	(ei_widgetclass_name_t name) {
+ei_widgetclass_t *ei_widgetclass_from_name(ei_widgetclass_name_t name) {
 
 }
