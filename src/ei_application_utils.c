@@ -93,11 +93,12 @@ void free_root_window(ei_surface_t root_window) {
 	hw_surface_free(PICK_SURFACE);
 }
 
-ei_rect_t big_union_rect(ei_linked_rect_t **rectangle_list) {
-	ei_rect_t big_rect;
-	while (*rectangle_list != NULL) {
-		big_rect = rect_union(big_rect, (*rectangle_list)->rect);
-		*rectangle_list = (*rectangle_list)->next;
+ei_rect_t big_union_rect(ei_linked_rect_t *rectangle_list) {
+	ei_rect_t big_rect = rectangle_list->rect;
+	rectangle_list = rectangle_list->next;
+	while (rectangle_list != NULL) {
+		big_rect = rect_union(big_rect, rectangle_list->rect);
+		rectangle_list = rectangle_list->next;
 	}
 	return big_rect;
 }

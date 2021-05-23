@@ -111,10 +111,11 @@ void ei_app_run() {
 		// Update necessary rectangles
 		if (RECTANGLE_LIST != NULL) {
 			hw_surface_lock(ROOT_WINDOW);
-			big_rect = big_union_rect(&RECTANGLE_LIST);
+			big_rect = big_union_rect(RECTANGLE_LIST);
 			draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, &big_rect);
 			hw_surface_unlock(ROOT_WINDOW);
-			hw_surface_update_rects(ROOT_WINDOW, NULL);
+			hw_surface_update_rects(ROOT_WINDOW, RECTANGLE_LIST);
+			RECTANGLE_LIST = NULL;
 		}
 
 		hw_event_wait_next(&event);
