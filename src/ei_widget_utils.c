@@ -206,19 +206,28 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
 		    y_mouse <= y_max) {
 			if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
-				button->relief = ei_relief_sunken;
+				if (button->relief != ei_relief_sunken) {
+					button->relief = ei_relief_sunken;
+					ei_app_invalidate_rect(&widget->screen_location);
+				}
 				return EI_TRUE;
 			}
 			else if (event->type == ei_ev_mouse_buttonup) {
 				button->callback(widget, event, button->user_param);
+				if (button->relief != ei_relief_raised) {
+					button->relief = ei_relief_raised;
+					ei_app_invalidate_rect(&widget->screen_location);
+				}
 				return EI_TRUE;
 			}
 		}
 		else if (event->type == ei_ev_mouse_move) {
-			button->relief = ei_relief_raised;
+			if (button->relief != ei_relief_raised) {
+				button->relief = ei_relief_raised;
+				ei_app_invalidate_rect(&widget->screen_location);
+			}
 			return EI_TRUE;
 		}
-        }
 	return EI_FALSE;
 }
 
