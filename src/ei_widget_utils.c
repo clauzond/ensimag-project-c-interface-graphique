@@ -194,22 +194,32 @@ void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
+        struct ei_button_t  *button = (ei_button_t *) widget;
         int x_min = widget->screen_location.top_left.x;
         int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
         int y_min = widget->screen_location.top_left.y;
         int y_max = widget->screen_location.top_left.x + widget->screen_location.size.height;
-        if (event->type == ei_ev_mouse_buttondown) {
-                if (event->param.mouse.where.x >= x_min && event->param.mouse.where.x <= x_max
-                && event->param.mouse.where.y >= y_min && event->param.mouse.where.y <= y_max) {
-                        
+        int x_mouse = event->param.mouse.where.x;
+        int y_mouse = event->param.mouse.where.y;
+        if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
+            y_mouse <= y_max) {
+                if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
+                        button->relief = ei_relief_sunken;
+                        return EI_TRUE;
+                }
+                else if (event->type == ei_ev_mouse_buttonup) {
+                        button->callback;
+                        return EI_TRUE;
                 }
         }
-        if (event->type == ei_ev_mouse_buttonup) {
-
+        else if (event->type == ei_ev_mouse_move) {
+                button->relief = ei_relief_raised;
+                return EI_TRUE;
         }
-        if (event->type == ei_ev_mouse_move) {
-
+        else {
+                return EI_FALSE;
         }
+
 }
 
 ei_widgetclass_t ei_init_button_class(void) {
