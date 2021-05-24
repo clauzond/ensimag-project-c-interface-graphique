@@ -113,6 +113,7 @@ int main(int argc, char* argv[])
 	assert((dir_lookup_num(my_dir, "frame")->next == button_class));
 	assert((dir_lookup_num(my_dir, "button")->next == toplevel_class));
 	assert((dir_lookup_num(my_dir, "toplevel")->next == NULL));
+	assert((dir_lookup_num(my_dir, "bloublibla") == NULL));
 
 	free_widget_dir();
 	assert((strcmp(frame_class->name, "frame") != 0));

@@ -31,32 +31,17 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 			      void *user_data,
 			      ei_widget_destructor_t destructor) {
 	ei_widget_t *widget;
-	if (strcmp(class_name, "frame") == 0) {
-		widget = malloc(sizeof(ei_frame_t));
-		ei_frame_t *frame = (ei_frame_t *) widget;
-		*frame = ei_init_default_frame();
-		widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
-								frame->img_rect);
-		widget->wclass = NULL; // TODO
+	ei_widgetclass_t *wclass = ei_widgetclass_from_name(class_name);
 
-	} else if (strcmp(class_name, "button") == 0) {
-		widget = malloc(sizeof(ei_button_t));
-		ei_button_t *button = (ei_button_t *) widget;
-		*button = ei_init_default_button();
-		widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
-								button->img_rect);
-		widget->wclass = NULL; // TODO
-	} else if (strcmp(class_name, "toplevel") == 0) {
-		widget = malloc(sizeof(ei_toplevel_t));
-		ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
-		*toplevel = ei_init_default_toplevel();
-		widget->requested_size = ei_size(320, 240);
-		widget->wclass = NULL; // TODO
+	if (wclass != NULL) {
+		// TODO: vérifier l'initialisation dans allocfunc selon les deux lignes (pour frame, button)
+		// *frame = ei_init_default_frame();
+		// widget->requested_size = ei_widget_natural_size(...)
+		widget = wclass->allocfunc();
+		widget->wclass = wclass;
 	} else {
 		return NULL; // class_name not recognized
 	}
-
-	// TODO: Appel de la fonction d'allocation de widgets de la classe
 
 	// Initialisation des attributs communs à tous les widgets
 	widget->user_data = user_data;
@@ -78,7 +63,6 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 		widget->parent->children_head = widget;
 		widget->parent->children_tail = widget;
 	}
-
 	return widget;
 }
 
@@ -114,6 +98,7 @@ void ei_widget_destroy(ei_widget_t *widget) {
 
 	// Frees memory
 	widget->wclass->releasefunc(widget);
+	free(widget);
 }
 
 
@@ -160,6 +145,8 @@ void ei_frame_configure(ei_widget_t *widget,
 	}
 	if (text != NULL) {
 		frame->text = *text;
+		frame->img = NULL;
+		frame->img_rect = NULL;
 	}
 	if (text_font != NULL) {
 		frame->text_font = *text_font;
@@ -172,6 +159,7 @@ void ei_frame_configure(ei_widget_t *widget,
 	}
 	if (img != NULL) {
 		frame->img = img;
+		frame->text = NULL;
 	}
 	if (img_rect != NULL) {
 		frame->img_rect = *img_rect;
@@ -221,6 +209,8 @@ void ei_button_configure(ei_widget_t *widget,
 	}
 	if (text != NULL) {
 		button->text = *text;
+		button->img = NULL;
+		button->img_rect = NULL;
 	}
 	if (text_font != NULL) {
 		button->text_font = *text_font;
@@ -233,6 +223,7 @@ void ei_button_configure(ei_widget_t *widget,
 	}
 	if (img != NULL) {
 		button->img = img;
+		button->text = NULL;
 	}
 	if (img_rect != NULL) {
 		button->img_rect = *img_rect;

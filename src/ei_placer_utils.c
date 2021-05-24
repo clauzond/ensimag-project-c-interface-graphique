@@ -43,24 +43,17 @@ void init_placer_params(struct ei_widget_t *widget) {
 
 void forget_placer_params(ei_widget_t *widget) {
 	ei_placer_params_t *param = widget->placer_params;
-	param->anchor = NULL;
-	param->anchor_data = ei_anc_none;
-	param->x = NULL;
-	param->x_data = 0;
-	param->y = NULL;
-	param->y_data = 0;
-	param->w = NULL;
-	param->w_data = 0;
-	param->h = NULL;
-	param->h_data = 0;
-	param->rx = NULL;
-	param->rx_data = 0;
-	param->ry = NULL;
-	param->ry_data = 0;
-	param->rw = NULL;
-	param->rw_data = 0;
-	param->rh = NULL;
-	param->rh_data = 0;
+	free(param->anchor);
+	free(param->x);
+	free(param->y);
+	free(param->w);
+	free(param->h);
+	free(param->rx);
+	free(param->ry);
+	free(param->rw);
+	free(param->rh);
+	free(widget->placer_params);
+	widget->placer_params = NULL;
 }
 
 

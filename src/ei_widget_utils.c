@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ei_placer.h"
 #include "ei_event.h"
 #include "ei_utils.h"
 #include "ei_types.h"
@@ -29,6 +30,7 @@ void ei_widget_destroy_child(ei_widget_t *widget) {
 
 	// Frees memory
 	widget->wclass->releasefunc(widget);
+	free(widget);
 }
 
 ei_widget_t *ei_find_widget_by_id(uint32_t id) {
@@ -99,11 +101,20 @@ ei_toplevel_t ei_init_default_toplevel(void) {
 }
 
 ei_widget_t *frame_allocfunc(void) {
-
+	ei_widget_t *widget = malloc(sizeof(ei_frame_t));
+	ei_frame_t *frame = (ei_frame_t *) widget;
+	*frame = ei_init_default_frame();
+	widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font, frame->img_rect);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
+	return widget;
 }
 
 void frame_releasefunc(ei_widget_t *widget) {
+	ei_frame_t *frame = (ei_frame_t *) widget;
 
+	// Free widget fields allocated by library
+	ei_placer_forget(widget);
+	free(widget->content_rect);
 }
 
 void
@@ -137,11 +148,20 @@ ei_widgetclass_t ei_init_frame_class(void) {
 }
 
 ei_widget_t *button_allocfunc(void) {
-
+	ei_widget_t *widget = malloc(sizeof(ei_button_t));
+	ei_button_t *button = (ei_button_t *) widget;
+	*button = ei_init_default_button();
+	widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font, button->img_rect);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
+	return widget;
 }
 
 void button_releasefunc(ei_widget_t *widget) {
+	ei_button_t *button = (ei_button_t *) widget;
 
+	// Free widget fields allocated by library
+	ei_placer_forget(widget);
+	free(widget->content_rect);
 }
 
 void
@@ -175,11 +195,20 @@ ei_widgetclass_t ei_init_button_class(void) {
 }
 
 ei_widget_t *toplevel_allocfunc(void) {
-
+	ei_widget_t *widget = malloc(sizeof(ei_toplevel_t));
+	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+	*toplevel = ei_init_default_toplevel();
+	widget->requested_size = ei_size(320, 240);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
+	return widget;
 }
 
 void toplevel_releasefunc(ei_widget_t *widget) {
+	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 
+	// Free widget fields allocated by library
+	ei_placer_forget(widget);
+	free(widget->content_rect);
 }
 
 void

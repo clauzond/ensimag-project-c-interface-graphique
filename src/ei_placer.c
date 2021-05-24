@@ -51,6 +51,8 @@ void ei_place(struct ei_widget_t *widget,
 	manage_coord_y(widget, y, rel_y);
 	manage_width(widget, width, rel_width);
 	manage_height(widget, height, rel_height);
+	// TODO: update widget screen_location
+	widget->wclass->geomnotifyfunc(widget, widget->screen_location);
 }
 
 
