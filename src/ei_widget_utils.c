@@ -33,6 +33,20 @@ ei_widget_t *ei_find_widget_by_id(uint32_t id) {
 
 }
 
+ei_size_t ei_widget_natural_size(int border_width, char *text, ei_font_t text_font, ei_rect_t *img_rect) {
+	ei_size_t requested_size;
+	if (text != NULL) {
+		hw_text_compute_size(text, text_font, &requested_size.width, &requested_size.height);
+	} else if (img_rect != NULL) {
+		requested_size = img_rect->size;
+	} else {
+		requested_size = ei_size_zero();
+	}
+	requested_size.width += border_width;
+	requested_size.height += border_width;
+	return requested_size;
+}
+
 ei_frame_t ei_init_default_frame() {
 	ei_frame_t frame;
 	// frame.widget is not initialized
@@ -46,6 +60,7 @@ ei_frame_t ei_init_default_frame() {
 	frame.img = NULL;
 	frame.img_rect = NULL;
 	frame.img_anchor = ei_anc_center;
+	frame.requested_bool = EI_FALSE;
 	return frame;
 }
 
@@ -65,6 +80,7 @@ ei_button_t ei_init_default_button() {
 	button.img_anchor = ei_anc_center;
 	button.callback = empty_callback;
 	button.user_param = NULL;
+	button.requested_bool = EI_FALSE;
 }
 
 ei_toplevel_t ei_init_default_toplevel() {

@@ -10,13 +10,14 @@ typedef struct ei_frame_t {
 	ei_color_t color;
 	int border_width;
 	ei_relief_t relief;
-	char **text;
+	char *text;
 	ei_font_t text_font;
 	ei_color_t text_color;
 	ei_anchor_t text_anchor;
 	ei_surface_t *img;
 	ei_rect_t *img_rect;
 	ei_anchor_t img_anchor;
+	ei_bool_t requested_bool;
 } ei_frame_t;
 
 typedef struct ei_button_t {
@@ -34,6 +35,7 @@ typedef struct ei_button_t {
 	ei_anchor_t img_anchor;
 	ei_callback_t callback;
 	void *user_param;
+	ei_bool_t requested_bool;
 
 	// Paramètres hors config
 //	ei_rect_t *button_rect;
@@ -59,6 +61,8 @@ void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_pa
 void ei_widget_destroy_child(ei_widget_t *widget);
 
 ei_widget_t *ei_find_widget_by_id(uint32_t id);
+
+ei_size_t ei_widget_natural_size(int border_width, char *text, ei_font_t text_font, ei_rect_t *img_rect);
 
 ei_frame_t ei_init_default_frame();
 

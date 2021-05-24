@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include "ei_application.h"
 #include "ei_types.h"
@@ -30,31 +31,49 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_destructor_t destructor) {
 	// TODO: Vérification que la classe dont le nom a été passé en paramètre est connue par la bibliothèque
 
+	ei_widget_t *widget;
+	if (class_name == "TODOframe") {
+		widget = malloc(sizeof(ei_frame_t));
+		ei_frame_t *frame = (ei_frame_t *) widget;
+		*frame = ei_init_default_frame();
+		widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
+								frame->img_rect);
+	} else if (class_name == "TODObutton") {
+		widget = malloc(sizeof(ei_button_t));
+		ei_button_t *button = (ei_button_t *) widget;
+		*button = ei_init_default_button();
+		widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
+								button->img_rect);
+	} else if (class_name == "TODOtoplevel") {
+		widget = malloc(sizeof(ei_toplevel_t));
+		ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+		*toplevel = ei_init_default_toplevel();
+		widget->requested_size = ei_size(320, 240);
+	}
+
 	// TODO: Appel de la fonction d'allocation de widgets de la classe
 
 	// Initialisation des attributs communs à tous les widgets
-	ei_widget_t *widget;
 	widget->wclass = class_name;
 	widget->user_data = user_data;
 	widget->destructor = destructor;
 
 	// Widget Hierachy Management
 	widget->parent = parent;
-
-	if (widget->parent->children_head != NULL) {
-		widget->next_sibling = widget->parent->children_head->next_sibling;
-		widget->parent->children_head->next_sibling = widget;
-	} else {
-		widget->parent->children_head = widget;
-		ei_widget_t *ptr = widget->parent;
-		while (ptr != NULL) {
-			ptr->children_tail = widget;
-			ptr = ptr->parent;
-		}
-		widget->next_sibling = NULL;
-	}
+	widget->next_sibling = NULL;
 	widget->children_head = NULL;
 	widget->children_tail = NULL;
+
+	// Add widget as last child of parent
+	if (widget->parent->children_tail != NULL) {
+		assert((widget->parent->children_tail->next_sibling == NULL));
+		widget->parent->children_tail->next_sibling = widget;
+		widget->parent->children_tail = widget;
+	} else {
+		assert((widget->parent->children_head == NULL));
+		widget->parent->children_head = widget;
+		widget->parent->children_tail = widget;
+	}
 
 	// TODO: Appel de la fonction d'initialisation des attributs spécifiques à la classe
 
@@ -108,6 +127,7 @@ ei_widget_t *ei_widget_pick(ei_point_t *where) {
 	ei_surface_t pick_surface = ei_get_pick_surface();
 	hw_surface_set_origin(pick_surface, *where);
 	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(pick_surface);
+	// TODO: compléter ei_find_widget_by_id
 	return ei_find_widget_by_id(*pixel_ptr);
 }
 
@@ -127,10 +147,6 @@ void ei_frame_configure(ei_widget_t *widget,
 	// Polymorphisme
 	ei_frame_t *frame = (ei_frame_t *) widget;
 
-	if (requested_size != NULL) {
-		// TODO: requested_size (read doc of function)
-		// Concerne frame->widget
-	}
 	if (color != NULL) {
 		frame->color = *color;
 	}
@@ -161,6 +177,13 @@ void ei_frame_configure(ei_widget_t *widget,
 	if (img_anchor != NULL) {
 		frame->img_anchor = *img_anchor;
 	}
+	if (requested_size != NULL) { // last to configure
+		widget->requested_size = *requested_size;
+		frame->requested_bool = EI_TRUE;
+	} else if (!frame->requested_bool) {
+		widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
+								frame->img_rect);
+	}
 }
 
 
@@ -182,10 +205,6 @@ void ei_button_configure(ei_widget_t *widget,
 	// Polymorphisme
 	ei_button_t *button = (ei_button_t *) widget;
 
-	if (requested_size != NULL) {
-		// TODO: requested_size (read doc of function)
-		// Concerne button->widget
-	}
 	if (color != NULL) {
 		button->color = *color;
 	}
@@ -225,6 +244,13 @@ void ei_button_configure(ei_widget_t *widget,
 	if (user_param != NULL) {
 		button->user_param = *user_param;
 	}
+	if (requested_size != NULL) { // last to configure
+		widget->requested_size = *requested_size;
+		button->requested_bool = EI_TRUE;
+	} else if (!button->requested_bool) {
+		widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
+								button->img_rect);
+	}
 }
 
 
@@ -240,8 +266,7 @@ void ei_toplevel_configure(ei_widget_t *widget,
 	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 
 	if (requested_size != NULL) {
-		// TODO: requested_size (read doc of function)
-		// Concerne toplevel->widget
+		widget->requested_size = *requested_size;
 	}
 	if (color != NULL) {
 		toplevel->color = *color;
@@ -260,7 +285,6 @@ void ei_toplevel_configure(ei_widget_t *widget,
 	}
 	if (min_size != NULL) {
 		if (*min_size != NULL) {
-			// TODO: vérifier que c'est le comportement "standard"
 			toplevel->min_size = ei_size(160, 120);
 		} else {
 			toplevel->min_size = **min_size;
