@@ -200,7 +200,7 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		int x_min = widget->screen_location.top_left.x;
 		int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_min = widget->screen_location.top_left.y;
-		int y_max = widget->screen_location.top_left.x + widget->screen_location.size.height;
+		int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
 		if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
@@ -275,7 +275,16 @@ void toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
+        if (is_located_event(*event)) {
+                struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+                int x_bar_min = widget->screen_location.top_left.x;
+                int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
+                int y_bar_min = widget->screen_location.top_left.y;
+                int y_bar_max = widget->screen_location.top_left.y + toplevel->border_width
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
 
+        }
 }
 
 ei_widgetclass_t ei_init_toplevel_class(void) {

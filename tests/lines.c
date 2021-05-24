@@ -203,7 +203,7 @@ void test_button(ei_surface_t surface, ei_rect_t *clipper){
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
         ei_relief_t relief = ei_relief_sunken;
         draw_button(surface, text, font, text_color, clipper,
-                    rect, inside_color, rayon, relief);
+                    rect, inside_color, rayon, relief, EI_FALSE);
 }
 
 /*
