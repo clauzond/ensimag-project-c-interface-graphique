@@ -110,6 +110,10 @@ int main(int argc, char* argv[])
 	ei_widgetclass_register(toplevel_class);
 	assert((dir_lookup_num(my_dir, "toplevel") == toplevel_class));
 
+	assert((dir_lookup_num(my_dir, "frame")->next == dir_lookup_num(my_dir, "button")));
+	assert((dir_lookup_num(my_dir, "button")->next == dir_lookup_num(my_dir, "toplevel")));
+	assert((dir_lookup_num(my_dir, "toplevel")->next == NULL));
+
 
         // Terminate program with no error code.
         return 0;

@@ -132,7 +132,7 @@ ei_widgetclass_t ei_init_frame_class(void) {
 	wclass.setdefaultsfunc = &frame_setdefaultsfunc;
 	wclass.geomnotifyfunc = &frame_geomnotifyfunc;
 	wclass.handlefunc = &frame_handlefunc;
-	// wclass.next needs to be initialized
+	wclass.next = NULL;
 	return wclass;
 }
 
@@ -170,7 +170,7 @@ ei_widgetclass_t ei_init_button_class(void) {
 	wclass.setdefaultsfunc = &button_setdefaultsfunc;
 	wclass.geomnotifyfunc = &button_geomnotifyfunc;
 	wclass.handlefunc = &button_handlefunc;
-	// wclass.next needs to be initialized
+	wclass.next = NULL;
 	return wclass;
 }
 
@@ -208,6 +208,6 @@ ei_widgetclass_t ei_init_toplevel_class(void) {
 	wclass.setdefaultsfunc = &toplevel_setdefaultsfunc;
 	wclass.geomnotifyfunc = &toplevel_geomnotifyfunc;
 	wclass.handlefunc = &toplevel_handlefunc;
-	// wclass.next needs to be initialized
+	wclass.next = NULL;
 	return wclass;
 }

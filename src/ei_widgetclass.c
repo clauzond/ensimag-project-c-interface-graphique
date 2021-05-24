@@ -6,6 +6,7 @@
 #include "ei_widgetclass_utils.h"
 #include "directory.h"
 
+ei_widgetclass_t *previous_class = NULL;
 
 /**
  * @brief	Registers a class to the program so that widgets of this class can be created.
@@ -14,6 +15,12 @@
  * @param	widgetclass	The structure describing the class.
  */
 void ei_widgetclass_register(ei_widgetclass_t *widgetclass) {
+	if (previous_class != NULL) {
+		previous_class->next = widgetclass;
+		previous_class = widgetclass;
+	} else {
+		previous_class = widgetclass;
+	}
 	struct dir* widget_dir = get_widget_dir();
 	dir_insert(widget_dir, ei_widgetclass_stringname(widgetclass->name), widgetclass);
 }
