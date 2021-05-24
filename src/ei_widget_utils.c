@@ -8,6 +8,7 @@
 #include "ei_widget.h"
 
 #include "ei_widget_utils.h"
+#include "ei_button.h"
 
 void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_param) {
 	return;
@@ -166,7 +167,6 @@ void button_releasefunc(ei_widget_t *widget) {
 
 void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
