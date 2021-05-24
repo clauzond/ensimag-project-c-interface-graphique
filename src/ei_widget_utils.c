@@ -6,9 +6,9 @@
 #include "ei_utils.h"
 #include "ei_types.h"
 #include "ei_widget.h"
+#include "ei_button.h"
 
 #include "ei_widget_utils.h"
-#include "ei_button.h"
 
 void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_param) {
 	return;
@@ -167,6 +167,9 @@ void button_releasefunc(ei_widget_t *widget) {
 
 void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
+        struct ei_button_t  *button = (ei_button_t *) widget;
+        draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->button_rect, button->color, *button->rayon, button->relief);
+        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->button_rect, *widget->pick_color, *button->rayon, ei_relief_none);
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
@@ -178,7 +181,15 @@ void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
+        if (event->type == ei_ev_mouse_buttondown) {
 
+        }
+        if (event->type == ei_ev_mouse_buttonup) {
+
+        }
+        if (event->type == ei_ev_mouse_move) {
+
+        }
 }
 
 ei_widgetclass_t ei_init_button_class(void) {

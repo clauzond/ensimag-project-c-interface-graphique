@@ -120,10 +120,15 @@ void draw_button(ei_surface_t surface,
                  ei_rect_t rect,
                  ei_color_t button_color,
                  float rayon,
-                 ei_relief_t relief) {
+                 ei_relief_t relief,
+                 ei_bool_t pick) {
         ei_color_t top_color;
         ei_color_t bot_color;
-        if(relief == ei_relief_sunken) {
+        if (pick == EI_TRUE) {
+                top_color = button_color;
+                bot_color = button_color;
+        }
+        else if(relief == ei_relief_sunken) {
                 top_color.red = button_color.red * 0.9; top_color.green = button_color.green * 0.9;
                 top_color.blue = button_color.blue * 0.9, top_color.alpha = button_color.alpha;
                 bot_color.red = button_color.red * 1.1; bot_color.green = button_color.green * 1.1;

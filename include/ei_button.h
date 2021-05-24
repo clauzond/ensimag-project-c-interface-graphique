@@ -49,6 +49,7 @@ ei_linked_point_t          *rounded_frame                 (ei_rect_t rect,
  * @param       button_color    The color of the part inside the button.
  * @param       rayon           The ray of the corners of the button.
  * @param       relief          Relief of the button.
+ * @param       pick            Boolean to know if the surface is a pick surface.
  * @return			nothing
  */
 void            draw_button              (ei_surface_t surface,
@@ -59,6 +60,7 @@ void            draw_button              (ei_surface_t surface,
                                          ei_rect_t rect,
                                          ei_color_t button_color,
                                          float rayon,
-                                         ei_relief_t relief);
+                                         ei_relief_t relief,
+                                         ei_bool_t pick);
 
 #endif //PROJETC_IG_EI_BUTTON_H
