@@ -3,7 +3,9 @@
 
 #include "ei_event.h"
 #include "ei_widget.h"
+#include "ei_widget_utils.h"
 #include "ei_widgetclass.h"
+#include "ei_widgetclass_utils.h"
 #include "hw_interface.h"
 #include "ei_application.h"
 
@@ -38,10 +40,18 @@ ei_linked_rect_t *RECTANGLE_LIST;
 void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 	hw_init();
 
-	// TODO: initialisation de toutes les classes widgets (un par un) avec ei_widgetclass_register
-	// ei_widgetclass_t frameclass;
-	// frameclass.name = "frame";
-	// ei_widgetclass_register(&frameclass);
+	// Register all classes of widget
+	ei_widgetclass_t *frame_class = malloc(sizeof(ei_widgetclass_t));
+	ei_widgetclass_t *button_class = malloc(sizeof(ei_widgetclass_t));
+	ei_widgetclass_t *toplevel_class = malloc(sizeof(ei_widgetclass_t));
+
+	*frame_class = ei_init_frame_class();
+	*button_class = ei_init_button_class();
+	*toplevel_class = ei_init_toplevel_class();
+
+	ei_widgetclass_register(frame_class);
+	ei_widgetclass_register(button_class);
+	ei_widgetclass_register(toplevel_class);
 
 	// Create root window
 	ROOT_WINDOW = hw_create_window(main_window_size, fullscreen);
@@ -61,6 +71,9 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 *		(ie. calls \ref hw_quit).
 */
 void ei_app_free(void) {
+	// Free widget classes
+	free_widget_dir();
+
 	// Free every widget
 	free_widget_recursively(ROOT_FRAME);
 
