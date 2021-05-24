@@ -92,6 +92,7 @@ void ei_app_run() {
 	ei_event_t event;
 	ei_widget_t *active_widget = NULL;
 	ei_bool_t event_handled;
+	ei_bool_t set_inactive = EI_FALSE;
 	ei_rect_t big_rect;
 
 	// Dessiner tout une première fois
@@ -108,7 +109,7 @@ void ei_app_run() {
 			if (event.type == ei_ev_mouse_buttondown) { // Set active
 				ei_event_set_active_widget(ei_widget_pick(&event.param.mouse.where));
 			} else if (event.type == ei_ev_mouse_buttonup) { // Unset active
-				ei_event_set_active_widget(NULL);
+				set_inactive = EI_TRUE;
 			}
 		}
 		active_widget = ei_event_get_active_widget();
@@ -129,6 +130,11 @@ void ei_app_run() {
 			hw_surface_unlock(ROOT_WINDOW);
 			hw_surface_update_rects(ROOT_WINDOW, RECTANGLE_LIST);
 			RECTANGLE_LIST = NULL;
+		}
+
+		// Set inactive
+		if (set_inactive) {
+			ei_event_set_active_widget(NULL);
 		}
 
 		hw_event_wait_next(&event);

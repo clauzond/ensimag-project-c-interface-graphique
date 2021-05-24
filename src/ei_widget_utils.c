@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ei_application.h"
 #include "ei_placer.h"
 #include "ei_event.h"
 #include "ei_utils.h"
@@ -35,7 +36,17 @@ void ei_widget_destroy_child(ei_widget_t *widget) {
 }
 
 ei_widget_t *ei_find_widget_by_id(uint32_t id) {
+	// Solution qui aurait été meilleure avec + de temps :
+	// dictionnaire de widget classé avec l'id (au lieu du nom)
+	// Recherche exhaustive
+	return search_widget(ei_app_root_widget(), id);
+}
 
+ei_bool_t search_widget(ei_widget_t *widget, uint32_t id) {
+	if (widget == NULL) {
+		return EI_FALSE;
+	}
+	return (widget->pick_id == id || search_widget(widget->next_sibling, id) || search_widget(widget->children_head, id));
 }
 
 ei_size_t ei_widget_natural_size(int border_width, char *text, ei_font_t text_font, ei_rect_t *img_rect) {
@@ -167,6 +178,8 @@ void button_releasefunc(ei_widget_t *widget) {
 
 void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
+	// TODO: ne pas utiliser "button->rayon" mais plutôt un des paramètres configurables par "ei_button_configure"
+	// TODO: possibilité d'utiliser une image (peu important)
         struct ei_button_t  *button = (ei_button_t *) widget;
         draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->button_rect, button->color, *button->rayon, button->relief);
         draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->button_rect, *widget->pick_color, *button->rayon, ei_relief_none);
