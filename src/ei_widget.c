@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "ei_application.h"
@@ -29,32 +30,35 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 			      ei_widget_t *parent,
 			      void *user_data,
 			      ei_widget_destructor_t destructor) {
-	// TODO: Vérification que la classe dont le nom a été passé en paramètre est connue par la bibliothèque
-
 	ei_widget_t *widget;
-	if (class_name == "TODOframe") {
+	if (strcmp(class_name, "frame") == 0) {
 		widget = malloc(sizeof(ei_frame_t));
 		ei_frame_t *frame = (ei_frame_t *) widget;
 		*frame = ei_init_default_frame();
 		widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
 								frame->img_rect);
-	} else if (class_name == "TODObutton") {
+		widget->wclass = NULL; // TODO
+
+	} else if (strcmp(class_name, "button") == 0) {
 		widget = malloc(sizeof(ei_button_t));
 		ei_button_t *button = (ei_button_t *) widget;
 		*button = ei_init_default_button();
 		widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
 								button->img_rect);
-	} else if (class_name == "TODOtoplevel") {
+		widget->wclass = NULL; // TODO
+	} else if (strcmp(class_name, "toplevel") == 0) {
 		widget = malloc(sizeof(ei_toplevel_t));
 		ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 		*toplevel = ei_init_default_toplevel();
 		widget->requested_size = ei_size(320, 240);
+		widget->wclass = NULL; // TODO
+	} else {
+		return NULL; // class_name not recognized
 	}
 
 	// TODO: Appel de la fonction d'allocation de widgets de la classe
 
 	// Initialisation des attributs communs à tous les widgets
-	widget->wclass = class_name;
 	widget->user_data = user_data;
 	widget->destructor = destructor;
 
@@ -74,8 +78,6 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 		widget->parent->children_head = widget;
 		widget->parent->children_tail = widget;
 	}
-
-	// TODO: Appel de la fonction d'initialisation des attributs spécifiques à la classe
 
 	return widget;
 }
