@@ -169,7 +169,7 @@ void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
         struct ei_button_t  *button = (ei_button_t *) widget;
         draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->button_rect, button->color, *button->rayon, button->relief);
-        draw_button(surface, NULL, button->text, button->text_color, clipper, *button->button_rect, *widget->pick_color, *button->rayon, ei_relief_none);
+        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->button_rect, *widget->pick_color, *button->rayon, ei_relief_none);
 
 }
 
