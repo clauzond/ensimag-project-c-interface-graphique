@@ -1,3 +1,14 @@
+## Mercredi jusqu'à 18h30 :
+  - Faire du debug
+  - Être capable de montrer visuellement toute notre avancée
+  - Cleanup le code (formatting, enlever import inutile, enlever TODO...)
+  - Pendant cleanup / debug / autre, notez ce qui est important pour la présentation orale (Quelles fonctionnalitées manque-t-il ? Quelles améliorations à faire ?)
+
+## Mercredi 19h00 : upload TEIDE
+
+## Jeudi matin : préparer la présentation
+## Jeudi aprèm ou Vendredi : présentation
+
 ## Étapes de progression
 - [x] A.1 (Damien)
 - [x] A.2 (Baptiste)  
