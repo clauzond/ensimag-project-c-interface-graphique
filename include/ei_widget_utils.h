@@ -38,12 +38,12 @@ typedef struct ei_button_t {
 	ei_bool_t requested_bool;
 
 	// Paramètres hors config
-//	ei_rect_t *button_rect;
-//	ei_color_t *top_color;
-//	ei_color_t *bot_color;
-//	ei_color_t *inside_color;
-//	float *rayon;
-//	ei_anchor_t *button_anchor;
+	ei_rect_t *button_rect;
+	ei_color_t *top_color;
+	ei_color_t *bot_color;
+	ei_color_t *inside_color;
+	float *rayon;
+	ei_anchor_t *button_anchor;
 } ei_button_t;
 
 typedef struct ei_toplevel_t {
