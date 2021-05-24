@@ -115,4 +115,17 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, struct ei_event_t *event);
 
 ei_widgetclass_t ei_init_toplevel_class(void);
 
+ei_linked_point_t rect_frame(ei_rect_t rect, ei_bool_t top_part,
+                             ei_bool_t bot_part);
+
+void draw_frame(ei_surface_t surface,
+                 const char *text,
+                 ei_font_t font,
+                 ei_color_t text_color,
+                 const ei_rect_t *clipper,
+                 ei_rect_t rect,
+                 ei_color_t frame_color,
+                 ei_relief_t relief,
+                 ei_bool_t pick);
+
 #endif //EI_WIDGET_UTILS_H
