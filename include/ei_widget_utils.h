@@ -70,4 +70,49 @@ ei_button_t ei_init_default_button();
 
 ei_toplevel_t ei_init_default_toplevel();
 
+ei_widgetclass_allocfunc_t frame_allocfunc(void);
+
+ei_widgetclass_releasefunc_t frame_releasefunc(ei_widget_t *widget);
+
+ei_widgetclass_drawfunc_t
+frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper);
+
+ei_widgetclass_setdefaultsfunc_t frame_setdefaultsfunc(ei_widget_t *widget);
+
+ei_widgetclass_geomnotifyfunc_t frame_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect);
+
+ei_widgetclass_handlefunc_t frame_handlefunc(ei_widget_t *widget, ei_event_t *event);
+
+ei_widgetclass_t ei_init_frame_class();
+
+ei_widgetclass_allocfunc_t button_allocfunc(void);
+
+ei_widgetclass_releasefunc_t button_releasefunc(ei_widget_t *widget);
+
+ei_widgetclass_drawfunc_t
+button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper);
+
+ei_widgetclass_setdefaultsfunc_t button_setdefaultsfunc(ei_widget_t *widget);
+
+ei_widgetclass_geomnotifyfunc_t button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect);
+
+ei_widgetclass_handlefunc_t button_handlefunc(ei_widget_t *widget, ei_event_t *event);
+
+ei_widgetclass_t ei_init_button_class();
+
+ei_widgetclass_allocfunc_t toplevel_allocfunc(void);
+
+ei_widgetclass_releasefunc_t toplevel_releasefunc(ei_widget_t *widget);
+
+ei_widgetclass_drawfunc_t
+toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper);
+
+ei_widgetclass_setdefaultsfunc_t toplevel_setdefaultsfunc(ei_widget_t *widget);
+
+ei_widgetclass_geomnotifyfunc_t toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect);
+
+ei_widgetclass_handlefunc_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event);
+
+ei_widgetclass_t ei_init_toplevel_class();
+
 #endif //EI_WIDGET_UTILS_H
