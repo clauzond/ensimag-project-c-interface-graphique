@@ -6,7 +6,12 @@
 #include "ei_widgetclass_utils.h"
 #include "directory.h"
 
+
+/** Global variables **/
+/**                  **/
 ei_widgetclass_t *previous_class = NULL;
+/**                  **/
+/** ---------------- **/
 
 /**
  * @brief	Registers a class to the program so that widgets of this class can be created.
@@ -19,6 +24,7 @@ void ei_widgetclass_register(ei_widgetclass_t *widgetclass) {
 		previous_class->next = widgetclass;
 		previous_class = widgetclass;
 	} else {
+		set_first_widgetclass(widgetclass);
 		previous_class = widgetclass;
 	}
 	struct dir* widget_dir = get_widget_dir();

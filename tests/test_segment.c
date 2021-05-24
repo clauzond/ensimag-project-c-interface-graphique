@@ -110,9 +110,14 @@ int main(int argc, char* argv[])
 	ei_widgetclass_register(toplevel_class);
 	assert((dir_lookup_num(my_dir, "toplevel") == toplevel_class));
 
-	assert((dir_lookup_num(my_dir, "frame")->next == dir_lookup_num(my_dir, "button")));
-	assert((dir_lookup_num(my_dir, "button")->next == dir_lookup_num(my_dir, "toplevel")));
+	assert((dir_lookup_num(my_dir, "frame")->next == button_class));
+	assert((dir_lookup_num(my_dir, "button")->next == toplevel_class));
 	assert((dir_lookup_num(my_dir, "toplevel")->next == NULL));
+
+	free_widget_dir();
+	assert((strcmp(frame_class->name, "frame") != 0));
+	assert((strcmp(button_class->name, "button") != 0));
+	assert((strcmp(toplevel_class->name, "toplevel") != 0));
 
 
         // Terminate program with no error code.
