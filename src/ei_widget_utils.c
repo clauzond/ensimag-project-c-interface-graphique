@@ -507,7 +507,7 @@ void draw_frame(ei_surface_t surface,
 	ei_color_t bot_color;
 	if (pick) {
 		ei_linked_point_t *pts = malloc(sizeof(ei_linked_point_t));
-		pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
 		ei_point_t where;
@@ -531,17 +531,17 @@ void draw_frame(ei_surface_t surface,
 			bot_color.green = frame_color.green * 0.9;
 			bot_color.blue = frame_color.blue * 0.9, bot_color.alpha = frame_color.alpha;
 		}
-		ei_linked_point_t *pts = rect_frame(rect, EI_TRUE, EI_FALSE);
+		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, top_color, clipper);
 		free_points(pts);
-		pts = rect_frame(rect, EI_FALSE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, bot_color, clipper);
 		free_points(pts);
 		rect.top_left.x += rect.size.width / 20;
 		rect.top_left.y += rect.size.height / 20;
 		rect.size.width -= rect.size.width * 2 / 20;
 		rect.size.height -= rect.size.width * 2 / 20;
-		pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
 		ei_point_t where;
