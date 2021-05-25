@@ -132,6 +132,10 @@ void frame_releasefunc(ei_widget_t *widget) {
 
 void
 frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
+        struct ei_frame_t  *frame = (ei_frame_t *) widget;
+        ei_rect_t rect = hw_surface_get_rect(surface);
+        draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, rect, frame->color, frame->relief, EI_FALSE);
+        draw_frame(pick_surface, NULL, frame->text, frame->text_color, clipper, rect, *widget->pick_color, ei_relief_none, EI_TRUE);
 
 }
 
@@ -144,7 +148,24 @@ void frame_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t frame_handlefunc(ei_widget_t *widget, ei_event_t *event) {
-
+        if (is_located_event(*event)) {
+                int x_min = widget->screen_location.top_left.x;
+                int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
+                int y_min = widget->screen_location.top_left.y;
+                int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
+                if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
+                    y_mouse <= y_max) {
+                        return EI_TRUE;
+                }
+                else {
+                        return EI_FALSE;
+                }
+        }
+        else {
+                return EI_FALSE;
+        }
 }
 
 ei_widgetclass_t ei_init_frame_class(void) {
@@ -298,4 +319,152 @@ ei_widgetclass_t ei_init_toplevel_class(void) {
 	wclass.handlefunc = &toplevel_handlefunc;
 	wclass.next = NULL;
 	return wclass;
+}
+
+
+
+ei_linked_point_t rect_frame(ei_rect_t rect, ei_bool_t top_part,
+                             ei_bool_t bot_part) {
+        ei_linked_point_t *premier = NULL;
+        ei_linked_point_t *deux = NULL;
+        ei_linked_point_t *trois = NULL;
+        ei_linked_point_t *quatre = NULL;
+        ei_linked_point_t *cinq = NULL;
+        ei_point_t point = rect.topleft;
+
+        int h;
+        if (rect.size.width >= rect.size.height){
+                h = rect.size.height/2;
+        } else {
+                h = rect.size.width/2;
+        }
+
+        if (top_part == 1 && bot_part == 1){
+
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x + rect.size.width;
+                deux->point = point;
+                deux->next = trois;
+
+                point.y = point.y + rect.size.height;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.topleft.x;
+                quatre->point = point;
+                quatre->next = NULL;
+                return premier;
+
+        } else if (top_part == 1) {
+
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x + rect.size.width;
+                deux->point = point;
+                deux->next = trois;
+
+                point.x = point.x - h;
+                point.y = point.y + h;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.top_left.x + h;
+                point.y = rect.top_left.y + h;
+                quatre->point = point;
+                quatre->next = cinq;
+
+                point.x = rect.top_left.x;
+                point.y = rect.top_left.y + rect.size.height;
+                cinq->point = point;
+                cinq->next = NULL;
+                return premier;
+
+
+        } else if (bot_part == 1) {
+
+                point.x = point.x + rect.size.width;
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x - h;
+                point.y = point.y + h;
+                deux->point = point;
+                deux->next = trois;
+
+                point.x = rect.top_left.x + h;
+                point.y = rect.top_left.y + h;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.top_left.x;
+                point.y = rect.top_left.y + rect.size.height;
+                quatre->point = point;
+                quatre->next = cinq;
+
+                point.x = rect.top_left.x + rect.size.width;
+                cinq->point = point;
+                cinq->next = NULL;
+                return premier;
+
+        } else {
+                return NULL;
+        }
+}
+
+void draw_frame(ei_surface_t surface,
+                const char *text,
+                ei_font_t font,
+                ei_color_t text_color,
+                const ei_rect_t *clipper,
+                ei_rect_t rect,
+                ei_color_t frame_color,
+                ei_relief_t relief,
+                ei_bool_t pick) {
+        ei_color_t top_color;
+        ei_color_t bot_color;
+        if (pick == EI_TRUE) {
+                ei_linked_point_t *pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+                ei_draw_polygon(surface, pts, frame_color, clipper);
+                free_points(pts);
+                ei_point_t where;
+                where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
+                where.y = rect.top_left.y + rect.size.height * 3 / 10;
+                ei_draw_text(surface, &where, text, font, text_color, clipper);
+        } else {
+                if (relief == ei_relief_sunken) {
+                        top_color.red = frame_color.red * 0.9;
+                        top_color.green = frame_color.green * 0.9;
+                        top_color.blue = frame_color.blue * 0.9, top_color.alpha = frame_color.alpha;
+                        bot_color.red = frame_color.red * 1.1;
+                        bot_color.green = frame_color.green * 1.1;
+                        bot_color.blue = frame_color.blue * 1.1, bot_color.alpha = frame_color.alpha;
+                } else {
+                        top_color.red = frame_color.red * 1.1;
+                        top_color.green = frame_color.green * 1.1;
+                        top_color.blue = frame_color.blue * 1.1, top_color.alpha = frame_color.alpha;
+                        bot_color.red = frame_color.red * 0.9;
+                        bot_color.green = frame_color.green * 0.9;
+                        bot_color.blue = frame_color.blue * 0.9, bot_color.alpha = frame_color.alpha;
+                }
+                ei_linked_point_t *pts = rect_frame(rect, EI_TRUE, EI_FALSE);
+                ei_draw_polygon(surface, pts, top_color, clipper);
+                free_points(pts);
+                pts = rect_frame(rect, EI_FALSE, EI_TRUE);
+                ei_draw_polygon(surface, pts, bot_color, clipper);
+                free_points(pts);
+                rect.top_left.x += rect.size.width / 20;
+                rect.top_left.y += rect.size.height / 20;
+                rect.size.width -= rect.size.width * 2 / 20;
+                rect.size.height -= rect.size.width * 2 / 20;
+                pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+                ei_draw_polygon(surface, pts, frame_color, clipper);
+                free_points(pts);
+                ei_point_t where;
+                where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
+                where.y = rect.top_left.y + rect.size.height * 3 / 10;
+                ei_draw_text(surface, &where, text, font, text_color, clipper);
+        }
 }
