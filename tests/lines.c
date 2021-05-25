@@ -211,7 +211,7 @@ void test_toplevel (ei_surface_t surface, ei_rect_t *clipper) {
         ei_font_t font = ei_default_font;
         ei_color_t text_color = {255, 255, 255, 255};
         ei_color_t inside_color = {100, 100, 100, 255};
-        ei_size_t taille; taille.height = 100; taille.width = 100;
+        ei_size_t taille; taille.height = 200; taille.width = 500;
         ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 200;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
         draw_toplevel(surface, text, font, text_color, clipper,

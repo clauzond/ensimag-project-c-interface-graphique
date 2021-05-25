@@ -376,21 +376,23 @@ void draw_toplevel (ei_surface_t surface,
                 free_points(pts);
         }
         else {
+                ei_size_t size;
+                hw_text_compute_size(text, font, &(size.width), &(size.height));
                 ei_rect_t bot_right_corner;
-                bot_right_corner.top_left.x = rect.top_left.x + 0.9 * rect.size.width;
-                bot_right_corner.top_left.y = rect.top_left.y + 0.9 * rect.size.height;
-                bot_right_corner.size.width = 0.1 * rect.size.width;
-                bot_right_corner.size.height = 0.1 * rect.size.height;
+                bot_right_corner.size.width = 0.2 * rect.size.height;
+                bot_right_corner.size.height = 0.2 * rect.size.height;
+                bot_right_corner.top_left.x = rect.top_left.x + rect.size.width - bot_right_corner.size.width;
+                bot_right_corner.top_left.y = rect.top_left.y + rect.size.height - bot_right_corner.size.height;
                 ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
                 ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
                                           toplevel_color.blue * 0.5, toplevel_color.alpha};
                 ei_draw_polygon(surface, pts, frame_color, clipper);
                 free_points(pts);
-                ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + border_width;
+                ei_point_t where; where.x = rect.top_left.x + rect.size.width * 0.05; where.y = rect.top_left.y + border_width;
                 rect.top_left.x += border_width;
-                rect.top_left.y += rect.size.height/10;
+                rect.top_left.y += border_width + size.height;
                 rect.size.width -= 2 * border_width;
-                rect.size.height -= rect.size.height * 1/20 + border_width;
+                rect.size.height = rect.size.height - size.height - 2 * border_width;
                 pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
                 ei_draw_polygon(surface, pts, toplevel_color, clipper);
                 free_points(pts);
