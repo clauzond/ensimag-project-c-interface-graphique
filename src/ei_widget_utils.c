@@ -310,10 +310,13 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		int x_bar_min = widget->screen_location.top_left.x;
 		int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_bar_min = widget->screen_location.top_left.y;
-		int y_bar_max = widget->screen_location.top_left.y + toplevel->border_width;
+		int y_bar_max = widget->screen_location.top_left.y + widget->screen_location.size.height / 10;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
+                if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
+                y_mouse <= y_bar_max) {
 
+                }
 	}
 }
 
@@ -345,9 +348,17 @@ void draw_toplevel (ei_surface_t surface,
                 free_points(pts);
         }
         else {
+                ei_rect_t bot_right_corner;
+                bot_right_corner.top_left.x = rect.top_left.x + 0.95 * rect.size.width;
+                bot_right_corner.top_left.y = rect.top_left.y + 0.95 * rect.size.height;
+                bot_right_corner.size.width = 0.95 * rect.size.width;
+                bot_right_corner.size.height = 0.95 * rect.size.height;
                 ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
                 ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
                                           toplevel_color.blue * 0.5, toplevel_color.alpha};
+                ei_draw_polygon(surface, pts, frame_color, clipper);
+                free_points(pts);
+                pts = rounded_frame(bot_right_corner, 0, EI_TRUE, EI_TRUE);
                 ei_draw_polygon(surface, pts, frame_color, clipper);
                 free_points(pts);
                 ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + border_width;
