@@ -128,8 +128,6 @@ void draw_button(ei_surface_t surface,
                 ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_TRUE);
                 ei_draw_polygon(surface, pts, button_color, clipper);
                 free_points(pts);
-                ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + rect.size.height*3/10;
-                ei_draw_text(surface, &where, text, font, text_color, clipper);
         }
         else {
                 if(relief == ei_relief_sunken) {
@@ -153,7 +151,7 @@ void draw_button(ei_surface_t surface,
                 rect.top_left.x += rect.size.width/20;
                 rect.top_left.y += rect.size.height/20;
                 rect.size.width -= rect.size.width*2/20;
-                rect.size.height -= rect.size.width*2/20;
+                rect.size.height -= rect.size.height * 2/20;
                 pts = rounded_frame(rect, rayon, EI_TRUE, EI_TRUE);
                 ei_draw_polygon(surface, pts, button_color, clipper);
                 free_points(pts);
