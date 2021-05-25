@@ -131,6 +131,7 @@ void ei_app_run() {
 			if (is_located_event(event)) {
 				printf("x: %u, y: %u\n", event.param.mouse.where.x, event.param.mouse.where.y);
 			}
+			printf("\n");
 			event_handled = active_widget->wclass->handlefunc(active_widget, &event);
 		}
 		if (!event_handled && !is_located_event(event)) {
