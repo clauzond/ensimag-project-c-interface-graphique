@@ -118,6 +118,10 @@ void ei_app_run() {
 		}
 		active_widget = ei_event_get_active_widget();
 		if (active_widget != NULL) {
+			printf("Active widget: %s\n", active_widget->wclass->name);
+			if (is_located_event(event)) {
+				printf("x: %u, y: %u\n", event.param.mouse.where.x, event.param.mouse.where.y);
+			}
 			event_handled = active_widget->wclass->handlefunc(active_widget, &event);
 		}
 		if (!event_handled && !is_located_event(event)) {
