@@ -404,98 +404,6 @@ void draw_toplevel (ei_surface_t surface,
 
 }
 
-ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
-                             ei_bool_t bot_part) {
-        ei_linked_point_t *premier = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *deux = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *trois = malloc(sizeof(ei_linked_point_t));
-        ei_linked_point_t *quatre = malloc(sizeof(ei_linked_point_t));
-        ei_point_t point = rect.top_left;
-
-        int h;
-        if (rect.size.width >= rect.size.height){
-                h = rect.size.height/2;
-        } else {
-                h = rect.size.width/2;
-        }
-
-        if (top_part == 1 && bot_part == 1){
-
-                premier->point = point;
-                premier->next = deux;
-
-                point.x = point.x + rect.size.width;
-                deux->point = point;
-                deux->next = trois;
-
-                point.y = point.y + rect.size.height;
-                trois->point = point;
-                trois->next = quatre;
-
-                point.x = rect.top_left.x;
-                quatre->point = point;
-                quatre->next = NULL;
-                return premier;
-
-        } else if (top_part == 1) {
-		ei_linked_point_t *cinq	= malloc(sizeof(ei_linked_point_t));
-
-                premier->point = point;
-                premier->next = deux;
-
-                point.x = point.x + rect.size.width;
-                deux->point = point;
-                deux->next = trois;
-
-                point.x = point.x - h;
-                point.y = point.y + h;
-                trois->point = point;
-                trois->next = quatre;
-
-                point.x = rect.top_left.x + h;
-                point.y = rect.top_left.y + h;
-                quatre->point = point;
-                quatre->next = cinq;
-
-                point.x = rect.top_left.x;
-                point.y = rect.top_left.y + rect.size.height;
-                cinq->point = point;
-                cinq->next = NULL;
-                return premier;
-
-
-        } else if (bot_part == 1) {
-		ei_linked_point_t *cinq	= malloc(sizeof(ei_linked_point_t));
-
-		point.x = point.x + rect.size.width;
-                premier->point = point;
-                premier->next = deux;
-
-                point.x = point.x - h;
-                point.y = point.y + h;
-                deux->point = point;
-                deux->next = trois;
-
-                point.x = rect.top_left.x + h;
-                point.y = rect.top_left.y + h;
-                trois->point = point;
-                trois->next = quatre;
-
-                point.x = rect.top_left.x;
-                point.y = rect.top_left.y + rect.size.height;
-                quatre->point = point;
-                quatre->next = cinq;
-
-                point.x = rect.top_left.x + rect.size.width;
-                cinq->point = point;
-                cinq->next = NULL;
-                return premier;
-	}
-        else {
-                return NULL;
-        }
-}
-
 void draw_frame(ei_surface_t surface,
 		const char *text,
 		ei_font_t font,
@@ -509,7 +417,7 @@ void draw_frame(ei_surface_t surface,
 	ei_color_t bot_color;
 	if (pick) {
 		ei_linked_point_t *pts = malloc(sizeof(ei_linked_point_t));
-		pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
 		ei_point_t where;
@@ -533,17 +441,17 @@ void draw_frame(ei_surface_t surface,
 			bot_color.green = frame_color.green * 0.9;
 			bot_color.blue = frame_color.blue * 0.9, bot_color.alpha = frame_color.alpha;
 		}
-		ei_linked_point_t *pts = rect_frame(rect, EI_TRUE, EI_FALSE);
+		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, top_color, clipper);
 		free_points(pts);
-		pts = rect_frame(rect, EI_FALSE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, bot_color, clipper);
 		free_points(pts);
 		rect.top_left.x += rect.size.width / 20;
 		rect.top_left.y += rect.size.height / 20;
 		rect.size.width -= rect.size.width * 2 / 20;
 		rect.size.height -= rect.size.width * 2 / 20;
-		pts = rect_frame(rect, EI_TRUE, EI_TRUE);
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
 		ei_point_t where;
