@@ -176,7 +176,7 @@ void frame_setdefaultsfunc(ei_widget_t *widget) {
 }
 
 void frame_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
-
+	*(widget->content_rect) = rect;
 }
 
 ei_bool_t frame_handlefunc(ei_widget_t *widget, ei_event_t *event) {
@@ -243,7 +243,7 @@ void button_setdefaultsfunc(ei_widget_t *widget) {
 }
 
 void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
-
+	*(widget->content_rect) = rect;
 }
 
 ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
@@ -328,7 +328,7 @@ void toplevel_setdefaultsfunc(ei_widget_t *widget) {
 }
 
 void toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
-
+	*(widget->content_rect) = rect;
 }
 
 ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
@@ -507,7 +507,7 @@ void draw_frame(ei_surface_t surface,
 	ei_color_t bot_color;
 	if (pick) {
 		ei_linked_point_t *pts = malloc(sizeof(ei_linked_point_t));
-		rect_frame(rect, EI_TRUE, EI_TRUE);
+		pts = rect_frame(rect, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
 		ei_point_t where;

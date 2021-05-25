@@ -6,7 +6,7 @@
 
 /** Global variables **/
 /**                  **/
-ei_default_handle_func_t DEFAULT_HANDLE_FUNC;
+ei_default_handle_func_t DEFAULT_HANDLE_FUNC = NULL;
 ei_widget_t *ACTIVE_WIDGET = NULL;
 /**                  **/
 /** ---------------- **/

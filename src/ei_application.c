@@ -122,7 +122,10 @@ void ei_app_run() {
 		if (!event_handled && !is_located_event(event)) {
 			// Si ce n’est pas un évènement situé, le traitant concerné est celui
 			// qui a été défini par le programmeur
-			ei_event_get_default_handle_func()(&event);
+			ei_default_handle_func_t default_handle = ei_event_get_default_handle_func();
+			if (default_handle != NULL) {
+				default_handle(&event);
+			}
 		}
 
 		// Update necessary rectangles
