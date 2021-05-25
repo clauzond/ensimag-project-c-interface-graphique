@@ -3,6 +3,7 @@
 #include "ei_application_utils.h"
 #include "ei_widget.h"
 #include "ei_types.h"
+#include "ei_utils.h"
 
 #include "ei_placer_utils.h"
 
@@ -305,14 +306,20 @@ get_direction_most(int parent_dimension, int parent_c, float *rel_dimension, int
 
 void manage_screen_location(ei_widget_t *widget) {
 	ei_rect_t screen_location;
+	ei_rect_t parent_rect;
 	struct anchor_shift as = create_anchor_shift(widget->placer_params->anchor_data);
-	struct double_int x_coord = get_direction_most(widget->parent->content_rect->size.width,
-						       widget->parent->content_rect->top_left.x,
+	if (widget->parent != NULL) {
+		parent_rect = *(widget->parent->content_rect);
+	} else {
+		parent_rect = ei_rect_zero();
+	}
+	struct double_int x_coord = get_direction_most(parent_rect.size.width,
+						       parent_rect.top_left.x,
 						       widget->placer_params->rw, widget->placer_params->w,
 						       widget->placer_params->rx, widget->placer_params->x,
 						       as.left_direction, as.right_direction);
-	struct double_int y_coord = get_direction_most(widget->parent->content_rect->size.height,
-						       widget->parent->content_rect->top_left.y,
+	struct double_int y_coord = get_direction_most(parent_rect.size.height,
+						       parent_rect.top_left.y,
 						       widget->placer_params->rh, widget->placer_params->h,
 						       widget->placer_params->ry, widget->placer_params->y,
 						       as.up_direction, as.down_direction);
@@ -322,6 +329,6 @@ void manage_screen_location(ei_widget_t *widget) {
 	screen_location.top_left.y = y_coord.left;
 	screen_location.size.height = y_coord.right - y_coord.left;
 
-	screen_location = rect_intersection(screen_location, *widget->parent->content_rect);
+	screen_location = rect_intersection(screen_location, parent_rect);
 	widget->screen_location = screen_location;
 }
