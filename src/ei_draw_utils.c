@@ -7,6 +7,12 @@
 
 #include "ei_draw_utils.h"
 
+/** Global variables **/
+/**                  **/
+ei_bool_t is_pick_surface = EI_FALSE;
+/**                  **/
+/** ---------------- **/
+
 ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel) {
 	int ir, ig, ib, ia;
 	ei_color_t color;
@@ -53,7 +59,7 @@ void draw_pixel(ei_surface_t surface, uint32_t *pixel_ptr, int x, int y, ei_colo
 
 uint32_t add_pixels(ei_surface_t source, uint32_t *src_pixel, ei_color_t *src_color, ei_surface_t destination, uint32_t *dst_pixel, ei_bool_t alpha) {
 	uint32_t result;
-	if (alpha) { // Use additive transparency
+	if (!is_pick_surface && alpha) { // Use additive transparency
 		ei_color_t src;
 		ei_color_t dst = pixel_to_rgba(destination, *dst_pixel);
 		if (src_color == NULL) {

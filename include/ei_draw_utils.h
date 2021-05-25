@@ -22,6 +22,8 @@ typedef struct ei_side_table {
 	struct ei_side **array;
 } ei_side_table;
 
+ei_bool_t is_pick_surface;
+
 /**
  * \brief 	Do the opposite of \ref ei_map_rgba. Converts a 32 bits integer returned by \ref hw_surface_get_buffer
  * 		into the red, green, blue and alpha components.

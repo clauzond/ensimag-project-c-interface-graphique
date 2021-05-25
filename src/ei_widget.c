@@ -125,8 +125,10 @@ void ei_widget_destroy(ei_widget_t *widget) {
  */
 ei_widget_t *ei_widget_pick(ei_point_t *where) {
 	ei_surface_t pick_surface = ei_get_pick_surface();
-	hw_surface_set_origin(pick_surface, *where);
+	hw_surface_lock(pick_surface);
 	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(pick_surface);
+	pixel_ptr += where->x + where->y * hw_surface_get_size(pick_surface).width;
+	hw_surface_unlock(pick_surface);
 	return ei_find_widget_by_id(*pixel_ptr);
 }
 
@@ -301,7 +303,7 @@ void ei_toplevel_configure(ei_widget_t *widget,
                         img_rect.top_left.x = widget->screen_location.top_left.x + widget->requested_size.width - requested_size.width;
                         img_rect.top_left.y = widget->screen_location.top_left.y + widget->requested_size.height - requested_size.height;
                         ei_button_configure(widg_close_button, &requested_size, &red, &border_width, &corner_radius,
-                        &relief, &text, ei_default_font, &white, NULL, NULL, &img_rect, NULL, NULL, widget->user_data);
+                        &relief, &text, ei_default_font, &white, NULL, NULL, &img_rect, NULL, empty_callback, widget->user_data);
 		}
 	}
 	if (resizable != NULL) {
