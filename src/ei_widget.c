@@ -125,8 +125,10 @@ void ei_widget_destroy(ei_widget_t *widget) {
  */
 ei_widget_t *ei_widget_pick(ei_point_t *where) {
 	ei_surface_t pick_surface = ei_get_pick_surface();
-	hw_surface_set_origin(pick_surface, *where);
+	hw_surface_lock(pick_surface);
 	uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(pick_surface);
+	pixel_ptr += where->x + where->y * hw_surface_get_size(pick_surface).width;
+	hw_surface_unlock(pick_surface);
 	return ei_find_widget_by_id(*pixel_ptr);
 }
 

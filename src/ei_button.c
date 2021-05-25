@@ -9,6 +9,7 @@
 #include "ei_draw.h"
 #include "ei_button.h"
 #include "ei_free.h"
+#include "ei_draw_utils.h"
 
 
 ei_linked_point_t *arc(ei_point_t centre,
@@ -124,6 +125,7 @@ void draw_button(ei_surface_t surface,
                  ei_bool_t pick) {
         ei_color_t top_color;
         ei_color_t bot_color;
+        is_pick_surface = pick;
         if (pick == EI_TRUE) {
                 ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_TRUE);
                 ei_draw_polygon(surface, pts, button_color, clipper);

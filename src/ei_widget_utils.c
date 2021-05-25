@@ -11,12 +11,13 @@
 #include "ei_button.h"
 #include "ei_free.h"
 
+#include "ei_draw_utils.h"
 #include "ei_widget_utils.h"
 #include "ei_application_utils.h"
 
 /** Global variables **/
 /**                  **/
-uint32_t general_id = 0;
+uint32_t general_id = 0xff000000;
 /**                  **/
 /** ---------------- **/
 
@@ -45,7 +46,8 @@ void ei_widget_destroy_child(ei_widget_t *widget) {
 }
 
 uint32_t ei_get_widget_id(ei_widget_t *widget) {
-	return general_id++;
+	general_id += 0x2277cc45;
+	return general_id;
 }
 
 ei_widget_t *ei_find_widget_by_id(uint32_t id) {
@@ -166,7 +168,7 @@ frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surf
 	struct ei_frame_t *frame = (ei_frame_t *) widget;
 	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, widget->screen_location, frame->color,
 		   frame->relief, EI_FALSE);
-	draw_frame(pick_surface, NULL, frame->text, frame->text_color, clipper, widget->screen_location, *widget->pick_color,
+	draw_frame(pick_surface, NULL, frame->text_font, frame->text_color, clipper, widget->screen_location, *widget->pick_color,
 		   ei_relief_none, EI_TRUE);
 
 }
@@ -235,7 +237,7 @@ button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_sur
 	// TODO: possibilité d'utiliser une image (peu important)
         struct ei_button_t  *button = (ei_button_t *) widget;
         draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location, button->color, button->corner_radius, button->relief, EI_FALSE);
-        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, widget->screen_location, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
+        draw_button(pick_surface, NULL, button->text_font, button->text_color, clipper, widget->screen_location, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
@@ -320,7 +322,7 @@ toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_s
         draw_toplevel(surface, toplevel->title, ei_default_font, blanc, clipper, widget->screen_location,
                       toplevel->color, EI_FALSE, toplevel->border_width);
         draw_toplevel(pick_surface, NULL, ei_default_font, blanc, clipper, widget->screen_location,
-                      *widget->pick_color, EI_FALSE, toplevel->border_width);
+                      *widget->pick_color, EI_TRUE, toplevel->border_width);
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t *widget) {
@@ -370,6 +372,7 @@ void draw_toplevel (ei_surface_t surface,
                     ei_color_t toplevel_color,
                     ei_bool_t pick,
                     int border_width) {
+	is_pick_surface = pick;
         if (pick == EI_TRUE) {
                 ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
                 ei_draw_polygon(surface, pts, toplevel_color, clipper);
@@ -505,6 +508,7 @@ void draw_frame(ei_surface_t surface,
 		ei_bool_t pick) {
 	ei_color_t top_color;
 	ei_color_t bot_color;
+	is_pick_surface = pick;
 	if (pick) {
 		ei_linked_point_t *pts = malloc(sizeof(ei_linked_point_t));
 		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
