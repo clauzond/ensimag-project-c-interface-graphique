@@ -444,79 +444,10 @@ ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
                 cinq->point = point;
                 cinq->next = NULL;
                 return premier;
-
-	if (top_part == 1 && bot_part == 1) {
-		premier->point = point;
-		premier->next = deux;
-
-		point.x = point.x + rect.size.width;
-		deux->point = point;
-		deux->next = trois;
-
-		point.y = point.y + rect.size.height;
-		trois->point = point;
-		trois->next = quatre;
-
-		point.x = rect.top_left.x;
-		quatre->point = point;
-		quatre->next = NULL;
-		return premier;
-
-	} else if (top_part == 1) {
-		ei_linked_point_t *cinq = malloc(sizeof(ei_linked_point_t));
-
-		premier->point = point;
-		premier->next = deux;
-
-		point.x = point.x + rect.size.width;
-		deux->point = point;
-		deux->next = trois;
-
-		point.x = point.x - h;
-		point.y = point.y + h;
-		trois->point = point;
-		trois->next = quatre;
-
-		point.x = rect.top_left.x + h;
-		point.y = rect.top_left.y + h;
-		quatre->point = point;
-		quatre->next = cinq;
-
-		point.x = rect.top_left.x;
-		point.y = rect.top_left.y + rect.size.height;
-		cinq->point = point;
-		cinq->next = NULL;
-		return premier;
-
-
-	} else if (bot_part == 1) {
-		ei_linked_point_t *cinq = malloc(sizeof(ei_linked_point_t));
-		point.x = point.x + rect.size.width;
-		premier->point = point;
-		premier->next = deux;
-
-		point.x = point.x - h;
-		point.y = point.y + h;
-		deux->point = point;
-		deux->next = trois;
-
-		point.x = rect.top_left.x + h;
-		point.y = rect.top_left.y + h;
-		trois->point = point;
-		trois->next = quatre;
-
-		point.x = rect.top_left.x;
-		point.y = rect.top_left.y + rect.size.height;
-		quatre->point = point;
-		quatre->next = cinq;
-
-		point.x = rect.top_left.x + rect.size.width;
-		cinq->point = point;
-		cinq->next = NULL;
-		return premier;
-	} else {
-		return NULL;
 	}
+        else {
+                return NULL;
+        }
 }
 
 void draw_frame(ei_surface_t surface,
