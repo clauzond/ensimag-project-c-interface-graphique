@@ -404,11 +404,10 @@ void draw_toplevel (ei_surface_t surface,
 
 ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
                              ei_bool_t bot_part) {
-        ei_linked_point_t *premier = NULL;
-        ei_linked_point_t *deux = NULL;
-        ei_linked_point_t *trois = NULL;
-        ei_linked_point_t *quatre = NULL;
-        ei_linked_point_t *cinq = NULL;
+        ei_linked_point_t *premier = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *deux = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *trois = malloc(sizeof(ei_linked_point_t));
+        ei_linked_point_t *quatre = malloc(sizeof(ei_linked_point_t));
         ei_point_t point = rect.top_left;
 
         int h;
@@ -437,6 +436,7 @@ ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
                 return premier;
 
         } else if (top_part == 1) {
+		ei_linked_point_t *cinq	= malloc(sizeof(ei_linked_point_t));
 
                 premier->point = point;
                 premier->next = deux;
@@ -463,8 +463,9 @@ ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
 
 
         } else if (bot_part == 1) {
+		ei_linked_point_t *cinq	= malloc(sizeof(ei_linked_point_t));
 
-                point.x = point.x + rect.size.width;
+		point.x = point.x + rect.size.width;
                 premier->point = point;
                 premier->next = deux;
 
