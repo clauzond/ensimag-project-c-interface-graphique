@@ -118,6 +118,15 @@ void ei_app_run() {
 		}
 		active_widget = ei_event_get_active_widget();
 		if (active_widget != NULL) {
+			if (event.type == 5) {
+				printf("Event: mousedown\n",event.type);
+			} else if (event.type == 6) {
+				printf("Event: mouseup\n",event.type);
+			} else if (event.type == 7) {
+				printf("Event: move\n",event.type);
+			} else {
+				printf("Event: %i (consulte la doc)\n",event.type);
+			}
 			printf("Active widget: %s\n", active_widget->wclass->name);
 			if (is_located_event(event)) {
 				printf("x: %u, y: %u\n", event.param.mouse.where.x, event.param.mouse.where.y);
@@ -146,6 +155,7 @@ void ei_app_run() {
 		// Set inactive
 		if (set_inactive) {
 			ei_event_set_active_widget(NULL);
+			set_inactive = EI_FALSE;
 		}
 
 		hw_event_wait_next(&event);
