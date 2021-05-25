@@ -137,10 +137,9 @@ void frame_releasefunc(ei_widget_t *widget) {
 void
 frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
 	struct ei_frame_t *frame = (ei_frame_t *) widget;
-	ei_rect_t rect = hw_surface_get_rect(surface);
-	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, rect, frame->color,
+	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, widget->screen_location, frame->color,
 		   frame->relief, EI_FALSE);
-	draw_frame(pick_surface, NULL, frame->text, frame->text_color, clipper, rect, *widget->pick_color,
+	draw_frame(pick_surface, NULL, frame->text, frame->text_color, clipper, widget->screen_location, *widget->pick_color,
 		   ei_relief_none, EI_TRUE);
 
 }
@@ -208,8 +207,8 @@ button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_sur
 	// TODO: ne pas utiliser "button->rayon" mais plutôt un des paramètres configurables par "ei_button_configure"
 	// TODO: possibilité d'utiliser une image (peu important)
         struct ei_button_t  *button = (ei_button_t *) widget;
-        draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->img_rect, button->color, button->corner_radius, button->relief, EI_FALSE);
-        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->img_rect, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
+        draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location, button->color, button->corner_radius, button->relief, EI_FALSE);
+        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, widget->screen_location, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
@@ -288,7 +287,13 @@ void toplevel_releasefunc(ei_widget_t *widget) {
 
 void
 toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-
+        // TODO: ajouter ei_font_t dans ei_toplevel_t?
+        struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+        ei_color_t blanc = {255, 255, 255, 255};
+        draw_toplevel(surface, toplevel->title, ei_default_font, blanc, clipper, widget->screen_location,
+                      toplevel->color, EI_FALSE, toplevel->border_width);
+        draw_toplevel(pick_surface, NULL, ei_default_font, blanc, clipper, widget->screen_location,
+                      *widget->pick_color, EI_FALSE, toplevel->border_width);
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t *widget) {
@@ -332,7 +337,6 @@ void draw_toplevel (ei_surface_t surface,
                     const ei_rect_t *clipper,
                     ei_rect_t rect,
                     ei_color_t toplevel_color,
-                    ei_relief_t relief,
                     ei_bool_t pick,
                     int border_width) {
         if (pick == EI_TRUE) {
