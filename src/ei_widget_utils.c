@@ -280,7 +280,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
                 int x_bar_min = widget->screen_location.top_left.x;
                 int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
                 int y_bar_min = widget->screen_location.top_left.y;
-                int y_bar_max = widget->screen_location.top_left.y + toplevel->border_width
+                int y_bar_max = widget->screen_location.top_left.y + toplevel->border_width;
                 int x_mouse = event->param.mouse.where.x;
                 int y_mouse = event->param.mouse.where.y;
 
