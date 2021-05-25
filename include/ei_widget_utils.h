@@ -38,12 +38,12 @@ typedef struct ei_button_t {
 	ei_bool_t requested_bool;
 
 	// Paramètres hors config
-	ei_rect_t *button_rect;
-	ei_color_t *top_color;
-	ei_color_t *bot_color;
-	ei_color_t *inside_color;
-	float *rayon;
-	ei_anchor_t *button_anchor;
+//	ei_rect_t *button_rect;
+//	ei_color_t *top_color;
+//	ei_color_t *bot_color;
+//	ei_color_t *inside_color;
+//	float *rayon;
+//	ei_anchor_t *button_anchor;
 } ei_button_t;
 
 typedef struct ei_toplevel_t {
@@ -115,8 +115,19 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, struct ei_event_t *event);
 
 ei_widgetclass_t ei_init_toplevel_class(void);
 
+void draw_toplevel (ei_surface_t surface,
+                    const char *text,
+                    ei_font_t font,
+                    ei_color_t text_color,
+                    const ei_rect_t *clipper,
+                    ei_rect_t rect,
+                    ei_color_t toplevel_color,
+                    ei_relief_t relief,
+                    ei_bool_t pick,
+                    int border_width);
+
 ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
-			      ei_bool_t bot_part);
+                             ei_bool_t bot_part);
 
 void draw_frame(ei_surface_t surface,
 		const char *text,

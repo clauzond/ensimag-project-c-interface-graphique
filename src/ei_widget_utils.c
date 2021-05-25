@@ -9,6 +9,7 @@
 #include "ei_types.h"
 #include "ei_widget.h"
 #include "ei_button.h"
+#include "ei_free.h"
 
 #include "ei_widget_utils.h"
 #include "ei_application_utils.h"
@@ -206,11 +207,9 @@ void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
 	// TODO: ne pas utiliser "button->rayon" mais plutôt un des paramètres configurables par "ei_button_configure"
 	// TODO: possibilité d'utiliser une image (peu important)
-	struct ei_button_t *button = (ei_button_t *) widget;
-	draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->button_rect,
-		    button->color, *button->rayon, button->relief, EI_FALSE);
-	draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->button_rect,
-		    *widget->pick_color, *button->rayon, ei_relief_none, EI_TRUE);
+        struct ei_button_t  *button = (ei_button_t *) widget;
+        draw_button(surface, button->text, button->text_font, button->text_color, clipper, *button->img_rect, button->color, button->corner_radius, button->relief, EI_FALSE);
+        draw_button(pick_surface, NULL, button->text, button->text_color, clipper, *button->img_rect, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
@@ -222,39 +221,39 @@ void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
-	if (is_located_event(*event)) {
-		struct ei_button_t *button = (ei_button_t *) widget;
-		int x_min = widget->screen_location.top_left.x;
-		int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
-		int y_min = widget->screen_location.top_left.y;
-		int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
-		int x_mouse = event->param.mouse.where.x;
-		int y_mouse = event->param.mouse.where.y;
-		if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
-		    y_mouse <= y_max) {
-			if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
-				if (button->relief != ei_relief_sunken) {
-					button->relief = ei_relief_sunken;
-					ei_app_invalidate_rect(&widget->screen_location);
-				}
-				return EI_TRUE;
-			} else if (event->type == ei_ev_mouse_buttonup) {
-				button->callback(widget, event, button->user_param);
-				if (button->relief != ei_relief_raised) {
-					button->relief = ei_relief_raised;
-					ei_app_invalidate_rect(&widget->screen_location);
-				}
-				return EI_TRUE;
-			}
-		} else if (event->type == ei_ev_mouse_move) {
-			if (button->relief != ei_relief_raised) {
-				button->relief = ei_relief_raised;
-				ei_app_invalidate_rect(&widget->screen_location);
-			}
-			return EI_TRUE;
-		}
-		return EI_FALSE;
-	}
+        if (is_located_event(*event)) {
+                struct ei_button_t *button = (ei_button_t *) widget;
+                int x_min = widget->screen_location.top_left.x;
+                int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
+                int y_min = widget->screen_location.top_left.y;
+                int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+                int x_mouse = event->param.mouse.where.x;
+                int y_mouse = event->param.mouse.where.y;
+                if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
+                    y_mouse <= y_max) {
+                        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
+                                if (button->relief != ei_relief_sunken) {
+                                        button->relief = ei_relief_sunken;
+                                        ei_app_invalidate_rect(&widget->screen_location);
+                                }
+                                return EI_TRUE;
+                        } else if (event->type == ei_ev_mouse_buttonup) {
+                                button->callback(widget, event, button->user_param);
+                                if (button->relief != ei_relief_raised) {
+                                        button->relief = ei_relief_raised;
+                                        ei_app_invalidate_rect(&widget->screen_location);
+                                }
+                                return EI_TRUE;
+                        }
+                } else if (event->type == ei_ev_mouse_move) {
+                        if (button->relief != ei_relief_raised) {
+                                button->relief = ei_relief_raised;
+                                ei_app_invalidate_rect(&widget->screen_location);
+                        }
+                        return EI_TRUE;
+                }
+                return EI_FALSE;
+        }
 }
 
 ei_widgetclass_t ei_init_button_class(void) {
@@ -326,21 +325,125 @@ ei_widgetclass_t ei_init_toplevel_class(void) {
 	return wclass;
 }
 
+void draw_toplevel (ei_surface_t surface,
+                    const char *text,
+                    ei_font_t font,
+                    ei_color_t text_color,
+                    const ei_rect_t *clipper,
+                    ei_rect_t rect,
+                    ei_color_t toplevel_color,
+                    ei_relief_t relief,
+                    ei_bool_t pick,
+                    int border_width) {
+        if (pick == EI_TRUE) {
+                ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
+                ei_draw_polygon(surface, pts, toplevel_color, clipper);
+                free_points(pts);
+        }
+        else {
+                ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
+                ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
+                                          toplevel_color.blue * 0.5, toplevel_color.alpha};
+                ei_draw_polygon(surface, pts, frame_color, clipper);
+                free_points(pts);
+                ei_point_t where; where.x = rect.top_left.x + rect.size.width*1.5/10; where.y = rect.top_left.y + border_width;
+                rect.top_left.x += border_width;
+                rect.top_left.y += rect.size.height/10;
+                rect.size.width -= 2 * border_width;
+                rect.size.height -= rect.size.height * 1/20 + border_width;
+                pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
+                ei_draw_polygon(surface, pts, toplevel_color, clipper);
+                free_points(pts);
+                ei_draw_text(surface, &where, text, font, text_color, clipper);
+        }
+
+}
 
 ei_linked_point_t *rect_frame(ei_rect_t rect, ei_bool_t top_part,
-			      ei_bool_t bot_part) {
-	ei_linked_point_t *premier = malloc(sizeof(ei_linked_point_t));
-	ei_linked_point_t *deux = malloc(sizeof(ei_linked_point_t));
-	ei_linked_point_t *trois = malloc(sizeof(ei_linked_point_t));
-	ei_linked_point_t *quatre = malloc(sizeof(ei_linked_point_t));
-	ei_point_t point = rect.top_left;
+                             ei_bool_t bot_part) {
+        ei_linked_point_t *premier = NULL;
+        ei_linked_point_t *deux = NULL;
+        ei_linked_point_t *trois = NULL;
+        ei_linked_point_t *quatre = NULL;
+        ei_linked_point_t *cinq = NULL;
+        ei_point_t point = rect.top_left;
 
-	int h;
-	if (rect.size.width >= rect.size.height) {
-		h = rect.size.height / 2;
-	} else {
-		h = rect.size.width / 2;
-	}
+        int h;
+        if (rect.size.width >= rect.size.height){
+                h = rect.size.height/2;
+        } else {
+                h = rect.size.width/2;
+        }
+
+        if (top_part == 1 && bot_part == 1){
+
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x + rect.size.width;
+                deux->point = point;
+                deux->next = trois;
+
+                point.y = point.y + rect.size.height;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.top_left.x;
+                quatre->point = point;
+                quatre->next = NULL;
+                return premier;
+
+        } else if (top_part == 1) {
+
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x + rect.size.width;
+                deux->point = point;
+                deux->next = trois;
+
+                point.x = point.x - h;
+                point.y = point.y + h;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.top_left.x + h;
+                point.y = rect.top_left.y + h;
+                quatre->point = point;
+                quatre->next = cinq;
+
+                point.x = rect.top_left.x;
+                point.y = rect.top_left.y + rect.size.height;
+                cinq->point = point;
+                cinq->next = NULL;
+                return premier;
+
+
+        } else if (bot_part == 1) {
+
+                point.x = point.x + rect.size.width;
+                premier->point = point;
+                premier->next = deux;
+
+                point.x = point.x - h;
+                point.y = point.y + h;
+                deux->point = point;
+                deux->next = trois;
+
+                point.x = rect.top_left.x + h;
+                point.y = rect.top_left.y + h;
+                trois->point = point;
+                trois->next = quatre;
+
+                point.x = rect.top_left.x;
+                point.y = rect.top_left.y + rect.size.height;
+                quatre->point = point;
+                quatre->next = cinq;
+
+                point.x = rect.top_left.x + rect.size.width;
+                cinq->point = point;
+                cinq->next = NULL;
+                return premier;
 
 	if (top_part == 1 && bot_part == 1) {
 		premier->point = point;
