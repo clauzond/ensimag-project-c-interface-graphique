@@ -10,6 +10,7 @@
 #include "ei_event.h"
 #include "ei_button.h"
 #include "ei_free.h"
+#include "ei_widget_utils.h"
 
 
 
@@ -151,8 +152,7 @@ void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
 /* test_arc --
  *
  */
-void test_arc(ei_surface_t surface, ei_rect_t* clipper)
-{
+void test_arc(ei_surface_t surface, ei_rect_t* clipper) {
         ei_color_t		color		= { 255, 0, 0, 255 };
         ei_point_t centre;
         centre.x = 400; centre.y = 300;
@@ -161,7 +161,7 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper)
         ei_draw_polygon(surface, pts, color, clipper);
 }
 
-void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
+void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper) {
         ei_color_t		color		= { 255, 0, 0, 255 };
         ei_size_t taille; taille.height = 150; taille.width = 50;
         ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
@@ -184,7 +184,7 @@ void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper){
         free_points(pts);
 }
 
-void test_text(ei_surface_t surface, ei_rect_t *clipper){
+void test_text(ei_surface_t surface, ei_rect_t *clipper) {
         ei_point_t where; where.x = 200; where.y = 200;
         char *text = "hello";
         ei_font_t font = ei_default_font;
@@ -192,7 +192,7 @@ void test_text(ei_surface_t surface, ei_rect_t *clipper){
         ei_draw_text(surface, &where, text, font, color, clipper);
 }
 
-void test_button(ei_surface_t surface, ei_rect_t *clipper){
+void test_button(ei_surface_t surface, ei_rect_t *clipper) {
         const char *text = "button";
         ei_font_t font = ei_default_font;
         ei_color_t text_color = {255, 255, 255, 255};
@@ -204,6 +204,18 @@ void test_button(ei_surface_t surface, ei_rect_t *clipper){
         ei_relief_t relief = ei_relief_sunken;
         draw_button(surface, text, font, text_color, clipper,
                     rect, inside_color, rayon, relief, EI_FALSE);
+}
+
+void test_toplevel (ei_surface_t surface, ei_rect_t *clipper) {
+        const char *text = "Toplevel";
+        ei_font_t font = ei_default_font;
+        ei_color_t text_color = {255, 255, 255, 255};
+        ei_color_t inside_color = {100, 100, 100, 255};
+        ei_size_t taille; taille.height = 100; taille.width = 100;
+        ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 200;
+        ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
+        draw_toplevel(surface, text, font, text_color, clipper,
+                    rect, inside_color, EI_FALSE, 5);
 }
 
 /*
@@ -231,7 +243,7 @@ int main(int argc, char** argv)
 	ei_fill		(main_window, &white, clipper_ptr);
 
 	/* Draw polylines. */
-	test_line	(main_window, clipper_ptr);
+	//test_line	(main_window, clipper_ptr);
 	// test_octogone	(main_window, clipper_ptr, 0);
 	// test_square	(main_window, clipper_ptr, 0);
 
@@ -239,7 +251,9 @@ int main(int argc, char** argv)
 	//test_arc	(main_window, clipper_ptr);
 
         /* rounded_frame. */
-      	test_rounded_frame	(main_window, clipper_ptr);
+      	//test_rounded_frame	(main_window, clipper_ptr);
+        //test_button             (main_window, clipper_ptr);
+        test_toplevel           (main_window, clipper_ptr);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
