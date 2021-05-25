@@ -63,7 +63,7 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 
 	// Create root widget
 	ROOT_FRAME = ei_widget_create("frame", NULL, NULL, NULL);
-	ei_placer_run(ROOT_FRAME);
+	ei_place(ROOT_FRAME, NULL, 0, 0, &real_size.width, &real_size.height, NULL, NULL, NULL, NULL);
 
 	// Create rectangle list (for ei_app_invalidate_rects)
 	RECTANGLE_LIST = malloc(sizeof(ei_linked_rect_t));

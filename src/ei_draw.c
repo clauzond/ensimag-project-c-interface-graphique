@@ -128,11 +128,12 @@ void ei_draw_polygon(ei_surface_t surface,
                      const ei_rect_t *clipper) {
         /* TODO: link last_point avec first_point */
         int y = 0;
+        int height = hw_surface_get_size(surface).height;
         ei_side_table tc = construct_side_table(surface, first_point);
         ei_side *tca = NULL;
         uint32_t *pixel_ptr = (uint32_t *) hw_surface_get_buffer(surface);
 
-        while ((tc.length != 0) || (tca != NULL)) {
+        while (((tc.length != 0) || (tca != NULL)) && y < height) {
                 // Déplacer les côtés de TC(y) dans TCA
                 move_sides_to_tca(&tc, y, &tca);
 

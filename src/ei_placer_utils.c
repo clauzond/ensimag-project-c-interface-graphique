@@ -104,7 +104,7 @@ void manage_coord_x(ei_widget_t *widget, int *x, float *rel_x) {
 		widget->placer_params->x = &(widget->placer_params->x_data);
 	} else if (widget->placer_params->x == NULL && widget->placer_params->rx == NULL) { // no default value
 		widget->placer_params->rx_data = 0;
-		widget->placer_params->rx = &(widget->placer_params->rx_data);
+		widget->placer_params->rx = NULL;
 		widget->placer_params->x_data = 0;
 		widget->placer_params->x = &(widget->placer_params->x_data);
 	}
@@ -136,7 +136,7 @@ void manage_coord_y(ei_widget_t *widget, int *y, float *rel_y) {
 		widget->placer_params->y = &(widget->placer_params->y_data);
 	} else if (widget->placer_params->y == NULL && widget->placer_params->ry == NULL) { // no default value
 		widget->placer_params->ry_data = 0;
-		widget->placer_params->ry = &(widget->placer_params->ry_data);
+		widget->placer_params->ry = NULL;
 		widget->placer_params->y_data = 0;
 		widget->placer_params->y = &(widget->placer_params->y_data);
 	}
@@ -186,7 +186,7 @@ struct anchor_shift create_anchor_shift(ei_anchor_t anchor) {
 			as = init_anchor_shift(-0.5, 0.5, 0, 1);
 			break;
 		case (ei_anc_northwest):
-			as = init_anchor_shift(0, 0, 0, 1);
+			as = init_anchor_shift(0, 1, 0, 1);
 			break;
 		default:
 			break;
@@ -265,21 +265,21 @@ void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 		h = widget->requested_size.height;
 	} else if (widget->placer_params->rh != NULL) {
 		// default
-		rh = widget->placer_params->rw_data;
+		rh = widget->placer_params->rh_data;
 	} else if (widget->placer_params->h != NULL) {
-		h = widget->placer_params->w_data;
+		h = widget->placer_params->h_data;
 	} // else zero
 
 	if (rh == 0) {
-		widget->placer_params->rw_data = 0;
+		widget->placer_params->rh_data = 0;
 		widget->placer_params->rh = NULL;
-		widget->placer_params->w_data = h;
-		widget->placer_params->h = &(widget->placer_params->w_data);
+		widget->placer_params->h_data = h;
+		widget->placer_params->h = &(widget->placer_params->h_data);
 	} else {
-		widget->placer_params->w_data = 0;
+		widget->placer_params->h_data = 0;
 		widget->placer_params->h = NULL;
-		widget->placer_params->rw_data = rh;
-		widget->placer_params->rh = &(widget->placer_params->rw_data);
+		widget->placer_params->rh_data = rh;
+		widget->placer_params->rh = &(widget->placer_params->rh_data);
 	}
 }
 
@@ -294,12 +294,12 @@ get_direction_most(int parent_dimension, int parent_c, float *rel_dimension, int
 		pos_c = parent_c + (*rel_c) * parent_dimension;
 	}
 
-	if (rel_dimension != NULL) {
-		lr.left = pos_c + (left * (*rel_dimension) * parent_dimension);
-		lr.right = pos_c + (right * (*rel_dimension) * parent_dimension);
-	} else if (dimension != NULL) {
+	if (dimension != NULL) {
 		lr.left = pos_c + (left * (*dimension));
 		lr.right = pos_c + (right * (*dimension));
+	} else if (rel_dimension != NULL) {
+		lr.left = pos_c + (left * (*rel_dimension) * parent_dimension);
+		lr.right = pos_c + (right * (*rel_dimension) * parent_dimension);
 	}
 	return lr;
 }
@@ -329,6 +329,8 @@ void manage_screen_location(ei_widget_t *widget) {
 	screen_location.top_left.y = y_coord.left;
 	screen_location.size.height = y_coord.right - y_coord.left;
 
-	screen_location = rect_intersection(screen_location, parent_rect);
+	if (widget->parent != NULL) {
+		screen_location = rect_intersection(screen_location, parent_rect);
+	}
 	widget->screen_location = screen_location;
 }
