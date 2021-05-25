@@ -10,6 +10,11 @@ struct anchor_shift {
 	float right_direction;
 };
 
+struct double_int {
+	int left;
+	int right;
+};
+
 void init_placer_params(struct ei_widget_t *widget);
 
 void forget_placer_params(ei_widget_t *widget);
@@ -34,5 +39,7 @@ is_valid_dimension(int parent_dimension, float *rel_dimension, int *dimension, i
 void manage_width(ei_widget_t *widget, int *width, float *rel_width);
 
 void manage_height(ei_widget_t *widget, int *height, float *rel_height);
+
+void manage_screen_location(ei_widget_t *widget);
 
 #endif //EI_PLACER_UTILS_H

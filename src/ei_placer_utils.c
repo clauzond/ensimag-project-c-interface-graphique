@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "ei_application_utils.h"
 #include "ei_widget.h"
 #include "ei_types.h"
 
@@ -160,28 +161,28 @@ struct anchor_shift create_anchor_shift(ei_anchor_t anchor) {
 	struct anchor_shift as;
 	switch (anchor) {
 		case (ei_anc_center):
-			as = init_anchor_shift(0.5, 0.5, 0.5, 0.5);
+			as = init_anchor_shift(-0.5, 0.5, -0.5, 0.5);
 			break;
 		case (ei_anc_north):
-			as = init_anchor_shift(0, 1, 0.5, 0.5);
+			as = init_anchor_shift(0, 1, -0.5, 0.5);
 			break;
 		case (ei_anc_northeast):
-			as = init_anchor_shift(0, 1, 1, 0);
+			as = init_anchor_shift(0, 1, -1, 0);
 			break;
 		case (ei_anc_east):
-			as = init_anchor_shift(0.5, 0.5, 1, 0);
+			as = init_anchor_shift(-0.5, 0.5, -1, 0);
 			break;
 		case (ei_anc_southeast):
-			as = init_anchor_shift(1, 0, 1, 0);
+			as = init_anchor_shift(-1, 0, -1, 0);
 			break;
 		case (ei_anc_south):
-			as = init_anchor_shift(1, 0, 0.5, 0.5);
+			as = init_anchor_shift(-1, 0, -0.5, 0.5);
 			break;
 		case (ei_anc_southwest):
-			as = init_anchor_shift(1, 0, 0, 1);
+			as = init_anchor_shift(-1, 0, 0, 1);
 			break;
 		case (ei_anc_west):
-			as = init_anchor_shift(0.5, 0.5, 0, 1);
+			as = init_anchor_shift(-0.5, 0.5, 0, 1);
 			break;
 		case (ei_anc_northwest):
 			as = init_anchor_shift(0, 0, 0, 1);
@@ -279,4 +280,48 @@ void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 		widget->placer_params->rw_data = rh;
 		widget->placer_params->rh = &(widget->placer_params->rw_data);
 	}
+}
+
+struct double_int
+get_direction_most(int parent_dimension, int parent_c, float *rel_dimension, int *dimension, float *rel_c, int *c,
+		   float left, float right) {
+	int pos_c;
+	struct double_int lr;
+	if (c != NULL) {
+		pos_c = *c;
+	} else {
+		pos_c = parent_c + (*rel_c) * parent_dimension;
+	}
+
+	if (rel_dimension != NULL) {
+		lr.left = pos_c + (left * (*rel_dimension) * parent_dimension);
+		lr.right = pos_c + (right * (*rel_dimension) * parent_dimension);
+	} else if (dimension != NULL) {
+		lr.left = pos_c + (left * (*dimension));
+		lr.right = pos_c + (right * (*dimension));
+	}
+	return lr;
+}
+
+void manage_screen_location(ei_widget_t *widget) {
+	ei_rect_t screen_location;
+	struct anchor_shift as = create_anchor_shift(widget->placer_params->anchor_data);
+	struct double_int x_coord = get_direction_most(widget->parent->content_rect->size.width,
+						       widget->parent->content_rect->top_left.x,
+						       widget->placer_params->rw, widget->placer_params->w,
+						       widget->placer_params->rx, widget->placer_params->x,
+						       as.left_direction, as.right_direction);
+	struct double_int y_coord = get_direction_most(widget->parent->content_rect->size.height,
+						       widget->parent->content_rect->top_left.y,
+						       widget->placer_params->rh, widget->placer_params->h,
+						       widget->placer_params->ry, widget->placer_params->y,
+						       as.up_direction, as.down_direction);
+	screen_location.top_left.x = x_coord.left;
+	screen_location.size.width = x_coord.right - x_coord.left;
+
+	screen_location.top_left.y = y_coord.left;
+	screen_location.size.height = y_coord.right - y_coord.left;
+
+	screen_location = rect_intersection(screen_location, *widget->parent->content_rect);
+	widget->screen_location = screen_location;
 }

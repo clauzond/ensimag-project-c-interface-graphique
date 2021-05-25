@@ -44,14 +44,13 @@ void ei_place(struct ei_widget_t *widget,
 	      float *rel_y,
 	      float *rel_width,
 	      float *rel_height) {
-	// TODO: call widget->wclass->geomnotifyfunc
 	init_placer_params(widget);
 	manage_anchor(widget, anchor);
 	manage_coord_x(widget, x, rel_x);
 	manage_coord_y(widget, y, rel_y);
 	manage_width(widget, width, rel_width);
 	manage_height(widget, height, rel_height);
-	// TODO: update widget screen_location
+	manage_screen_location(widget);
 	widget->wclass->geomnotifyfunc(widget, widget->screen_location);
 }
 
