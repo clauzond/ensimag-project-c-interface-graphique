@@ -304,6 +304,8 @@ void ei_toplevel_configure(ei_widget_t *widget,
                         img_rect.top_left.y = widget->screen_location.top_left.y + widget->requested_size.height - requested_size.height;
                         ei_button_configure(widg_close_button, &requested_size, &red, &border_width, &corner_radius,
                         &relief, &text, ei_default_font, &white, NULL, NULL, &img_rect, NULL, empty_callback, widget->user_data);
+                        //ei_place(close_button, NULL, &img_rect.top_left.x, &img_rect.top_left.y, NULL,
+                        //         NULL, NULL, NULL, NULL, NULL);
 		}
 	}
 	if (resizable != NULL) {

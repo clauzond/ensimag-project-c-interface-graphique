@@ -144,7 +144,7 @@ void draw_button(ei_surface_t surface,
                         bot_color.red = button_color.red * 0.9; bot_color.green = button_color.green * 0.9;
                         bot_color.blue = button_color.blue * 0.9, bot_color.alpha = button_color.alpha;
                 }
-                ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_FALSE);
+                ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE,EI_TRUE);
                 ei_draw_polygon(surface, pts, top_color, clipper);
                 free_points(pts);
                 pts = rounded_frame(rect, rayon, EI_FALSE,EI_TRUE);
