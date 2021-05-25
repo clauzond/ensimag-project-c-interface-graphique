@@ -61,6 +61,9 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 	ei_surface_t pick_surface = hw_surface_create(ROOT_WINDOW, real_size, EI_TRUE);
 	ei_set_pick_surface(pick_surface);
 
+	// Create root widget
+	ROOT_FRAME = ei_widget_create("frame", NULL, NULL, NULL);
+
 	// Create rectangle list (for ei_app_invalidate_rects)
 	RECTANGLE_LIST = malloc(sizeof(ei_linked_rect_t));
 	RECTANGLE_LIST = NULL;

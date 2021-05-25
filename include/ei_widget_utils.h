@@ -60,9 +60,11 @@ void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_pa
 
 void ei_widget_destroy_child(ei_widget_t *widget);
 
+uint32_t ei_get_widget_id(ei_widget_t *widget);
+
 ei_widget_t *ei_find_widget_by_id(uint32_t id);
 
-ei_bool_t search_widget(ei_widget_t *widget, uint32_t id);
+ei_widget_t *search_widget(ei_widget_t *widget, uint32_t id);
 
 ei_size_t ei_widget_natural_size(int border_width, char *text, ei_font_t text_font, ei_rect_t *img_rect);
 

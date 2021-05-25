@@ -3,6 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "ei_draw_utils.h"
 #include "ei_application.h"
 #include "ei_types.h"
 #include "ei_utils.h"
@@ -44,6 +45,9 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 	}
 
 	// Initialisation des attributs communs à tous les widgets
+	widget->pick_id = ei_get_widget_id(widget);
+	widget->pick_color = malloc(sizeof(ei_color_t));
+	*widget->pick_color = pixel_to_rgba(ei_get_pick_surface(), widget->pick_id);
 	widget->user_data = user_data;
 	widget->destructor = destructor;
 
@@ -54,15 +58,24 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 	widget->children_tail = NULL;
 
 	// Add widget as last child of parent
-	if (widget->parent->children_tail != NULL) {
-		assert((widget->parent->children_tail->next_sibling == NULL));
-		widget->parent->children_tail->next_sibling = widget;
-		widget->parent->children_tail = widget;
-	} else {
-		assert((widget->parent->children_head == NULL));
-		widget->parent->children_head = widget;
-		widget->parent->children_tail = widget;
+	if (widget->parent != NULL) {
+		if (widget->parent->children_tail != NULL) {
+			assert((widget->parent->children_tail->next_sibling == NULL));
+			widget->parent->children_tail->next_sibling = widget;
+			widget->parent->children_tail = widget;
+		} else {
+			assert((widget->parent->children_head == NULL));
+			widget->parent->children_head = widget;
+			widget->parent->children_tail = widget;
+		}
 	}
+
+	// Widget geometry
+	widget->placer_params = NULL;
+	widget->requested_size = ei_size_zero();
+	widget->screen_location = ei_rect_zero();
+	widget->content_rect = &(widget->screen_location);
+
 	return widget;
 }
 

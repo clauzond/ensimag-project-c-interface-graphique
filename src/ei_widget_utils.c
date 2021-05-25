@@ -14,6 +14,12 @@
 #include "ei_widget_utils.h"
 #include "ei_application_utils.h"
 
+/** Global variables **/
+/**                  **/
+uint32_t general_id = 0;
+/**                  **/
+/** ---------------- **/
+
 void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_param) {
 	return;
 }
@@ -38,6 +44,10 @@ void ei_widget_destroy_child(ei_widget_t *widget) {
 	free(widget);
 }
 
+uint32_t ei_get_widget_id(ei_widget_t *widget) {
+	return general_id++;
+}
+
 ei_widget_t *ei_find_widget_by_id(uint32_t id) {
 	// Solution qui aurait été meilleure avec + de temps :
 	// dictionnaire de widget classé avec l'id (au lieu du nom)
@@ -45,12 +55,29 @@ ei_widget_t *ei_find_widget_by_id(uint32_t id) {
 	return search_widget(ei_app_root_widget(), id);
 }
 
-ei_bool_t search_widget(ei_widget_t *widget, uint32_t id) {
-	if (widget == NULL) {
-		return EI_FALSE;
+ei_widget_t *search_widget(ei_widget_t *widget, uint32_t id) {
+	if (widget->pick_id == id) {
+		return widget;
+	} else {
+		if (widget->next_sibling == NULL && widget->children_head == NULL) {
+			return NULL;
+		} else if (widget->next_sibling != NULL && widget->children_head == NULL) {
+			return search_widget(widget->next_sibling, id);
+		} else if (widget->next_sibling == NULL && widget->children_head != NULL) {
+			return search_widget(widget->children_head, id);
+		} else {
+			ei_widget_t *wsibling = search_widget(widget->next_sibling, id);
+			if (wsibling != NULL) {
+				return wsibling;
+			}
+			ei_widget_t *wchild = search_widget(widget->children_head, id);
+			if (wchild != NULL) {
+				return wchild;
+			}
+			return NULL;
+		}
+
 	}
-	return (widget->pick_id == id || search_widget(widget->next_sibling, id) ||
-		search_widget(widget->children_head, id));
 }
 
 ei_size_t ei_widget_natural_size(int border_width, char *text, ei_font_t text_font, ei_rect_t *img_rect) {
@@ -251,8 +278,8 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
                         }
                         return EI_TRUE;
                 }
-                return EI_FALSE;
         }
+	return EI_FALSE;
 }
 
 ei_widgetclass_t ei_init_button_class(void) {
@@ -318,6 +345,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 
                 }
 	}
+	return EI_FALSE;
 }
 
 ei_widgetclass_t ei_init_toplevel_class(void) {
