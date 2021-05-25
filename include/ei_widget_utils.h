@@ -122,6 +122,7 @@ void draw_toplevel (ei_surface_t surface,
                     const ei_rect_t *clipper,
                     ei_rect_t rect,
                     ei_color_t toplevel_color,
+                    ei_relief_t relief,
                     ei_bool_t pick,
                     int border_width);
 
