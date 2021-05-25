@@ -6,6 +6,7 @@
 #include "ei_types.h"
 #include "hw_interface.h"
 #include "ei_draw_utils.h"
+#include "ei_application_utils.h"
 
 /**
 * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer
@@ -190,8 +191,9 @@ void ei_draw_text(ei_surface_t surface,
 
         // Create src_rect if clipping needed by finding the intersection between the two rectangles
         if (clipper != NULL) {
-                size.width = min(clipper->size.width - where->x + clipper->top_left.x, size.width + where->x - clipper->top_left.x);
-                size.height = min(clipper->size.height - where->y - clipper->top_left.y, size.height + where->y - clipper->top_left.y);
+        	ei_rect_t r2 = {*where, size};
+		ei_rect_t r0 = rect_intersection(*clipper, r2);
+		size = r0.size;
                 if (size.width < 0 || size.height < 0) { // Empty intersection
                         return;
                 }
