@@ -237,14 +237,6 @@ button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_sur
 	// TODO: possibilité d'utiliser une image (peu important)
         struct ei_button_t  *button = (ei_button_t *) widget;
         draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location, button->color, button->corner_radius, button->relief, EI_FALSE);
-        if (button->img != NULL){
-                hw_surface_lock(surface);
-                hw_surface_lock(button->img);
-                ei_copy_surface(surface, clipper, button->img , button->img_rect, EI_FALSE);
-                hw_surface_unlock(surface);
-                hw_surface_unlock(button->img);
-                hw_surface_update_rects(surface, NULL);
-        }
         draw_button(pick_surface, NULL, button->text_font, button->text_color, clipper, widget->screen_location, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
 }
 
