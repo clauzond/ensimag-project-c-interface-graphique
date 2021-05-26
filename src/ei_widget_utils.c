@@ -359,12 +359,16 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 		ei_size_t size;
 		hw_text_compute_size(toplevel->title, ei_default_font, &size.width, &size.height);
+
+		// TODO: factoriser ça
 		int x_bar_min = widget->screen_location.top_left.x;
 		int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_bar_min = widget->screen_location.top_left.y;
 		int y_bar_max = widget->screen_location.top_left.y + size.height + toplevel->border_width;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
+
+		// Souris sur le bandeau de la fenêtre
 		if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
 		    y_mouse <= y_bar_max) {
 			if (event->type == ei_ev_mouse_buttondown) {
@@ -373,24 +377,30 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 				return EI_TRUE;
 			}
 		}
-		if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool == EI_TRUE) {
-			ei_app_invalidate_rect(&widget->screen_location);
+
+		// Souris qui déplace la fenêtre
+		if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool) {
 			int dx = x_mouse - toplevel->move_mode.last_location.x;
 			int dy = y_mouse - toplevel->move_mode.last_location.y;
 			int new_x = widget->screen_location.top_left.x + dx;
 			int new_y = widget->screen_location.top_left.y + dy;
+			ei_app_invalidate_rect(&widget->screen_location);
 			ei_place(widget, NULL, &new_x, &new_y, NULL, NULL, NULL, NULL, NULL, NULL);
 			ei_app_invalidate_rect(&widget->screen_location);
 			toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
-		} else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+		} else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool) {
 			toplevel->move_mode.move_mode_bool = EI_FALSE;
 			return EI_TRUE;
 		}
+
+
+		// TODO: factoriser ça
 		int x_resize_min = widget->screen_location.top_left.x + widget->screen_location.size.height * 0.8;
 		int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
 		int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+		// Souris sur le bandeau de redimensionnement
 		if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
 		    y_mouse <= y_resize_max) {
 			if (event->type == ei_ev_mouse_buttondown) {
@@ -399,17 +409,19 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 				return EI_TRUE;
 			}
 		}
-		if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
-			ei_app_invalidate_rect(&widget->screen_location);
+
+		// Souris qui redimensionne la fenêtre
+		if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool) {
 			int dx = x_mouse - toplevel->resize_mode.last_location.x;
 			int dy = y_mouse - toplevel->resize_mode.last_location.y;
 			int new_width = widget->screen_location.size.width + dx;
 			int new_height = widget->screen_location.size.height + dy;
-			ei_place(widget, NULL, NULL, NULL, new_width, new_height, NULL, NULL, NULL, NULL);
+			ei_app_invalidate_rect(&widget->screen_location);
+			ei_place(widget, NULL, NULL, NULL, &new_width, &new_height, NULL, NULL, NULL, NULL);
 			ei_app_invalidate_rect(&widget->screen_location);
 			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
-		} else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+		} else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool) {
 			toplevel->resize_mode.resize_mode_bool = EI_FALSE;
 			return EI_TRUE;
 		}
@@ -427,7 +439,7 @@ void draw_toplevel(ei_surface_t surface,
 		   ei_bool_t pick,
 		   int border_width) {
 	is_pick_surface = pick;
-	if (pick == EI_TRUE) {
+	if (pick) {
 		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, toplevel_color, clipper);
 		free_points(pts);
