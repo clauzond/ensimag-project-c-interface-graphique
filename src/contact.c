@@ -1,3 +1,7 @@
+/*
+  Module adapté du TP fil rouge
+*/
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -5,11 +9,6 @@
 
 #include "contact.h"
 
-/*
-Spécification du module LIBRE
---> il faut identifier les fonctions utiles pour la construction d'un annuaire de contacts
---> il faut faire ses propres tests
-*/
 
 /*
   Insère un nouveau contact dans la liste de contact _cptr_ construit à partir des nom et

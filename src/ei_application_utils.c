@@ -1,11 +1,8 @@
 #include <stdlib.h>
 
-#include "ei_utils.h"
-#include "ei_widget.h"
-#include "ei_widgetclass.h"
-#include "ei_types.h"
 #include "ei_event.h"
-#include "ei_application.h"
+#include "ei_types.h"
+#include "ei_widget.h"
 
 #include "ei_application_utils.h"
 
@@ -106,7 +103,7 @@ void free_rectangle_list(ei_linked_rect_t *rectangle_list) {
 	if (rectangle_list == NULL) {
 		return;
 	}
-	ei_linked_point_t *ptr = rectangle_list;
+	ei_linked_rect_t *ptr = rectangle_list;
 	while (rectangle_list->next != NULL) {
 		ptr = rectangle_list->next;
 		free(rectangle_list);

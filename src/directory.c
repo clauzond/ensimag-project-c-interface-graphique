@@ -1,11 +1,9 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-#include "directory.h"
 #include "contact.h"
+#include "directory.h"
 #include "hash.h"
 
 /*

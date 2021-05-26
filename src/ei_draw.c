@@ -1,13 +1,13 @@
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 
+#include "hw_interface.h"
 #include "ei_draw.h"
 #include "ei_types.h"
-#include "hw_interface.h"
-#include "ei_draw_utils.h"
+
 #include "ei_application_utils.h"
+#include "ei_draw_utils.h"
 
 /**
 * \brief	Converts the red, green, blue and alpha components of a color into a 32 bits integer

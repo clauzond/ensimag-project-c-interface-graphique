@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
-#include "ei_widget.h"
 #include "ei_event.h"
+#include "ei_widget.h"
 
 /** Global variables **/
 /**                  **/

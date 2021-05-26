@@ -1,19 +1,25 @@
+/**
+ *  @file	ei_draw_utils.h
+ *  @brief	Functions that are useful to \ref ei_draw.h
+ *
+ */
+
 #ifndef EI_DRAW_UTILS_H
 #define EI_DRAW_UTILS_H
 
-#include "ei_types.h"
 #include "hw_interface.h"
+#include "ei_types.h"
 
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 
 typedef struct ei_side {
-	int ymax;
-	int x_ymin;
-	int dx;                ///< dx can be negative
-	int dy;                ///< dy always positive (segment from ymin to ymax)
-	int E;                ///< Error in Bresenham algorithm
+	int ymax;	///< Maximum y of the side
+	int x_ymin;	///< x corresponding to pixel intersection with scanline of ymin
+	int dx;         ///< dx can be negative
+	int dy;		///< dy always positive (segment from ymin to ymax)
+	int E;          ///< Error in Bresenham algorithm
 	struct ei_side *next;
 } ei_side;
 
@@ -22,6 +28,9 @@ typedef struct ei_side_table {
 	struct ei_side **array;
 } ei_side_table;
 
+/**
+ * \brief Boolean allowing draw functions to only use mono-colors (no alpha used)
+ */
 ei_bool_t is_pick_surface;
 
 /**

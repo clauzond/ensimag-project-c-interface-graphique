@@ -1,11 +1,9 @@
-//
-// Created by baptiste on 12/05/2021.
-//
 #include <stdlib.h>
 #include <math.h>
 
-#include "ei_types.h"
 #include "ei_draw.h"
+#include "ei_types.h"
+
 #include "ei_button.h"
 #include "ei_draw_utils.h"
 
