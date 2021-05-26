@@ -354,23 +354,38 @@ void toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 	*(widget->content_rect) = rect;
 }
 
+ei_bool_t mouse_in_window_bar(ei_toplevel_t *toplevel, ei_event_t *event, ei_size_t text_size) {
+	int x_bar_min = toplevel->widget.screen_location.top_left.x;
+	int x_bar_max = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.width;
+	int y_bar_min = toplevel->widget.screen_location.top_left.y;
+	int y_bar_max = toplevel->widget.screen_location.top_left.y + text_size.height + toplevel->border_width;
+	int x_mouse = event->param.mouse.where.x;
+	int y_mouse = event->param.mouse.where.y;
+
+	return (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min && y_mouse <= y_bar_max);
+}
+
+ei_bool_t mouse_in_window_resize(ei_toplevel_t *toplevel, ei_event_t *event, ei_size_t text_size) {
+	int x_resize_min = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.height * 0.8;
+	int x_resize_max = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.width;
+	int y_resize_min = toplevel->widget.screen_location.top_left.y + toplevel->widget.screen_location.size.height * 0.8;
+	int y_resize_max = toplevel->widget.screen_location.top_left.y + toplevel->widget.screen_location.size.height;
+	int x_mouse = event->param.mouse.where.x;
+	int y_mouse = event->param.mouse.where.y;
+
+	return (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min && y_mouse <= y_resize_max);
+}
+
 ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 	if (is_located_event(*event)) {
 		struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 		ei_size_t size;
 		hw_text_compute_size(toplevel->title, ei_default_font, &size.width, &size.height);
-
-		// TODO: factoriser ça
-		int x_bar_min = widget->screen_location.top_left.x;
-		int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
-		int y_bar_min = widget->screen_location.top_left.y;
-		int y_bar_max = widget->screen_location.top_left.y + size.height + toplevel->border_width;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
 
 		// Souris sur le bandeau de la fenêtre
-		if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
-		    y_mouse <= y_bar_max) {
+		if (mouse_in_window_bar(toplevel, event, size)) {
 			if (event->type == ei_ev_mouse_buttondown) {
 				toplevel->move_mode.move_mode_bool = EI_TRUE;
 				toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
@@ -391,18 +406,12 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			return EI_TRUE;
 		} else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool) {
 			toplevel->move_mode.move_mode_bool = EI_FALSE;
+			toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
 		}
 
-
-		// TODO: factoriser ça
-		int x_resize_min = widget->screen_location.top_left.x + widget->screen_location.size.height * 0.8;
-		int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
-		int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
-		int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
 		// Souris sur le bandeau de redimensionnement
-		if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
-		    y_mouse <= y_resize_max) {
+		if (mouse_in_window_resize(toplevel, event, size)) {
 			if (event->type == ei_ev_mouse_buttondown) {
 				toplevel->resize_mode.resize_mode_bool = EI_TRUE;
 				toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
@@ -416,8 +425,8 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			int dy = y_mouse - toplevel->resize_mode.last_location.y;
 			int new_width = widget->screen_location.size.width + dx;
 			int new_height = widget->screen_location.size.height + dy;
+			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 			if (new_width < toplevel->min_size.width && new_height < toplevel->min_size.height) {
-				toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 				return EI_FALSE;
 			} else {
 				if (new_width < toplevel->min_size.width) {
@@ -430,10 +439,10 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			ei_app_invalidate_rect(&widget->screen_location);
 			ei_place(widget, NULL, NULL, NULL, &new_width, &new_height, NULL, NULL, NULL, NULL);
 			ei_app_invalidate_rect(&widget->screen_location);
-			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
 		} else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool) {
 			toplevel->resize_mode.resize_mode_bool = EI_FALSE;
+			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
 		}
 	}
