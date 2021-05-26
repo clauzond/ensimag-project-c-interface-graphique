@@ -143,6 +143,7 @@ void draw_button(ei_surface_t surface,
 		free_points(pts);
 	} else {
 		if (relief == ei_relief_sunken) {
+		        //Couleurs pour un bouton enfoncé
 			top_color.red = button_color.red * 0.9;
 			top_color.green = button_color.green * 0.9;
 			top_color.blue = button_color.blue * 0.9, top_color.alpha = button_color.alpha;
@@ -163,6 +164,7 @@ void draw_button(ei_surface_t surface,
                         }
 			bot_color.alpha = button_color.alpha;
 		} else {
+		        //Couleurs pour un bouton relevé
                         if (button_color.red * 1.1 <= 255) {
                                 top_color.red = button_color.red * 1.1;
                         } else {
