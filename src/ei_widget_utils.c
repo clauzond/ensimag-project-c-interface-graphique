@@ -371,6 +371,32 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			toplevel->move_mode.move_mode_bool = EI_FALSE;
 			return EI_TRUE;
 		}
+		int x_resize_min = widget->screen_location.top_left.x + widget->screen_location.size.height * 0.8;
+                int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width ;
+                int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
+                int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+                if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
+                    y_mouse <= y_resize_max) {
+                        if (event->type == ei_ev_mouse_buttondown) {
+                                toplevel->resize_mode.resize_mode_bool = EI_TRUE;
+                                toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+                                return EI_TRUE;
+                        }
+                }
+                if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+                        ei_app_invalidate_rect(&widget->screen_location);
+                        int dx = x_mouse - toplevel->resize_mode.last_location.x;
+                        int dy = y_mouse - toplevel->resize_mode.last_location.y;
+                        int new_width = widget->screen_location.size.width + dx;
+                        int new_height = widget->screen_location.size.height + dy;
+                        ei_place(widget, NULL, NULL, NULL, new_width, new_height, NULL, NULL, NULL, NULL);
+                        ei_app_invalidate_rect(&widget->screen_location);
+                        toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+                        return EI_TRUE;
+                } else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+                        toplevel->resize_mode.resize_mode_bool = EI_FALSE;
+                        return EI_TRUE;
+                }
 	}
 	return EI_FALSE;
 }
