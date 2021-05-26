@@ -286,27 +286,6 @@ void ei_toplevel_configure(ei_widget_t *widget,
 	}
 	if (closable != NULL) {
 		toplevel->closable = *closable;
-		if (toplevel->closable == EI_TRUE) {
-		        ei_widget_t *widg_close_button = ei_widget_create("button", widget, widget->user_data,
-                                                       ei_widget_destroy);
-		        struct ei_button_t *close_button = (ei_button_t *) widg_close_button;
-		        ei_size_t requested_size;
-                        hw_text_compute_size(title, ei_default_font, &(requested_size.width), &(requested_size.height));
-                        requested_size.width = requested_size.height;
-                        ei_color_t red = {255, 0, 0, 255};
-                        ei_color_t white = {255, 255, 255, 255};
-                        int border_width = 0;
-                        int corner_radius = 0;
-                        ei_relief_t relief = ei_relief_raised;
-                        char text ="X";
-                        ei_rect_t img_rect; img_rect.size = requested_size;
-                        img_rect.top_left.x = widget->screen_location.top_left.x + widget->requested_size.width - requested_size.width;
-                        img_rect.top_left.y = widget->screen_location.top_left.y + widget->requested_size.height - requested_size.height;
-                        ei_button_configure(widg_close_button, &requested_size, &red, &border_width, &corner_radius,
-                        &relief, &text, ei_default_font, &white, NULL, NULL, &img_rect, NULL, empty_callback, widget->user_data);
-                        //ei_place(close_button, NULL, &img_rect.top_left.x, &img_rect.top_left.y, NULL,
-                        //         NULL, NULL, NULL, NULL, NULL);
-		}
 	}
 	if (resizable != NULL) {
 		toplevel->resizable = *resizable;
