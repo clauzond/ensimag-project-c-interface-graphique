@@ -48,16 +48,6 @@ void forget_placer_params(ei_widget_t *widget) {
 	if (param == NULL) {
 		return;
 	}
-	free(param->anchor);
-	free(param->x);
-	free(param->y);
-	free(param->w);
-	free(param->h);
-	free(param->rx);
-	free(param->ry);
-	free(param->rw);
-	free(param->rh);
-	free(widget->placer_params);
 	widget->placer_params = NULL;
 }
 

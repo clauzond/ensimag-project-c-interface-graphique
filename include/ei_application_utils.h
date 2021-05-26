@@ -68,14 +68,6 @@ ei_rect_t rect_union(ei_rect_t r1, ei_rect_t r2);
 void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window, ei_rect_t *clipper);
 
 /**
- * \brief 	Frees recursively "widget" and every other widgets beside or below in hierarchy.
- * 		Can be used to free every widget when used with root widget.
- *
- * @param 	widget
- */
-void free_widget_recursively(ei_widget_t *widget);
-
-/**
  * \brief	Frees the root window
  *
  * @param 	root_window

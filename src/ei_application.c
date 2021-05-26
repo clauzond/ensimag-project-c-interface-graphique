@@ -74,11 +74,11 @@ void ei_app_create(ei_size_t main_window_size, ei_bool_t fullscreen) {
 *		(ie. calls \ref hw_quit).
 */
 void ei_app_free(void) {
+	// Free every widget
+	ei_widget_destroy(ROOT_FRAME);
+
 	// Free widget classes
 	free_widget_dir();
-
-	// Free every widget
-	free_widget_recursively(ROOT_FRAME);
 
 	// Free both root window and pick surface
 	free_root_window(ROOT_WINDOW);

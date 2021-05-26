@@ -64,21 +64,6 @@ void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window, ei_r
 	}
 }
 
-void free_widget_recursively(ei_widget_t *widget) {
-	ei_widget_t *next_sibling = widget->next_sibling;
-	ei_widget_t *children_head = widget->children_head;
-
-	// Traitement pour un widget
-	ei_widget_destroy(widget);
-
-	// Prochain widget à traiter
-	if (next_sibling != NULL) {
-		free_widget_recursively(next_sibling);
-	} else if (children_head != NULL) {
-		free_widget_recursively(children_head);
-	}
-}
-
 void free_root_window(ei_surface_t root_window) {
 	// Free root window
 	hw_surface_unlock(root_window);

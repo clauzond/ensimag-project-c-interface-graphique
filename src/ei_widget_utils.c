@@ -25,7 +25,9 @@ void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_pa
 
 void ei_widget_destroy_child(ei_widget_t *widget) {
 	// Call destructor if provided
-	widget->destructor(widget);
+	if (widget->destructor != NULL) {
+		widget->destructor(widget);
+	}
 
 	// Destroys its descendants
 	ei_widget_t *ptr = widget->children_head;
@@ -132,7 +134,6 @@ void frame_releasefunc(ei_widget_t *widget) {
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
 	free(widget->pick_color);
-	free(widget->content_rect);
 }
 
 void
@@ -225,7 +226,6 @@ void button_releasefunc(ei_widget_t *widget) {
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
 	free(widget->pick_color);
-	free(widget->content_rect);
 }
 
 void
@@ -329,7 +329,6 @@ void toplevel_releasefunc(ei_widget_t *widget) {
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
 	free(widget->pick_color);
-	free(widget->content_rect);
 }
 
 void
