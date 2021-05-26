@@ -105,6 +105,24 @@ void ei_widget_destroy(ei_widget_t *widget) {
 	}
 
 	// Link correctly between siblings and parent (parcours linéaire)
+	// Link between siblings
+	if (widget->parent != NULL) {
+		ptr = widget->parent->children_head;
+		if (ptr == widget) {
+			widget->parent->children_head = widget->next_sibling;
+			if (widget->parent->children_tail == widget) {
+				widget->parent->children_tail = widget->next_sibling;
+			}
+		} else {
+			while (ptr->next_sibling != widget) {
+				ptr = ptr->next_sibling;
+			}
+			ptr->next_sibling = widget->next_sibling;
+			if (widget->next_sibling == NULL) {
+				widget->parent->children_tail = ptr;
+			}
+		}
+	}
 
 	// Frees memory
 	widget->wclass->releasefunc(widget);

@@ -204,8 +204,14 @@ void draw_button(ei_surface_t surface,
 
 		//Texte
 		ei_point_t where;
-		where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
-		where.y = rect.top_left.y + rect.size.height * 3 / 10;
+		if (relief == ei_relief_raised) {
+                        where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
+                        where.y = rect.top_left.y + rect.size.height * 3 / 10;
+		} else {
+                        where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
+                        where.y = rect.top_left.y + rect.size.height * 3.5 / 10;
+                }
+
 		ei_draw_text(surface, &where, text, font, text_color, clipper);
 	}
 
