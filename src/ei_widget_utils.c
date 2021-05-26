@@ -545,13 +545,39 @@ void draw_frame(ei_surface_t surface,
 			top_color.red = frame_color.red * 0.9;
 			top_color.green = frame_color.green * 0.9;
 			top_color.blue = frame_color.blue * 0.9, top_color.alpha = frame_color.alpha;
-			bot_color.red = frame_color.red * 1.1;
-			bot_color.green = frame_color.green * 1.1;
-			bot_color.blue = frame_color.blue * 1.1, bot_color.alpha = frame_color.alpha;
+                        if (frame_color.red * 1.1 <= 255) {
+                                bot_color.red = frame_color.red * 1.1;
+                        } else {
+                                bot_color.red = 255;
+                        }
+                        if (frame_color.green * 1.1 <= 255) {
+                                bot_color.green = frame_color.green * 1.1;
+                        } else {
+                                bot_color.red = 255;
+                        }
+                        if (frame_color.blue * 1.1 <= 255) {
+                                bot_color.blue = frame_color.blue * 1.1;
+                        } else {
+                                bot_color.red = 255;
+                        }
+			bot_color.alpha = frame_color.alpha;
 		} else {
-			top_color.red = frame_color.red * 1.1;
-			top_color.green = frame_color.green * 1.1;
-			top_color.blue = frame_color.blue * 1.1, top_color.alpha = frame_color.alpha;
+                        if (frame_color.red * 1.1 <= 255) {
+                                top_color.red = frame_color.red * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+                        if (frame_color.green * 1.1 <= 255) {
+                                top_color.green = frame_color.green * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+                        if (frame_color.blue * 1.1 <= 255) {
+                                top_color.blue = frame_color.blue * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+			top_color.alpha = frame_color.alpha;
 			bot_color.red = frame_color.red * 0.9;
 			bot_color.green = frame_color.green * 0.9;
 			bot_color.blue = frame_color.blue * 0.9, bot_color.alpha = frame_color.alpha;
