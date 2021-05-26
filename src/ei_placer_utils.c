@@ -212,8 +212,8 @@ is_valid_dimension(int parent_dimension, float *rel_dimension, int *dimension, i
 void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
 	// Gestion width
 	// 0. Paramètres
-	// 1. requested_size
-	// 2. valeur par default (placer_params)
+	// 1. valeur par default (placer_params)
+	// 2. requested_size
 	// 3. = 0
 	int w = 0, rw = 0;
 
@@ -223,14 +223,14 @@ void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
 	} else if (width != NULL) {
 		// width
 		w = *width;
-	} else if (widget->requested_size.width != 0) {
-		// requested width
-		w = widget->requested_size.width;
 	} else if (widget->placer_params->rw != NULL) {
 		// default
 		rw = widget->placer_params->rw_data;
 	} else if (widget->placer_params->w != NULL) {
 		w = widget->placer_params->w_data;
+	} else if (widget->requested_size.width != 0) {
+		// requested width
+		w = widget->requested_size.width;
 	} // else zero
 
 	if (rw == 0) {
@@ -249,8 +249,8 @@ void manage_width(ei_widget_t *widget, int *width, float *rel_width) {
 void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 	// Gestion height
 	// 0. Paramètres
-	// 1. requested_size
-	// 2. valeur default (placer_params)
+	// 1. valeur default (placer_params)
+	// 2. requested_size
 	// 3. = 0
 	int h = 0, rh = 0;
 
@@ -260,14 +260,14 @@ void manage_height(ei_widget_t *widget, int *height, float *rel_height) {
 	} else if (height != NULL) {
 		// height
 		h = *height;
-	} else if (widget->requested_size.height != 0) {
-		// requested height
-		h = widget->requested_size.height;
 	} else if (widget->placer_params->rh != NULL) {
 		// default
 		rh = widget->placer_params->rh_data;
 	} else if (widget->placer_params->h != NULL) {
 		h = widget->placer_params->h_data;
+	} else if (widget->requested_size.height != 0) {
+		// requested height
+		h = widget->requested_size.height;
 	} // else zero
 
 	if (rh == 0) {
