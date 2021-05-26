@@ -212,7 +212,11 @@ void move_sides_to_tca(ei_side_table *tc, int y, ei_side **tca) {
 		if ((*tca) == NULL) {
 			*tca = tc->array[y];
 		} else {
-			(*tca)->next = tc->array[y];
+			ei_side *ptr = *tca;
+			while (ptr->next != NULL) {
+				ptr = ptr->next;
+			}
+			ptr->next = tc->array[y];
 		}
 		while (tc->array[y] != NULL) { // vider tc->array[y]
 			tc->array[y] = tc->array[y]->next; // ne pas free, car déplacé dans tca
