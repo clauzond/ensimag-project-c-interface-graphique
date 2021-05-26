@@ -6,6 +6,7 @@
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
 
+#include "ei_draw_utils.h"
 #include "ei_application_utils.h"
 #include "ei_widget_utils.h"
 #include "ei_widgetclass_utils.h"
@@ -101,6 +102,7 @@ void ei_app_run() {
 	// Dessiner tout une première fois
 	hw_surface_lock(ROOT_WINDOW);
 	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, NULL);
+	draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, NULL);
 	hw_surface_unlock(ROOT_WINDOW);
 	hw_surface_update_rects(ROOT_WINDOW, NULL);
 
@@ -133,6 +135,9 @@ void ei_app_run() {
 			hw_surface_lock(ROOT_WINDOW);
 			big_rect = big_union_rect(RECTANGLE_LIST);
 			draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, &big_rect);
+			is_pick_surface = EI_TRUE;
+			draw_widget_recursively(ROOT_FRAME, ei_get_pick_surface(), &big_rect);
+			is_pick_surface = EI_FALSE;
 			hw_surface_unlock(ROOT_WINDOW);
 			hw_surface_update_rects(ROOT_WINDOW, RECTANGLE_LIST);
 			free_rectangle_list(RECTANGLE_LIST);
