@@ -262,8 +262,10 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		int y_mouse = event->param.mouse.where.y;
 		if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
 		    y_mouse <= y_max) {
+		        //event à l'intérieur du bouton
 			if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
 				if (button->relief != ei_relief_sunken) {
+				        //affichage bouton relevé->enfoncé
 					button->relief = ei_relief_sunken;
 					ei_app_invalidate_rect(&widget->screen_location);
 				}
@@ -271,6 +273,7 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			} else if (event->type == ei_ev_mouse_buttonup) {
 				button->callback(widget, event, button->user_param);
 				if (button->relief != ei_relief_raised) {
+				        //affichage bouton relevé
 					button->relief = ei_relief_raised;
 					ei_app_invalidate_rect(&widget->screen_location);
 				}
@@ -278,6 +281,7 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			}
 		} else if (event->type == ei_ev_mouse_move) {
 			if (button->relief != ei_relief_raised) {
+			        //affichage bouton relevé pour déplacement hors du bouton
 				button->relief = ei_relief_raised;
 				ei_app_invalidate_rect(&widget->screen_location);
 			}
@@ -384,6 +388,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		// Souris sur le bandeau de la fenêtre
 		if (mouse_in_window_bar(toplevel, event, size)) {
 			if (event->type == ei_ev_mouse_buttondown) {
+			        //On passe en mode déplacement de la fenêtre
 				toplevel->move_mode.move_mode_bool = EI_TRUE;
 				toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
 				return EI_TRUE;
@@ -402,6 +407,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
 		} else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool) {
+		        //On sort du mode déplacement quand le bouton de la souris est relaché
 			toplevel->move_mode.move_mode_bool = EI_FALSE;
 			toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
@@ -410,6 +416,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 		// Souris sur le bandeau de redimensionnement
 		if (mouse_in_window_resize(toplevel, event, size)) {
 			if (event->type == ei_ev_mouse_buttondown) {
+			        //On passe en mode redimensionnement
 				toplevel->resize_mode.resize_mode_bool = EI_TRUE;
 				toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 				return EI_TRUE;
@@ -418,7 +425,8 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 
 		// Souris qui redimensionne la fenêtre
 		if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool) {
-		        int dx = 0; int dy = 0;
+                        //Redimensionnement selon les axes voulus
+                        int dx = 0; int dy = 0;
 		        if (toplevel->resizable == ei_axis_both) {
                                 dx = x_mouse - toplevel->resize_mode.last_location.x;
                                 dy = y_mouse - toplevel->resize_mode.last_location.y;
@@ -431,6 +439,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			int new_width = widget->screen_location.size.width + dx;
 			int new_height = widget->screen_location.size.height + dy;
 			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+			//Respect de la taille minimale
 			if (new_width < toplevel->min_size.width && new_height < toplevel->min_size.height) {
 				return EI_FALSE;
 			} else {
@@ -446,6 +455,7 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			ei_app_invalidate_rect(&widget->screen_location);
 			return EI_TRUE;
 		} else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool) {
+		        //On sort du mode redimensionnement
 			toplevel->resize_mode.resize_mode_bool = EI_FALSE;
 			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
 			return EI_TRUE;
@@ -471,26 +481,36 @@ void draw_toplevel(ei_surface_t surface,
 	} else {
 		ei_size_t size;
 		hw_text_compute_size(text, font, &(size.width), &(size.height));
-		ei_rect_t bot_right_corner;
+		ei_rect_t bot_right_corner; //carré de redimensionnement
 		bot_right_corner.size.width = 0.1 * rect.size.height;
 		bot_right_corner.size.height = 0.1 * rect.size.height;
 		bot_right_corner.top_left.x = rect.top_left.x + rect.size.width - bot_right_corner.size.width;
 		bot_right_corner.top_left.y = rect.top_left.y + rect.size.height - bot_right_corner.size.height;
+
+		//dessin de la partie extérieure
 		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
 					  toplevel_color.blue * 0.5, toplevel_color.alpha};
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
+
+		//position du texte en fonction du rectangle de départ
 		ei_point_t where;
 		where.x = rect.top_left.x + rect.size.width * 0.05;
 		where.y = rect.top_left.y + border_width;
+
+		//rectangle intérieur
 		rect.top_left.x += border_width;
 		rect.top_left.y += 2 * border_width + size.height;
 		rect.size.width -= 2 * border_width;
 		rect.size.height = rect.size.height - size.height - 3 * border_width;
+
+		//dessin de la partie intérieure
 		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, toplevel_color, clipper);
 		free_points(pts);
+
+		//dessin du carré de redimensionnement
 		pts = rounded_frame(bot_right_corner, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);
