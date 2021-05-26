@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include <assert.h>
 
 #include "hw_interface.h"
 #include "ei_utils.h"
@@ -9,7 +8,6 @@
 #include "ei_types.h"
 #include "ei_event.h"
 #include "ei_button.h"
-#include "ei_free.h"
 #include "ei_widget_utils.h"
 
 
