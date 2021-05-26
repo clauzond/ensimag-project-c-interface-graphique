@@ -349,21 +349,35 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
                         if (event->type == ei_ev_mouse_buttondown) {
                                 toplevel->move_mode.move_mode_bool = EI_TRUE;
                                 toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
+<<<<<<< HEAD
+=======
+                                // ei_app_invalidate_rect(&widget->screen_location);
+>>>>>>> 885f342718964fc3a54c611a42e90de72ee0486a
                                 return EI_TRUE;
                         }
                         else if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+                                ei_app_invalidate_rect(&widget->screen_location);
                                 int dx = event->param.mouse.where.x - toplevel->move_mode.last_location.x;
                                 int dy = event->param.mouse.where.y - toplevel->move_mode.last_location.y;
                                 int new_x = widget->screen_location.top_left.x + dx;
                                 int new_y = widget->screen_location.top_left.y + dy;
+<<<<<<< HEAD
                                 ei_rect_t old_loc = widget->screen_location;
                                 widget->screen_location.top_left = ei_point(new_x, new_y);
                                 ei_app_invalidate_rect(&old_loc);
+=======
+				ei_place(widget, NULL, &new_x, &new_y, NULL, NULL, NULL, NULL, NULL, NULL);
+                                // widget->screen_location.top_left = ei_point(new_x, new_y);
+>>>>>>> 885f342718964fc3a54c611a42e90de72ee0486a
                                 ei_app_invalidate_rect(&widget->screen_location);
                                 return EI_TRUE;
                         }
                         else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool == EI_TRUE) {
                                 toplevel->move_mode.move_mode_bool = EI_FALSE;
+<<<<<<< HEAD
+=======
+                                // ei_app_invalidate_rect(&widget->screen_location);
+>>>>>>> 885f342718964fc3a54c611a42e90de72ee0486a
                                 return EI_TRUE;
                         }
                 }
