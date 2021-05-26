@@ -186,6 +186,9 @@ ei_side_table construct_side_table(ei_surface_t surface, const ei_linked_point_t
 			x1 = x2;
 			x2 = tmp;
 		}
+		if (y1 > height || y1 < 0) {
+			continue;
+		}
 		ei_side *side = malloc(sizeof(ei_side));
 		side->ymax = y2;
 		side->x_ymin = x1;

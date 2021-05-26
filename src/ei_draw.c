@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #include "ei_draw.h"
 #include "ei_types.h"
@@ -176,7 +177,7 @@ void ei_draw_text(ei_surface_t surface,
                   ei_font_t font,
                   ei_color_t color,
                   const ei_rect_t *clipper) {
-	if (text == NULL) {
+	if (text == NULL || strcmp(text, "") == 0) {
 		return;
 	}
         ei_rect_t dst_rect;
