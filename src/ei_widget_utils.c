@@ -366,9 +366,9 @@ ei_bool_t mouse_in_window_bar(ei_toplevel_t *toplevel, ei_event_t *event, ei_siz
 }
 
 ei_bool_t mouse_in_window_resize(ei_toplevel_t *toplevel, ei_event_t *event, ei_size_t text_size) {
-	int x_resize_min = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.height * 0.8;
+	int x_resize_min = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.height * 0.9;
 	int x_resize_max = toplevel->widget.screen_location.top_left.x + toplevel->widget.screen_location.size.width;
-	int y_resize_min = toplevel->widget.screen_location.top_left.y + toplevel->widget.screen_location.size.height * 0.8;
+	int y_resize_min = toplevel->widget.screen_location.top_left.y + toplevel->widget.screen_location.size.height * 0.9;
 	int y_resize_max = toplevel->widget.screen_location.top_left.y + toplevel->widget.screen_location.size.height;
 	int x_mouse = event->param.mouse.where.x;
 	int y_mouse = event->param.mouse.where.y;
@@ -475,8 +475,8 @@ void draw_toplevel(ei_surface_t surface,
 		ei_size_t size;
 		hw_text_compute_size(text, font, &(size.width), &(size.height));
 		ei_rect_t bot_right_corner;
-		bot_right_corner.size.width = 0.2 * rect.size.height;
-		bot_right_corner.size.height = 0.2 * rect.size.height;
+		bot_right_corner.size.width = 0.1 * rect.size.height;
+		bot_right_corner.size.height = 0.1 * rect.size.height;
 		bot_right_corner.top_left.x = rect.top_left.x + rect.size.width - bot_right_corner.size.width;
 		bot_right_corner.top_left.y = rect.top_left.y + rect.size.height - bot_right_corner.size.height;
 		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
