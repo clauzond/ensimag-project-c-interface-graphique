@@ -416,6 +416,17 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			int dy = y_mouse - toplevel->resize_mode.last_location.y;
 			int new_width = widget->screen_location.size.width + dx;
 			int new_height = widget->screen_location.size.height + dy;
+			if (new_width < toplevel->min_size.width && new_height < toplevel->min_size.height) {
+				toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+				return EI_FALSE;
+			} else {
+				if (new_width < toplevel->min_size.width) {
+					new_width = widget->screen_location.size.width;
+				}
+				if (new_height < toplevel->min_size.height) {
+					new_height = widget->screen_location.size.height;
+				}
+			}
 			ei_app_invalidate_rect(&widget->screen_location);
 			ei_place(widget, NULL, NULL, NULL, &new_width, &new_height, NULL, NULL, NULL, NULL);
 			ei_app_invalidate_rect(&widget->screen_location);
