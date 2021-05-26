@@ -43,7 +43,7 @@ void ei_widget_destroy_child(ei_widget_t *widget) {
 	free(widget);
 }
 
-uint32_t ei_get_widget_id(ei_widget_t *widget) {
+uint32_t ei_get_widget_id(void) {
 	general_id += 0x2277cc45;
 	return general_id;
 }
@@ -123,11 +123,6 @@ ei_widgetclass_t ei_init_frame_class(void) {
 
 ei_widget_t *frame_allocfunc(void) {
 	ei_widget_t *widget = malloc(sizeof(ei_frame_t));
-	ei_frame_t *frame = (ei_frame_t *) widget;
-	*frame = ei_init_default_frame();
-	widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
-							frame->img_rect);
-	widget->content_rect = malloc(sizeof(ei_rect_t));
 	return widget;
 }
 
@@ -142,7 +137,7 @@ void frame_releasefunc(ei_widget_t *widget) {
 
 void
 frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-	struct ei_frame_t *frame = (ei_frame_t *) widget;
+	ei_frame_t *frame = (ei_frame_t *) widget;
 	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, widget->screen_location,
 		   frame->color,
 		   frame->relief, EI_FALSE);
@@ -153,7 +148,13 @@ frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surf
 }
 
 void frame_setdefaultsfunc(ei_widget_t *widget) {
-
+	ei_frame_t *frame = (ei_frame_t *) widget;
+	ei_widgetclass_t *wclass = widget->wclass;
+	*frame = ei_init_default_frame();
+	widget->wclass = wclass;
+	widget->requested_size = ei_widget_natural_size(frame->border_width, frame->text, frame->text_font,
+							frame->img_rect);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
 }
 
 void frame_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
@@ -215,11 +216,6 @@ ei_widgetclass_t ei_init_button_class(void) {
 
 ei_widget_t *button_allocfunc(void) {
 	ei_widget_t *widget = malloc(sizeof(ei_button_t));
-	ei_button_t *button = (ei_button_t *) widget;
-	*button = ei_init_default_button();
-	widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
-							button->img_rect);
-	widget->content_rect = malloc(sizeof(ei_rect_t));
 	return widget;
 }
 
@@ -242,7 +238,13 @@ button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_sur
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
-
+	ei_button_t *button = (ei_button_t *) widget;
+	ei_widgetclass_t *wclass = widget->wclass;
+	*button = ei_init_default_button();
+	widget->wclass = wclass;
+	widget->requested_size = ei_widget_natural_size(button->border_width, button->text, button->text_font,
+							button->img_rect);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
 }
 
 void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
@@ -314,10 +316,6 @@ ei_widgetclass_t ei_init_toplevel_class(void) {
 
 ei_widget_t *toplevel_allocfunc(void) {
 	ei_widget_t *widget = malloc(sizeof(ei_toplevel_t));
-	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
-	*toplevel = ei_init_default_toplevel();
-	widget->requested_size = ei_size(320, 240);
-	widget->content_rect = malloc(sizeof(ei_rect_t));
 	return widget;
 }
 
@@ -341,7 +339,12 @@ toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_s
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t *widget) {
-
+	ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+	ei_widgetclass_t *wclass = widget->wclass;
+	*toplevel = ei_init_default_toplevel();
+	widget->wclass = wclass;
+	widget->requested_size = ei_size(320, 240);
+	widget->content_rect = malloc(sizeof(ei_rect_t));
 }
 
 void toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {

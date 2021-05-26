@@ -45,6 +45,9 @@ void init_placer_params(struct ei_widget_t *widget) {
 
 void forget_placer_params(ei_widget_t *widget) {
 	ei_placer_params_t *param = widget->placer_params;
+	if (param == NULL) {
+		return;
+	}
 	free(param->anchor);
 	free(param->x);
 	free(param->y);
@@ -56,16 +59,6 @@ void forget_placer_params(ei_widget_t *widget) {
 	free(param->rh);
 	free(widget->placer_params);
 	widget->placer_params = NULL;
-}
-
-
-ei_bool_t is_valid_padding(float rel_c, int c, int dimension) {
-	int pos_c = c + rel_c * dimension;
-	return (ei_bool_t) (0 <= pos_c && pos_c <= dimension);
-}
-
-ei_bool_t is_valid_coord(int c, int dimension) {
-	return (ei_bool_t) (0 <= c && c < dimension);
 }
 
 void manage_anchor(ei_widget_t *widget, ei_anchor_t *anchor) {
@@ -192,21 +185,6 @@ struct anchor_shift create_anchor_shift(ei_anchor_t anchor) {
 			break;
 	}
 	return as;
-}
-
-ei_bool_t
-is_valid_dimension(int parent_dimension, float *rel_dimension, int *dimension, int pos_c, float left, float right) {
-	int left_most, right_most;
-	if (rel_dimension != NULL) {
-		left_most = pos_c + (left * (*rel_dimension) * parent_dimension);
-		right_most = pos_c + (right * (*rel_dimension) * parent_dimension);
-	} else if (dimension != NULL) {
-		left_most = pos_c + (left * (*dimension));
-		right_most = pos_c + (right * (*dimension));
-	} else {
-		return EI_FALSE;
-	}
-	return (ei_bool_t) (0 <= left_most && right_most <= parent_dimension);
 }
 
 void manage_width(ei_widget_t *widget, int *width, float *rel_width) {

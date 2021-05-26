@@ -36,12 +36,13 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 	if (wclass != NULL) {
 		widget = wclass->allocfunc();
 		widget->wclass = wclass;
+		widget->wclass->setdefaultsfunc(widget);
 	} else {
 		return NULL; // class_name not recognized
 	}
 
 	// Initialisation des attributs communs à tous les widgets
-	widget->pick_id = ei_get_widget_id(widget);
+	widget->pick_id = ei_get_widget_id();
 	widget->pick_color = malloc(sizeof(ei_color_t));
 	*widget->pick_color = pixel_to_rgba(ei_get_pick_surface(), widget->pick_id);
 	widget->user_data = user_data;

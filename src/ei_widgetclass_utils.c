@@ -18,7 +18,7 @@ struct dir* get_widget_dir(void) {
 	return widget_dir;
 }
 
-void free_widget_dir(void) {
+void  free_widget_dir(void) {
 	ei_widgetclass_t *to_free;
 	dir_free(widget_dir);
 	while (first_class != NULL) {
