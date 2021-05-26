@@ -1,3 +1,9 @@
+/**
+ *  @file	directory.h
+ *  @brief	Manages the directory (or dictionnary) containing linked lists of pointers to \ref ei_widgetclass_t type.
+ *
+ */
+
 #ifndef _DIRECTORY_H_
 #define _DIRECTORY_H_
 

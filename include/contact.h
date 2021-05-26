@@ -1,3 +1,9 @@
+/**
+ *  @file	contact.h
+ *  @brief	Manages the cells containing pointers to \ref ei_widgetclass_t type.
+ *
+ */
+
 #ifndef _CONTACT_H_
 #define _CONTACT_H_
 
