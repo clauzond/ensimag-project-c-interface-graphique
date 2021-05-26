@@ -488,9 +488,9 @@ void draw_toplevel(ei_surface_t surface,
 		where.x = rect.top_left.x + rect.size.width * 0.05;
 		where.y = rect.top_left.y + border_width;
 		rect.top_left.x += border_width;
-		rect.top_left.y += border_width + size.height;
+		rect.top_left.y += 2 * border_width + size.height;
 		rect.size.width -= 2 * border_width;
-		rect.size.height = rect.size.height - size.height - 2 * border_width;
+		rect.size.height = rect.size.height - size.height - 3 * border_width;
 		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, toplevel_color, clipper);
 		free_points(pts);
