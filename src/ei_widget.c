@@ -1,14 +1,13 @@
-#include <stdlib.h>
-#include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
-#include "ei_draw_utils.h"
 #include "ei_application.h"
 #include "ei_types.h"
 #include "ei_utils.h"
 #include "ei_widget.h"
 #include "ei_widgetclass.h"
 
+#include "ei_draw_utils.h"
 #include "ei_widget_utils.h"
 #include "ei_application_utils.h"
 

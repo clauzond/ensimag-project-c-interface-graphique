@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "hw_interface.h"
 #include "ei_draw.h"
 #include "ei_types.h"
-#include "hw_interface.h"
 
 #include "ei_draw_utils.h"
 

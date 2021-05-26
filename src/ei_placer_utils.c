@@ -1,10 +1,10 @@
 #include <stdlib.h>
 
-#include "ei_application_utils.h"
-#include "ei_widget.h"
 #include "ei_types.h"
 #include "ei_utils.h"
+#include "ei_widget.h"
 
+#include "ei_application_utils.h"
 #include "ei_placer_utils.h"
 
 void init_placer_params(struct ei_widget_t *widget) {

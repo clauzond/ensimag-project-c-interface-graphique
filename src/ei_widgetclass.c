@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "ei_widgetclass.h"
+
 #include "ei_widgetclass_utils.h"
 #include "directory.h"
 
