@@ -150,6 +150,7 @@ void ei_app_run() {
 			draw_widget_recursively(ROOT_FRAME, ROOT_WINDOW, &big_rect);
 			hw_surface_unlock(ROOT_WINDOW);
 			hw_surface_update_rects(ROOT_WINDOW, RECTANGLE_LIST);
+			free_rectangle_list(RECTANGLE_LIST);
 			RECTANGLE_LIST = NULL;
 		}
 

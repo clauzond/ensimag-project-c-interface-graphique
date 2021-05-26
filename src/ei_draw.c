@@ -155,6 +155,13 @@ void ei_draw_polygon(ei_surface_t surface,
                 // Mettre à jour les abscisses d’intersections des côtés de TCA avec la nouvelle scanline
                 update_scanline(tca, y);
         }
+	ei_side *ptr;
+	while (tca != NULL && tca->next != NULL) {
+		ptr = tca->next;
+		free(tca);
+		tca = ptr;
+	}
+	free(tca);
         free(tc.array);
 }
 

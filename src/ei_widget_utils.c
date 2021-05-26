@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <ei_free.h>
 
 #include "ei_application.h"
 #include "ei_placer.h"
@@ -9,7 +8,6 @@
 #include "ei_types.h"
 #include "ei_widget.h"
 #include "ei_button.h"
-#include "ei_free.h"
 
 #include "ei_draw_utils.h"
 #include "ei_widget_utils.h"
@@ -160,6 +158,7 @@ void frame_releasefunc(ei_widget_t *widget) {
 
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
+	free(widget->pick_color);
 	free(widget->content_rect);
 }
 
@@ -230,6 +229,7 @@ void button_releasefunc(ei_widget_t *widget) {
 
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
+	free(widget->pick_color);
 	free(widget->content_rect);
 }
 
@@ -315,6 +315,7 @@ void toplevel_releasefunc(ei_widget_t *widget) {
 
 	// Free widget fields allocated by library
 	ei_placer_forget(widget);
+	free(widget->pick_color);
 	free(widget->content_rect);
 }
 
@@ -445,7 +446,7 @@ void draw_frame(ei_surface_t surface,
 	ei_color_t bot_color;
 	is_pick_surface = pick;
 	if (pick) {
-		ei_linked_point_t *pts = malloc(sizeof(ei_linked_point_t));
+		ei_linked_point_t *pts;
 		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, frame_color, clipper);
 		free_points(pts);

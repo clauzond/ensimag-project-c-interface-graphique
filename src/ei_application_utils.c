@@ -102,3 +102,16 @@ ei_rect_t big_union_rect(ei_linked_rect_t *rectangle_list) {
 	}
 	return big_rect;
 }
+
+void free_rectangle_list(ei_linked_rect_t *rectangle_list) {
+	if (rectangle_list == NULL) {
+		return;
+	}
+	ei_linked_point_t *ptr = rectangle_list;
+	while (rectangle_list->next != NULL) {
+		ptr = rectangle_list->next;
+		free(rectangle_list);
+		rectangle_list = ptr;
+	}
+	free(rectangle_list);
+}
