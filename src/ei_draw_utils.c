@@ -33,13 +33,8 @@ ei_color_t pixel_to_rgba(ei_surface_t surface, uint32_t pixel) {
 
 
 ei_bool_t point_in_clipper(int x, int y, const ei_rect_t *clipper) {
-	/* TODO: Clipping force brute à remplacer */
-
 	if (clipper == NULL) {
 		return EI_TRUE;
-		// TODO: clipper inside root window
-		// ei_size_t size = hw_surface_get_size(ei_app_root_surface());
-		// return (0 <= x && x <= size.width && 0 <= y && y <= size.height);
 	} else {
 		int cx = clipper->top_left.x;
 		int cy = clipper->top_left.y;
@@ -351,28 +346,3 @@ void update_scanline(ei_side *tca, int y) {
 		ptr->x_ymin = intersect.x;
 	}
 }
-
-
-//liste tri(liste L)
-//{
-//      liste i,j,min;
-//      int aux;
-//      for (i=L; i->suiv != NULL; i=i->suiv)
-//      {
-//              min=i;
-//              for (j=i->suiv; j != NULL; j=j->suiv)
-//              {
-//                      if (j->val < min->val)
-//                      {
-//                              min=j;
-//                      }
-//		}
-//              if (min != i)
-//              {
-//                      aux=min->val;
-//                      min->val = i->val;
-//                      i->val = aux;
-//              }
-//      }
-//      return(L);
-//}

@@ -57,9 +57,6 @@ void ei_draw_polyline(ei_surface_t surface,
                       const ei_linked_point_t *first_point,
                       ei_color_t color,
                       const ei_rect_t *clipper) {
-        /* TODO: Optimisation sur pixel_ptr */
-        /* --> retenir le pixel_ptr du précédent appel pour ne pas recalculer la pos de départ */
-
         int x1, x2, y1, y2, dx, dy, sign_x, sign_y;
         int swap;
 
@@ -128,7 +125,6 @@ void ei_draw_polygon(ei_surface_t surface,
                      const ei_linked_point_t *first_point,
                      ei_color_t color,
                      const ei_rect_t *clipper) {
-        /* TODO: link last_point avec first_point */
         int y = 0;
         int height = hw_surface_get_size(surface).height;
         ei_side_table tc = construct_side_table(surface, first_point);

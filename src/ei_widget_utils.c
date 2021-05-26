@@ -49,9 +49,6 @@ uint32_t ei_get_widget_id(ei_widget_t *widget) {
 }
 
 ei_widget_t *ei_find_widget_by_id(uint32_t id) {
-	// Solution qui aurait été meilleure avec + de temps :
-	// dictionnaire de widget classé avec l'id (au lieu du nom)
-	// Recherche exhaustive
 	return search_widget(ei_app_root_widget(), id);
 }
 
@@ -237,8 +234,6 @@ void button_releasefunc(ei_widget_t *widget) {
 
 void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-	// TODO: ne pas utiliser "button->rayon" mais plutôt un des paramètres configurables par "ei_button_configure"
-	// TODO: possibilité d'utiliser une image (peu important)
 	struct ei_button_t *button = (ei_button_t *) widget;
 	draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location,
 		    button->color, button->corner_radius, button->relief, EI_FALSE);
@@ -337,7 +332,6 @@ void toplevel_releasefunc(ei_widget_t *widget) {
 
 void
 toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-	// TODO: ajouter ei_font_t dans ei_toplevel_t?
 	struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 	ei_color_t blanc = {255, 255, 255, 255};
 	draw_toplevel(surface, toplevel->title, ei_default_font, blanc, clipper, widget->screen_location,
