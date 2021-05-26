@@ -111,36 +111,17 @@ ei_frame_t ei_init_default_frame(void) {
 	return frame;
 }
 
-ei_button_t ei_init_default_button(void) {
-	ei_button_t button;
-	// button.widget is not initialized
-	button.color = ei_default_background_color;
-	button.border_width = k_default_button_border_width;
-	button.corner_radius = k_default_button_corner_radius;
-	button.relief = ei_relief_raised;
-	button.text = NULL;
-	button.text_font = ei_default_font;
-	button.text_color = ei_font_default_color;
-	button.text_anchor = ei_anc_center;
-	button.img = NULL;
-	button.img_rect = NULL;
-	button.img_anchor = ei_anc_center;
-	button.callback = empty_callback;
-	button.user_param = NULL;
-	button.requested_bool = EI_FALSE;
-	return button;
-}
-
-ei_toplevel_t ei_init_default_toplevel(void) {
-	ei_toplevel_t toplevel;
-	// toplevel.widget is not initialized
-	toplevel.color = ei_default_background_color;
-	toplevel.border_width = 4;
-	toplevel.title = "Toplevel";
-	toplevel.closable = EI_TRUE;
-	toplevel.resizable = ei_axis_both;
-	toplevel.min_size = ei_size(160, 120);
-	return toplevel;
+ei_widgetclass_t ei_init_frame_class(void) {
+	ei_widgetclass_t wclass;
+	strcpy(wclass.name, "frame");
+	wclass.allocfunc = &frame_allocfunc;
+	wclass.releasefunc = &frame_releasefunc;
+	wclass.drawfunc = &frame_drawfunc;
+	wclass.setdefaultsfunc = &frame_setdefaultsfunc;
+	wclass.geomnotifyfunc = &frame_geomnotifyfunc;
+	wclass.handlefunc = &frame_handlefunc;
+	wclass.next = NULL;
+	return wclass;
 }
 
 ei_widget_t *frame_allocfunc(void) {
@@ -201,15 +182,36 @@ ei_bool_t frame_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 	}
 }
 
-ei_widgetclass_t ei_init_frame_class(void) {
+
+ei_button_t ei_init_default_button(void) {
+	ei_button_t button;
+	// button.widget is not initialized
+	button.color = ei_default_background_color;
+	button.border_width = k_default_button_border_width;
+	button.corner_radius = k_default_button_corner_radius;
+	button.relief = ei_relief_raised;
+	button.text = NULL;
+	button.text_font = ei_default_font;
+	button.text_color = ei_font_default_color;
+	button.text_anchor = ei_anc_center;
+	button.img = NULL;
+	button.img_rect = NULL;
+	button.img_anchor = ei_anc_center;
+	button.callback = empty_callback;
+	button.user_param = NULL;
+	button.requested_bool = EI_FALSE;
+	return button;
+}
+
+ei_widgetclass_t ei_init_button_class(void) {
 	ei_widgetclass_t wclass;
-	strcpy(wclass.name, "frame");
-	wclass.allocfunc = &frame_allocfunc;
-	wclass.releasefunc = &frame_releasefunc;
-	wclass.drawfunc = &frame_drawfunc;
-	wclass.setdefaultsfunc = &frame_setdefaultsfunc;
-	wclass.geomnotifyfunc = &frame_geomnotifyfunc;
-	wclass.handlefunc = &frame_handlefunc;
+	strcpy(wclass.name, "button");
+	wclass.allocfunc = &button_allocfunc;
+	wclass.releasefunc = &button_releasefunc;
+	wclass.drawfunc = &button_drawfunc;
+	wclass.setdefaultsfunc = &button_setdefaultsfunc;
+	wclass.geomnotifyfunc = &button_geomnotifyfunc;
+	wclass.handlefunc = &button_handlefunc;
 	wclass.next = NULL;
 	return wclass;
 }
@@ -288,15 +290,29 @@ ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 	return EI_FALSE;
 }
 
-ei_widgetclass_t ei_init_button_class(void) {
+ei_toplevel_t ei_init_default_toplevel(void) {
+	ei_toplevel_t toplevel;
+	// toplevel.widget is not initialized
+	toplevel.color = ei_default_background_color;
+	toplevel.border_width = 4;
+	toplevel.title = "Toplevel";
+	toplevel.closable = EI_TRUE;
+	toplevel.resizable = ei_axis_both;
+	toplevel.min_size = ei_size(160, 120);
+	toplevel.move_mode.move_mode_bool = EI_FALSE;
+	toplevel.resize_mode.resize_mode_bool = EI_FALSE;
+	return toplevel;
+}
+
+ei_widgetclass_t ei_init_toplevel_class(void) {
 	ei_widgetclass_t wclass;
-	strcpy(wclass.name, "button");
-	wclass.allocfunc = &button_allocfunc;
-	wclass.releasefunc = &button_releasefunc;
-	wclass.drawfunc = &button_drawfunc;
-	wclass.setdefaultsfunc = &button_setdefaultsfunc;
-	wclass.geomnotifyfunc = &button_geomnotifyfunc;
-	wclass.handlefunc = &button_handlefunc;
+	strcpy(wclass.name, "toplevel");
+	wclass.allocfunc = &toplevel_allocfunc;
+	wclass.releasefunc = &toplevel_releasefunc;
+	wclass.drawfunc = &toplevel_drawfunc;
+	wclass.setdefaultsfunc = &toplevel_setdefaultsfunc;
+	wclass.geomnotifyfunc = &toplevel_geomnotifyfunc;
+	wclass.handlefunc = &toplevel_handlefunc;
 	wclass.next = NULL;
 	return wclass;
 }
@@ -372,46 +388,33 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 			return EI_TRUE;
 		}
 		int x_resize_min = widget->screen_location.top_left.x + widget->screen_location.size.height * 0.8;
-                int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width ;
-                int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
-                int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
-                if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
-                    y_mouse <= y_resize_max) {
-                        if (event->type == ei_ev_mouse_buttondown) {
-                                toplevel->resize_mode.resize_mode_bool = EI_TRUE;
-                                toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
-                                return EI_TRUE;
-                        }
-                }
-                if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
-                        ei_app_invalidate_rect(&widget->screen_location);
-                        int dx = x_mouse - toplevel->resize_mode.last_location.x;
-                        int dy = y_mouse - toplevel->resize_mode.last_location.y;
-                        int new_width = widget->screen_location.size.width + dx;
-                        int new_height = widget->screen_location.size.height + dy;
-                        ei_place(widget, NULL, NULL, NULL, new_width, new_height, NULL, NULL, NULL, NULL);
-                        ei_app_invalidate_rect(&widget->screen_location);
-                        toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
-                        return EI_TRUE;
-                } else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
-                        toplevel->resize_mode.resize_mode_bool = EI_FALSE;
-                        return EI_TRUE;
-                }
+		int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
+		int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
+		int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+		if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
+		    y_mouse <= y_resize_max) {
+			if (event->type == ei_ev_mouse_buttondown) {
+				toplevel->resize_mode.resize_mode_bool = EI_TRUE;
+				toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+				return EI_TRUE;
+			}
+		}
+		if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+			ei_app_invalidate_rect(&widget->screen_location);
+			int dx = x_mouse - toplevel->resize_mode.last_location.x;
+			int dy = y_mouse - toplevel->resize_mode.last_location.y;
+			int new_width = widget->screen_location.size.width + dx;
+			int new_height = widget->screen_location.size.height + dy;
+			ei_place(widget, NULL, NULL, NULL, new_width, new_height, NULL, NULL, NULL, NULL);
+			ei_app_invalidate_rect(&widget->screen_location);
+			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+			return EI_TRUE;
+		} else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+			toplevel->resize_mode.resize_mode_bool = EI_FALSE;
+			return EI_TRUE;
+		}
 	}
 	return EI_FALSE;
-}
-
-ei_widgetclass_t ei_init_toplevel_class(void) {
-	ei_widgetclass_t wclass;
-	strcpy(wclass.name, "toplevel");
-	wclass.allocfunc = &toplevel_allocfunc;
-	wclass.releasefunc = &toplevel_releasefunc;
-	wclass.drawfunc = &toplevel_drawfunc;
-	wclass.setdefaultsfunc = &toplevel_setdefaultsfunc;
-	wclass.geomnotifyfunc = &toplevel_geomnotifyfunc;
-	wclass.handlefunc = &toplevel_handlefunc;
-	wclass.next = NULL;
-	return wclass;
 }
 
 void draw_toplevel(ei_surface_t surface,
