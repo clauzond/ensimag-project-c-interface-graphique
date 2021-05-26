@@ -421,8 +421,16 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 
 		// Souris qui redimensionne la fenêtre
 		if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool) {
-			int dx = x_mouse - toplevel->resize_mode.last_location.x;
-			int dy = y_mouse - toplevel->resize_mode.last_location.y;
+		        int dx = 0; int dy = 0;
+		        if (toplevel->resizable == ei_axis_both) {
+                                dx = x_mouse - toplevel->resize_mode.last_location.x;
+                                dy = y_mouse - toplevel->resize_mode.last_location.y;
+		        } else if (toplevel->resizable == ei_axis_x) {
+                                dx = x_mouse - toplevel->resize_mode.last_location.x;
+		        } else if (toplevel->resizable == ei_axis_y) {
+                                dy = y_mouse - toplevel->resize_mode.last_location.y;
+                        }
+
 			int new_width = widget->screen_location.size.width + dx;
 			int new_height = widget->screen_location.size.height + dy;
 			toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
