@@ -85,7 +85,9 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
  */
 void ei_widget_destroy(ei_widget_t *widget) {
 	// Call destructor if provided
-	widget->destructor(widget);
+	if (widget->destructor != NULL) {
+		widget->destructor(widget);
+	}
 
 	// Removes from screen if managed by placer
 	if (widget->placer_params != NULL) {
