@@ -336,15 +336,36 @@ void toplevel_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 	if (is_located_event(*event)) {
 		struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+		ei_size_t size;
+                hw_text_compute_size(toplevel->title, ei_default_font, &size.width, &size.height);
 		int x_bar_min = widget->screen_location.top_left.x;
 		int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_bar_min = widget->screen_location.top_left.y;
-		int y_bar_max = widget->screen_location.top_left.y + widget->screen_location.size.height / 10;
+		int y_bar_max = widget->screen_location.top_left.y + size.height + toplevel->border_width;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
                 if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
                 y_mouse <= y_bar_max) {
-
+                        if (event->type == ei_ev_mouse_buttondown) {
+                                toplevel->move_mode.move_mode_bool = EI_TRUE;
+                                toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
+                                ei_app_invalidate_rect(&widget->screen_location);
+                                return EI_TRUE;
+                        }
+                        else if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+                                int dx = event->param.mouse.where.x - toplevel->move_mode.last_location.x;
+                                int dy = event->param.mouse.where.y - toplevel->move_mode.last_location.y;
+                                int new_x = widget->screen_location.top_left.x + dx;
+                                int new_y = widget->screen_location.top_left.y + dy;
+                                widget->screen_location.top_left = ei_point(new_x, new_y);
+                                ei_app_invalidate_rect(&widget->screen_location);
+                                return EI_TRUE;
+                        }
+                        else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+                                toplevel->move_mode.move_mode_bool = EI_FALSE;
+                                ei_app_invalidate_rect(&widget->screen_location);
+                                return EI_TRUE;
+                        }
                 }
 	}
 	return EI_FALSE;

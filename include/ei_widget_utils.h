@@ -46,6 +46,11 @@ typedef struct ei_button_t {
 //	ei_anchor_t *button_anchor;
 } ei_button_t;
 
+typedef struct ei_move_mode {
+        ei_bool_t move_mode_bool;
+        ei_point_t last_location;
+} ei_move_mode;
+
 typedef struct ei_toplevel_t {
 	ei_widget_t widget; // Doit être de type "ei_widget_t" pour polymorphisme
 	ei_color_t color;
@@ -54,6 +59,7 @@ typedef struct ei_toplevel_t {
 	ei_bool_t closable;
 	ei_axis_set_t resizable;
 	ei_size_t min_size;
+	struct ei_move_mode move_mode;
 } ei_toplevel_t;
 
 void empty_callback(ei_widget_t *widget, struct ei_event_t *event, void *user_param);
