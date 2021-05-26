@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include "ei_types.h"
 
+void free_points(ei_linked_point_t *ptr);
+
 /**
  * \brief 	Return a linked point that corresponds to the arc.
  *
