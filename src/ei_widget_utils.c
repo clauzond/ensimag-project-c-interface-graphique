@@ -166,9 +166,11 @@ void frame_releasefunc(ei_widget_t *widget) {
 void
 frame_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
 	struct ei_frame_t *frame = (ei_frame_t *) widget;
-	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, widget->screen_location, frame->color,
+	draw_frame(surface, frame->text, frame->text_font, frame->text_color, clipper, widget->screen_location,
+		   frame->color,
 		   frame->relief, EI_FALSE);
-	draw_frame(pick_surface, NULL, frame->text_font, frame->text_color, clipper, widget->screen_location, *widget->pick_color,
+	draw_frame(pick_surface, NULL, frame->text_font, frame->text_color, clipper, widget->screen_location,
+		   *widget->pick_color,
 		   ei_relief_none, EI_TRUE);
 
 }
@@ -235,9 +237,11 @@ void
 button_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
 	// TODO: ne pas utiliser "button->rayon" mais plutôt un des paramètres configurables par "ei_button_configure"
 	// TODO: possibilité d'utiliser une image (peu important)
-        struct ei_button_t  *button = (ei_button_t *) widget;
-        draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location, button->color, button->corner_radius, button->relief, EI_FALSE);
-        draw_button(pick_surface, NULL, button->text_font, button->text_color, clipper, widget->screen_location, *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
+	struct ei_button_t *button = (ei_button_t *) widget;
+	draw_button(surface, button->text, button->text_font, button->text_color, clipper, widget->screen_location,
+		    button->color, button->corner_radius, button->relief, EI_FALSE);
+	draw_button(pick_surface, NULL, button->text_font, button->text_color, clipper, widget->screen_location,
+		    *widget->pick_color, button->corner_radius, ei_relief_none, EI_TRUE);
 }
 
 void button_setdefaultsfunc(ei_widget_t *widget) {
@@ -249,38 +253,38 @@ void button_geomnotifyfunc(ei_widget_t *widget, ei_rect_t rect) {
 }
 
 ei_bool_t button_handlefunc(ei_widget_t *widget, ei_event_t *event) {
-        if (is_located_event(*event)) {
-                struct ei_button_t *button = (ei_button_t *) widget;
-                int x_min = widget->screen_location.top_left.x;
-                int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
-                int y_min = widget->screen_location.top_left.y;
-                int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
-                int x_mouse = event->param.mouse.where.x;
-                int y_mouse = event->param.mouse.where.y;
-                if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
-                    y_mouse <= y_max) {
-                        if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
-                                if (button->relief != ei_relief_sunken) {
-                                        button->relief = ei_relief_sunken;
-                                        ei_app_invalidate_rect(&widget->screen_location);
-                                }
-                                return EI_TRUE;
-                        } else if (event->type == ei_ev_mouse_buttonup) {
-                                button->callback(widget, event, button->user_param);
-                                if (button->relief != ei_relief_raised) {
-                                        button->relief = ei_relief_raised;
-                                        ei_app_invalidate_rect(&widget->screen_location);
-                                }
-                                return EI_TRUE;
-                        }
-                } else if (event->type == ei_ev_mouse_move) {
-                        if (button->relief != ei_relief_raised) {
-                                button->relief = ei_relief_raised;
-                                ei_app_invalidate_rect(&widget->screen_location);
-                        }
-                        return EI_TRUE;
-                }
-        }
+	if (is_located_event(*event)) {
+		struct ei_button_t *button = (ei_button_t *) widget;
+		int x_min = widget->screen_location.top_left.x;
+		int x_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
+		int y_min = widget->screen_location.top_left.y;
+		int y_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+		int x_mouse = event->param.mouse.where.x;
+		int y_mouse = event->param.mouse.where.y;
+		if (x_mouse >= x_min && x_mouse <= x_max && y_mouse >= y_min &&
+		    y_mouse <= y_max) {
+			if (event->type == ei_ev_mouse_buttondown || event->type == ei_ev_mouse_move) {
+				if (button->relief != ei_relief_sunken) {
+					button->relief = ei_relief_sunken;
+					ei_app_invalidate_rect(&widget->screen_location);
+				}
+				return EI_TRUE;
+			} else if (event->type == ei_ev_mouse_buttonup) {
+				button->callback(widget, event, button->user_param);
+				if (button->relief != ei_relief_raised) {
+					button->relief = ei_relief_raised;
+					ei_app_invalidate_rect(&widget->screen_location);
+				}
+				return EI_TRUE;
+			}
+		} else if (event->type == ei_ev_mouse_move) {
+			if (button->relief != ei_relief_raised) {
+				button->relief = ei_relief_raised;
+				ei_app_invalidate_rect(&widget->screen_location);
+			}
+			return EI_TRUE;
+		}
+	}
 	return EI_FALSE;
 }
 
@@ -316,13 +320,13 @@ void toplevel_releasefunc(ei_widget_t *widget) {
 
 void
 toplevel_drawfunc(ei_widget_t *widget, ei_surface_t surface, ei_surface_t pick_surface, ei_rect_t *clipper) {
-        // TODO: ajouter ei_font_t dans ei_toplevel_t?
-        struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
-        ei_color_t blanc = {255, 255, 255, 255};
-        draw_toplevel(surface, toplevel->title, ei_default_font, blanc, clipper, widget->screen_location,
-                      toplevel->color, EI_FALSE, toplevel->border_width);
-        draw_toplevel(pick_surface, NULL, ei_default_font, blanc, clipper, widget->screen_location,
-                      *widget->pick_color, EI_TRUE, toplevel->border_width);
+	// TODO: ajouter ei_font_t dans ei_toplevel_t?
+	struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
+	ei_color_t blanc = {255, 255, 255, 255};
+	draw_toplevel(surface, toplevel->title, ei_default_font, blanc, clipper, widget->screen_location,
+		      toplevel->color, EI_FALSE, toplevel->border_width);
+	draw_toplevel(pick_surface, NULL, ei_default_font, blanc, clipper, widget->screen_location,
+		      *widget->pick_color, EI_TRUE, toplevel->border_width);
 }
 
 void toplevel_setdefaultsfunc(ei_widget_t *widget) {
@@ -337,38 +341,60 @@ ei_bool_t toplevel_handlefunc(ei_widget_t *widget, ei_event_t *event) {
 	if (is_located_event(*event)) {
 		struct ei_toplevel_t *toplevel = (ei_toplevel_t *) widget;
 		ei_size_t size;
-                hw_text_compute_size(toplevel->title, ei_default_font, &size.width, &size.height);
+		hw_text_compute_size(toplevel->title, ei_default_font, &size.width, &size.height);
 		int x_bar_min = widget->screen_location.top_left.x;
 		int x_bar_max = widget->screen_location.top_left.x + widget->screen_location.size.width;
 		int y_bar_min = widget->screen_location.top_left.y;
 		int y_bar_max = widget->screen_location.top_left.y + size.height + toplevel->border_width;
 		int x_mouse = event->param.mouse.where.x;
 		int y_mouse = event->param.mouse.where.y;
-                if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
-                y_mouse <= y_bar_max) {
+		if (x_mouse >= x_bar_min && x_mouse <= x_bar_max && y_mouse >= y_bar_min &&
+		    y_mouse <= y_bar_max) {
+			if (event->type == ei_ev_mouse_buttondown) {
+				toplevel->move_mode.move_mode_bool = EI_TRUE;
+				toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
+				return EI_TRUE;
+			}
+		}
+		if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+			ei_app_invalidate_rect(&widget->screen_location);
+			int dx = x_mouse - toplevel->move_mode.last_location.x;
+			int dy = y_mouse - toplevel->move_mode.last_location.y;
+			int new_x = widget->screen_location.top_left.x + dx;
+			int new_y = widget->screen_location.top_left.y + dy;
+			ei_place(widget, NULL, &new_x, &new_y, NULL, NULL, NULL, NULL, NULL, NULL);
+			ei_app_invalidate_rect(&widget->screen_location);
+			toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
+			return EI_TRUE;
+		} else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool == EI_TRUE) {
+			toplevel->move_mode.move_mode_bool = EI_FALSE;
+			return EI_TRUE;
+		}
+		int x_resize_min = widget->screen_location.top_left.x + widget->screen_location.size.height * 0.8;
+                int x_resize_max = widget->screen_location.top_left.x + widget->screen_location.size.width ;
+                int y_resize_min = widget->screen_location.top_left.y + widget->screen_location.size.height * 0.8;
+                int y_resize_max = widget->screen_location.top_left.y + widget->screen_location.size.height;
+                if (x_mouse >= x_resize_min && x_mouse <= x_resize_max && y_mouse >= y_resize_min &&
+                    y_mouse <= y_resize_max) {
                         if (event->type == ei_ev_mouse_buttondown) {
-                                toplevel->move_mode.move_mode_bool = EI_TRUE;
-                                toplevel->move_mode.last_location = ei_point(x_mouse, y_mouse);
+                                toplevel->resize_mode.resize_mode_bool = EI_TRUE;
+                                toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
                                 return EI_TRUE;
                         }
-                        else if (event->type == ei_ev_mouse_move && toplevel->move_mode.move_mode_bool == EI_TRUE) {
-                                ei_app_invalidate_rect(&widget->screen_location);
-                                int dx = event->param.mouse.where.x - toplevel->move_mode.last_location.x;
-                                int dy = event->param.mouse.where.y - toplevel->move_mode.last_location.y;
-                                int new_x = widget->screen_location.top_left.x + dx;
-                                int new_y = widget->screen_location.top_left.y + dy;
-                                ei_rect_t old_loc = widget->screen_location;
-                                widget->screen_location.top_left = ei_point(new_x, new_y);
-                                ei_app_invalidate_rect(&old_loc);
-				ei_place(widget, NULL, &new_x, &new_y, NULL, NULL, NULL, NULL, NULL, NULL);
-                                // widget->screen_location.top_left = ei_point(new_x, new_y);
-                                ei_app_invalidate_rect(&widget->screen_location);
-                                return EI_TRUE;
-                        }
-                        else if (event->type == ei_ev_mouse_buttonup && toplevel->move_mode.move_mode_bool == EI_TRUE) {
-                                toplevel->move_mode.move_mode_bool = EI_FALSE;
-                                return EI_TRUE;
-                        }
+                }
+                if (event->type == ei_ev_mouse_move && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+                        ei_app_invalidate_rect(&widget->screen_location);
+                        int dx = x_mouse - toplevel->resize_mode.last_location.x;
+                        int dy = y_mouse - toplevel->resize_mode.last_location.y;
+                        int new_width = widget->screen_location.size.width + dx;
+                        int new_height = widget->screen_location.size.height + dy;
+                        ei_place(widget, NULL, NULL, NULL, new_width, new_height, NULL, NULL, NULL, NULL);
+                        ei_app_invalidate_rect(&widget->screen_location);
+                        toplevel->resize_mode.last_location = ei_point(x_mouse, y_mouse);
+                        return EI_TRUE;
+                } else if (event->type == ei_ev_mouse_buttonup && toplevel->resize_mode.resize_mode_bool == EI_TRUE) {
+                        toplevel->resize_mode.resize_mode_bool = EI_FALSE;
+                        return EI_TRUE;
                 }
 	}
 	return EI_FALSE;
@@ -387,47 +413,48 @@ ei_widgetclass_t ei_init_toplevel_class(void) {
 	return wclass;
 }
 
-void draw_toplevel (ei_surface_t surface,
-                    const char *text,
-                    ei_font_t font,
-                    ei_color_t text_color,
-                    const ei_rect_t *clipper,
-                    ei_rect_t rect,
-                    ei_color_t toplevel_color,
-                    ei_bool_t pick,
-                    int border_width) {
+void draw_toplevel(ei_surface_t surface,
+		   const char *text,
+		   ei_font_t font,
+		   ei_color_t text_color,
+		   const ei_rect_t *clipper,
+		   ei_rect_t rect,
+		   ei_color_t toplevel_color,
+		   ei_bool_t pick,
+		   int border_width) {
 	is_pick_surface = pick;
-        if (pick == EI_TRUE) {
-                ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
-                ei_draw_polygon(surface, pts, toplevel_color, clipper);
-                free_points(pts);
-        }
-        else {
-                ei_size_t size;
-                hw_text_compute_size(text, font, &(size.width), &(size.height));
-                ei_rect_t bot_right_corner;
-                bot_right_corner.size.width = 0.2 * rect.size.height;
-                bot_right_corner.size.height = 0.2 * rect.size.height;
-                bot_right_corner.top_left.x = rect.top_left.x + rect.size.width - bot_right_corner.size.width;
-                bot_right_corner.top_left.y = rect.top_left.y + rect.size.height - bot_right_corner.size.height;
-                ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE,EI_TRUE);
-                ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
-                                          toplevel_color.blue * 0.5, toplevel_color.alpha};
-                ei_draw_polygon(surface, pts, frame_color, clipper);
-                free_points(pts);
-                ei_point_t where; where.x = rect.top_left.x + rect.size.width * 0.05; where.y = rect.top_left.y + border_width;
-                rect.top_left.x += border_width;
-                rect.top_left.y += border_width + size.height;
-                rect.size.width -= 2 * border_width;
-                rect.size.height = rect.size.height - size.height - 2 * border_width;
-                pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
-                ei_draw_polygon(surface, pts, toplevel_color, clipper);
-                free_points(pts);
-                pts = rounded_frame(bot_right_corner, 0, EI_TRUE, EI_TRUE);
-                ei_draw_polygon(surface, pts, frame_color, clipper);
-                free_points(pts);
-                ei_draw_text(surface, &where, text, font, text_color, clipper);
-        }
+	if (pick == EI_TRUE) {
+		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
+		ei_draw_polygon(surface, pts, toplevel_color, clipper);
+		free_points(pts);
+	} else {
+		ei_size_t size;
+		hw_text_compute_size(text, font, &(size.width), &(size.height));
+		ei_rect_t bot_right_corner;
+		bot_right_corner.size.width = 0.2 * rect.size.height;
+		bot_right_corner.size.height = 0.2 * rect.size.height;
+		bot_right_corner.top_left.x = rect.top_left.x + rect.size.width - bot_right_corner.size.width;
+		bot_right_corner.top_left.y = rect.top_left.y + rect.size.height - bot_right_corner.size.height;
+		ei_linked_point_t *pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
+		ei_color_t frame_color = {toplevel_color.red * 0.5, toplevel_color.green * 0.5,
+					  toplevel_color.blue * 0.5, toplevel_color.alpha};
+		ei_draw_polygon(surface, pts, frame_color, clipper);
+		free_points(pts);
+		ei_point_t where;
+		where.x = rect.top_left.x + rect.size.width * 0.05;
+		where.y = rect.top_left.y + border_width;
+		rect.top_left.x += border_width;
+		rect.top_left.y += border_width + size.height;
+		rect.size.width -= 2 * border_width;
+		rect.size.height = rect.size.height - size.height - 2 * border_width;
+		pts = rounded_frame(rect, 0, EI_TRUE, EI_TRUE);
+		ei_draw_polygon(surface, pts, toplevel_color, clipper);
+		free_points(pts);
+		pts = rounded_frame(bot_right_corner, 0, EI_TRUE, EI_TRUE);
+		ei_draw_polygon(surface, pts, frame_color, clipper);
+		free_points(pts);
+		ei_draw_text(surface, &where, text, font, text_color, clipper);
+	}
 
 }
 
