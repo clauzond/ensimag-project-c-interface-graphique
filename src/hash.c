@@ -1,7 +1,5 @@
-#include <stdlib.h>
 #include <stdint.h>
 
-#include <stdio.h>
 
 uint32_t hash(const char* str) {
     uint32_t hash = 5381;

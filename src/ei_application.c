@@ -118,23 +118,6 @@ void ei_app_run() {
 		}
 		active_widget = ei_event_get_active_widget();
 		if (active_widget != NULL) {
-			// TODO: remove
-			/*
-			if (event.type == 5) {
-				printf("Event: mousedown\n",event.type);
-			} else if (event.type == 6) {
-				printf("Event: mouseup\n",event.type);
-			} else if (event.type == 7) {
-				printf("Event: move\n",event.type);
-			} else {
-				printf("Event: %i (consulte la doc)\n",event.type);
-			}
-			printf("Active widget: %s\n", active_widget->wclass->name);
-			if (is_located_event(event)) {
-				printf("x: %u, y: %u\n", event.param.mouse.where.x, event.param.mouse.where.y);
-			}
-			printf("\n");
-			 */
 			event_handled = active_widget->wclass->handlefunc(active_widget, &event);
 		}
 		if (!event_handled && !is_located_event(event)) {

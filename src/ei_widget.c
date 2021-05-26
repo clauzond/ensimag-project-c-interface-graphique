@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
@@ -35,9 +34,6 @@ ei_widget_t *ei_widget_create(ei_widgetclass_name_t class_name,
 	ei_widgetclass_t *wclass = ei_widgetclass_from_name(class_name);
 
 	if (wclass != NULL) {
-		// TODO: vérifier l'initialisation dans allocfunc selon les deux lignes (pour frame, button)
-		// *frame = ei_init_default_frame();
-		// widget->requested_size = ei_widget_natural_size(...)
 		widget = wclass->allocfunc();
 		widget->wclass = wclass;
 	} else {
@@ -107,7 +103,6 @@ void ei_widget_destroy(ei_widget_t *widget) {
 	}
 
 	// Link correctly between siblings and parent (parcours linéaire)
-	// TODO: link correctly
 
 	// Frees memory
 	widget->wclass->releasefunc(widget);

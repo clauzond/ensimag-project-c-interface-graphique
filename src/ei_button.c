@@ -34,6 +34,7 @@ ei_linked_point_t *arc(ei_point_t centre,
 			point.x = centre.x + (int) rayon * cos(angle);
 			point.y = centre.y + (int) rayon * sin(angle);
 			if (premier == NULL || point.x != premier->point.x || point.y != premier->point.y) {
+			        // ajout si le point est différent du précédent
 				ei_linked_point_t *nouveau = malloc(sizeof(ei_linked_point_t));
 				nouveau->point = point;
 				nouveau->next = premier;
@@ -48,6 +49,7 @@ ei_linked_point_t *arc(ei_point_t centre,
 			point.x = centre.x + (int) rayon * cos(angle);
 			point.y = centre.y + (int) rayon * sin(angle);
 			if (premier == NULL || point.x != premier->point.x || point.y != premier->point.y) {
+                                // ajout si le point est différent du précédent
 				ei_linked_point_t *nouveau = malloc(sizeof(ei_linked_point_t));
 				nouveau->point = point;
 				nouveau->next = premier;
@@ -114,6 +116,7 @@ ei_linked_point_t *rounded_frame(ei_rect_t rect,
 	while (ptr->next != NULL) {
 		ptr = ptr->next;
 	}
+	//On relie le dernier point avec le premier
 	ei_linked_point_t *last = malloc(sizeof(ei_linked_point_t));
 	last->next = NULL;
 	last->point = premier->point;
@@ -140,26 +143,59 @@ void draw_button(ei_surface_t surface,
 		free_points(pts);
 	} else {
 		if (relief == ei_relief_sunken) {
+		        //Couleurs pour un bouton enfoncé
 			top_color.red = button_color.red * 0.9;
 			top_color.green = button_color.green * 0.9;
 			top_color.blue = button_color.blue * 0.9, top_color.alpha = button_color.alpha;
-			bot_color.red = button_color.red * 1.1;
-			bot_color.green = button_color.green * 1.1;
-			bot_color.blue = button_color.blue * 1.1, bot_color.alpha = button_color.alpha;
+			if (button_color.red * 1.1 <= 255) {
+                                bot_color.red = button_color.red * 1.1;
+			} else {
+                                bot_color.red = 255;
+			}
+                        if (button_color.green * 1.1 <= 255) {
+                                bot_color.green = button_color.green * 1.1;
+                        } else {
+                                bot_color.red = 255;
+                        }
+                        if (button_color.blue * 1.1 <= 255) {
+                                bot_color.blue = button_color.blue * 1.1;
+                        } else {
+                                bot_color.red = 255;
+                        }
+			bot_color.alpha = button_color.alpha;
 		} else {
-			top_color.red = button_color.red * 1.1;
-			top_color.green = button_color.green * 1.1;
-			top_color.blue = button_color.blue * 1.1, top_color.alpha = button_color.alpha;
+		        //Couleurs pour un bouton relevé
+                        if (button_color.red * 1.1 <= 255) {
+                                top_color.red = button_color.red * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+                        if (button_color.green * 1.1 <= 255) {
+                                top_color.green = button_color.green * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+                        if (button_color.blue * 1.1 <= 255) {
+                                top_color.blue = button_color.blue * 1.1;
+                        } else {
+                                top_color.red = 255;
+                        }
+			top_color.alpha = button_color.alpha;
 			bot_color.red = button_color.red * 0.9;
 			bot_color.green = button_color.green * 0.9;
 			bot_color.blue = button_color.blue * 0.9, bot_color.alpha = button_color.alpha;
 		}
+		//Partie haute
 		ei_linked_point_t *pts = rounded_frame(rect, rayon, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, top_color, clipper);
 		free_points(pts);
+
+		//Partie basse
 		pts = rounded_frame(rect, rayon, EI_FALSE, EI_TRUE);
 		ei_draw_polygon(surface, pts, bot_color, clipper);
 		free_points(pts);
+
+		//Partie intérieure
 		rect.top_left.x += rect.size.width / 20;
 		rect.top_left.y += rect.size.height / 20;
 		rect.size.width -= rect.size.width * 2 / 20;
@@ -167,6 +203,8 @@ void draw_button(ei_surface_t surface,
 		pts = rounded_frame(rect, rayon, EI_TRUE, EI_TRUE);
 		ei_draw_polygon(surface, pts, button_color, clipper);
 		free_points(pts);
+
+		//Texte
 		ei_point_t where;
 		where.x = rect.top_left.x + rect.size.width * 1.5 / 10;
 		where.y = rect.top_left.y + rect.size.height * 3 / 10;

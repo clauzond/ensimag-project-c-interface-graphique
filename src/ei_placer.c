@@ -64,7 +64,6 @@ void ei_place(struct ei_widget_t *widget,
  * @param	widget		The widget which geometry must be re-computed.
  */
 void ei_placer_run(struct ei_widget_t *widget) {
-	// TODO: ne fais pas ce qui est demandé (voir message sur ei_placer_run Discord)
 	ei_place(widget, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 

@@ -68,7 +68,6 @@ void draw_widget_recursively(ei_widget_t *widget, ei_surface_t root_window, ei_r
 }
 
 void free_widget_recursively(ei_widget_t *widget) {
-	// TODO: pas sûr que next_sibling et children_head sont conservés, fonction à repenser après implémentation de ei_widget_destroy
 	ei_widget_t *next_sibling = widget->next_sibling;
 	ei_widget_t *children_head = widget->children_head;
 
