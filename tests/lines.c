@@ -39,7 +39,7 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
  */
 void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 0, 255, 0, 200 };
+	ei_color_t		color		= { 0, 255, 0, 150 };
 	ei_linked_point_t	pts[9];
 	int			i, xdiff, ydiff;
 
@@ -81,7 +81,7 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
  */
 void test_square(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 255, 0, 0, 255 };
+	ei_color_t		color		= { 255, 0, 0, 100 };
 	ei_linked_point_t	pts[5];
 	int			i, xdiff, ydiff;
 
@@ -132,7 +132,7 @@ void test_dot(ei_surface_t surface, ei_rect_t* clipper)
 }
 
 void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
-        ei_color_t              color           = {100, 155, 205, 255};
+        ei_color_t              color           = {100, 155, 205, 120};
         ei_linked_point_t       pts[4];
 
         pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
@@ -151,7 +151,7 @@ void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
  *
  */
 void test_arc(ei_surface_t surface, ei_rect_t* clipper) {
-        ei_color_t		color		= { 255, 0, 0, 255 };
+        ei_color_t		color		= { 255, 0, 0, 50 };
         ei_point_t centre;
         centre.x = 400; centre.y = 300;
         float rayon = 200; float debut = 0; float fin = 2*M_PI;
@@ -160,9 +160,9 @@ void test_arc(ei_surface_t surface, ei_rect_t* clipper) {
 }
 
 void test_rounded_frame	(ei_surface_t surface, ei_rect_t *clipper) {
-        ei_color_t		color		= { 255, 0, 0, 255 };
+        ei_color_t		color		= { 255, 0, 0, 100 };
         ei_size_t taille; taille.height = 150; taille.width = 150;
-        ei_point_t pt_rect; pt_rect.x = 100; pt_rect.y = 100;
+        ei_point_t pt_rect; pt_rect.x = 0; pt_rect.y = 0;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
         float rayon = 25;
         ei_linked_point_t *pts = rounded_frame(rect, rayon, 1, 1);
@@ -207,10 +207,10 @@ void test_button(ei_surface_t surface, ei_rect_t *clipper) {
 void test_toplevel (ei_surface_t surface, ei_rect_t *clipper) {
         const char *text = "Toplevel";
         ei_font_t font = ei_default_font;
-        ei_color_t text_color = {255, 255, 255, 255};
-        ei_color_t inside_color = {100, 100, 100, 255};
+        ei_color_t text_color = {255, 255, 255, 50};
+        ei_color_t inside_color = {100, 100, 100, 50};
         ei_size_t taille; taille.height = 200; taille.width = 500;
-        ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 200;
+        ei_point_t pt_rect; pt_rect.x = 200; pt_rect.y = 400;
         ei_rect_t rect; rect.top_left = pt_rect ; rect.size = taille;
         draw_toplevel(surface, text, font, text_color, clipper,
                     rect, inside_color, EI_FALSE, 5);
@@ -241,17 +241,22 @@ int main(int argc, char** argv)
 	ei_fill		(main_window, &white, clipper_ptr);
 
 	/* Draw polylines. */
-	//test_line	(main_window, clipper_ptr);
-	// test_octogone	(main_window, clipper_ptr, 0);
-	// test_square	(main_window, clipper_ptr, 0);
+	test_line	(main_window, clipper_ptr);
+	test_octogone	(main_window, clipper_ptr, 1);
+	test_square	(main_window, clipper_ptr, 0);
+	test_triangle(main_window, clipper_ptr, 1);
 
         /* arc. */
-	//test_arc	(main_window, clipper_ptr);
+	test_arc	(main_window, clipper_ptr);
 
         /* rounded_frame. */
-      	//test_rounded_frame	(main_window, clipper_ptr);
-        //test_button             (main_window, clipper_ptr);
+      	test_rounded_frame	(main_window, clipper_ptr);
+        test_button             (main_window, clipper_ptr);
         test_toplevel           (main_window, clipper_ptr);
+
+        ei_rect_t dst = ei_rect(ei_point(500, 0), ei_size(300, 200));
+        ei_rect_t src = ei_rect(ei_point(200, 200), ei_size(300, 200));
+	ei_copy_surface(main_window, &dst, main_window, &src, EI_FALSE);
 
 	/* Unlock and update the surface. */
 	hw_surface_unlock(main_window);
