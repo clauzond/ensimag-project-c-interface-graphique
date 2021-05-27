@@ -15,7 +15,7 @@
 void button_press(ei_widget_t* widget, ei_event_t* event, void* user_param)
 {
 	printf("Click !\n");
-	char *text = "Merci d'avoir appuyé";
+	char *text = "Ca fait click !";
 	ei_button_configure(widget, NULL, NULL, NULL, NULL, NULL, &text, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 

@@ -24,7 +24,7 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
 	ei_linked_point_t	pts[2];
 
 	pts[0].point.x = 200; pts[0].point.y = 200; pts[0].next = &pts[1];
-	pts[1].point.x = 1000; pts[1].point.y = 400; pts[1].next = NULL;
+	pts[1].point.x = 600; pts[1].point.y = 400; pts[1].next = NULL;
 
 	ei_draw_polyline(surface, pts, color, clipper);
 }
@@ -39,7 +39,7 @@ void test_line(ei_surface_t surface, ei_rect_t* clipper)
  */
 void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 0, 255, 0, 150 };
+	ei_color_t		color		= { 255, 100, 255, 255 };
 	ei_linked_point_t	pts[9];
 	int			i, xdiff, ydiff;
 
@@ -81,7 +81,7 @@ void test_octogone(ei_surface_t surface, ei_rect_t* clipper, int polygon)
  */
 void test_square(ei_surface_t surface, ei_rect_t* clipper, int polygon)
 {
-	ei_color_t		color		= { 255, 0, 0, 100 };
+	ei_color_t		color		= { 255, 255, 0, 255 };
 	ei_linked_point_t	pts[5];
 	int			i, xdiff, ydiff;
 
@@ -132,7 +132,7 @@ void test_dot(ei_surface_t surface, ei_rect_t* clipper)
 }
 
 void test_triangle(ei_surface_t surface, ei_rect_t* clipper, int polygon) {
-        ei_color_t              color           = {100, 155, 205, 120};
+        ei_color_t              color           = {255, 0, 0, 120};
         ei_linked_point_t       pts[4];
 
         pts[0].point.x = 540; pts[0].point.y = 160; pts[0].next = &(pts[1]);
@@ -242,7 +242,7 @@ int main(int argc, char** argv)
 
 	/* Draw polylines. */
 	test_line	(main_window, clipper_ptr);
-	test_octogone	(main_window, clipper_ptr, 1);
+	test_octogone	(main_window, clipper_ptr, 0);
 	test_square	(main_window, clipper_ptr, 0);
 	test_triangle(main_window, clipper_ptr, 1);
 
